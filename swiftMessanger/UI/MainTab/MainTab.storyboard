@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main Tab-->
+        <scene sceneID="xbV-6g-rwN">
+            <objects>
+                <tabBarController restorationIdentifier="MainTab" storyboardIdentifier="MainTab" id="BZ1-8l-GpJ" customClass="MainTab" customModule="swiftMessanger" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="QOi-56-MQk">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="HaQ-e9-Dqn" kind="relationship" relationship="viewControllers" id="gQQ-cj-6oK"/>
+                        <segue destination="heV-Dc-bme" kind="relationship" relationship="viewControllers" id="gj3-BY-3z5"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ee6-4o-U9g" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1506" y="-266"/>
+        </scene>
+        <!--MessagesController-->
+        <scene sceneID="N6V-Xs-9fS">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="MessagesController" storyboardName="Messages" referencedIdentifier="MessagesController" id="HaQ-e9-Dqn" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Chats" image="bubble.left.and.bubble.right.fill" catalog="system" id="3JU-zC-c49"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Nas-wM-4fz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-399" y="-489"/>
+        </scene>
+        <!--SettingsController-->
+        <scene sceneID="OAB-zk-ixD">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="SettingsController" storyboardName="Settings" referencedIdentifier="SettingsController" id="heV-Dc-bme" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Settings" image="gear" catalog="system" id="EPz-2N-0rr"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UMn-vM-MOo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-358" y="-221"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="bubble.left.and.bubble.right.fill" catalog="system" width="128" height="97"/>
+        <image name="gear" catalog="system" width="128" height="122"/>
+    </resources>
+</document>
