@@ -141,7 +141,6 @@ extension ChatController : ChatControllerDelegate {
         if let count = viewModel.messages?.count, count > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
-        self.scrollToBottom(animated: true)
 
     }
 }
