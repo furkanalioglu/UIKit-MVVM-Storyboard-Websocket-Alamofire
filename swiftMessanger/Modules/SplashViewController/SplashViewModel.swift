@@ -36,7 +36,7 @@ class SplashViewModel {
     
     func handleLoginError(error: Error) {
         print("LIFEDEBUG: Splash faced with error: \(error.localizedDescription)")
-        delegate?.couldCheckUser(error: error)
+        delegate?.couldCheckUser(error: .couldNotFindUser)
         AppConfig.instance.currentUser = nil
         RootManager.switchRoot(.auth)
     }
@@ -46,12 +46,12 @@ class SplashViewModel {
             
             if let error = error {
                 print("MESSAGECONTROLLERDEBUG: \(error.localizedDescription)")
-                self.delegate?.couldReceivedDatas(error: error)
+                self.delegate?.couldCheckUser(error: .couldNotReceivedDatas)
                 return
             }
             
             self.messages = messages
-            self.delegate?.couldReceivedDatas(error: nil)
+            self.delegate?.couldCheckUser(error: nil)
             print("MESSAGECONTROLLERDEBUG: \(String(describing: messages))")
         }
     }

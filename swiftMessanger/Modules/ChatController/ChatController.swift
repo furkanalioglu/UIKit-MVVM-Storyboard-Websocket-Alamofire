@@ -53,6 +53,7 @@ class ChatController: UIViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControl
+
         
         setupTapGesture()
         
@@ -72,14 +73,21 @@ class ChatController: UIViewController {
                 self.inputViewBottonAnchor.constant = -keyboardSize.height
                 self.view.layoutIfNeeded()
             }
+            self.scrollToBottom(animated: true)
+
         }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
         UIView.animate(withDuration: 0.3) {
-            self.inputViewBottonAnchor.constant = -8
+            self.inputViewBottonAnchor.constant = 0
             self.view.layoutIfNeeded()
+            
+            self.tableView.contentInset = .zero
+            self.tableView.scrollIndicatorInsets = .zero
         }
+        self.scrollToBottom(animated: true)
+
     }
     
     @objc func handleRefresh() {
@@ -133,6 +141,8 @@ extension ChatController : ChatControllerDelegate {
         if let count = viewModel.messages?.count, count > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
+        self.scrollToBottom(animated: true)
+
     }
 }
 

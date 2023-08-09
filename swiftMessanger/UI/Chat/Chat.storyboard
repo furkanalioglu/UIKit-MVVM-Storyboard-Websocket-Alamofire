@@ -37,10 +37,9 @@
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BAk-Ef-dsW">
                                                 <rect key="frame" x="320" y="0.0" width="57" height="34"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" title="SEND">
-                                                    <fontDescription key="titleFontDescription" type="system" pointSize="11"/>
-                                                </buttonConfiguration>
+                                                <buttonConfiguration key="configuration" style="plain" image="paperplane.fill" catalog="system" title="  "/>
                                                 <connections>
                                                     <action selector="sendMessageAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="FR0-2r-OAP"/>
                                                 </connections>
@@ -70,6 +69,7 @@
                             <constraint firstItem="a1h-GK-geR" firstAttribute="bottom" secondItem="vDu-zF-Fre" secondAttribute="bottom" id="yPi-nr-59M"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <connections>
                         <outlet property="inputViewBottonAnchor" destination="yPi-nr-59M" id="QVo-eS-AoX"/>
                         <outlet property="messageTextField" destination="XFE-yd-LRk" id="72h-z9-8YJ"/>
@@ -89,6 +89,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="paperplane.fill" catalog="system" width="128" height="119"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

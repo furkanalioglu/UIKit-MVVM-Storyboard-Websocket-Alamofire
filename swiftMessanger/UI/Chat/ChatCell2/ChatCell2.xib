@@ -69,6 +69,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="leftStack" destination="ScP-ME-7Cp" id="Sjz-wg-HcS"/>
+                <outlet property="messageBuble" destination="AHI-bH-6H1" id="3rL-A7-vf5"/>
                 <outlet property="messageLabrl" destination="m70-rk-VBR" id="1fH-cN-kGh"/>
                 <outlet property="rightStack" destination="bdW-cW-GJq" id="vaD-lP-yJT"/>
             </connections>

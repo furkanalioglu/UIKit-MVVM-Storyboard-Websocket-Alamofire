@@ -7,10 +7,13 @@
 
 import UIKit
 
+enum SplashErrors: Int {
+    case couldNotFindUser, couldNotReceivedDatas
+}
+
 //MARK: - VMDELEGATE
 protocol SplashControllerDelegate : AnyObject {
-    func couldCheckUser(error: Error?)
-    func couldReceivedDatas(error: Error?)
+    func couldCheckUser(error: SplashErrors?)
 }
 
 
@@ -28,19 +31,18 @@ class SplashController: UIViewController {
 
 //MARK: - DELEGATE
 extension SplashController : SplashControllerDelegate {
-    func couldCheckUser(error: Error?) {
-        if error != nil {
+    func couldCheckUser(error: SplashErrors?) {
+        if error == .couldNotFindUser {
             RootManager.switchRoot(.auth)
-        } else {
-            print("Configured user without error")
+            return
         }
-    }
-    
-    func couldReceivedDatas(error: Error?) {
-        if error != nil {
-            print(error?.localizedDescription)
-        } else {
-            print("DEBUGSEND: \(viewModel.messages)")
+        
+        if error == .couldNotReceivedDatas {
+            print("COULD NOT FIND USER")
+            return
+        }
+        
+        if error == nil {
             RootManager.switchRoot(.tabBar,sender: viewModel.messages)
         }
     }

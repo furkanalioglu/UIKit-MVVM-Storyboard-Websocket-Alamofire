@@ -81,7 +81,9 @@ class ChatViewModel {
         guard let currentUserId = AppConfig.instance.currentUserId,
               let receiverUserId = user?.id,
               let text = myText,
-              !text.isEmpty else {
+              !text.isEmpty,
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
             print("Error: Invalid data provided for sending a message.")
             return
         }
