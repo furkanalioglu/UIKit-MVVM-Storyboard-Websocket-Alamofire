@@ -149,6 +149,10 @@ extension ChatController : SocketIOManagerChatDelegate {
     func didReceiveChatMessage(message: MessageItem) {
         if message.senderId == viewModel.user?.id || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
             viewModel.messages?.append(message)
+            debugPrint("*****")
+            dump(message)
+            print("receiveddebug: \(message)")
+            debugPrint("*****")
             tableView.reloadData()
             scrollToBottom(animated: true)
         }

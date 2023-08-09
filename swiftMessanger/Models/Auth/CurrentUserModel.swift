@@ -19,3 +19,4 @@ struct CurrentUserModel: Codable {
     var photoUrl: String
     
 }
+

@@ -101,7 +101,10 @@ class SocketIOManager {
     }
     
     func sendMessage(message: String, toUser: String) {
-        socket?.emit("message", Int(toUser) ?? 0, message)
+        guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
+        let myMessage = SentMessage(senderId: userId, message: message)
+        socket?.emit(SocketEmits.message.rawValue, myMessage.toData())
+
     }
     
     private func addHandlers() {
@@ -109,26 +112,25 @@ class SocketIOManager {
             debugPrint("SOCKETDEBUG: connected to socket")
         }
         
-        socket?.on("message") { (data, _) in
+        socket?.on(SocketListeners.message.rawValue) { (data, _) in
             print("SOCKETDEBUG: Raw message data: \(data)")
-
-            if let data = data as? [Any] {
-                let receiverId = data[3] as? Int ?? 0
-                let message = data[1] as? String ?? ""
-                let sendTime = data[2] as? String ?? ""
-                let senderId = data[0] as? Int ?? 99
-
-                let socketMessage = MessageItem(message: message, senderId: senderId, receiverId: receiverId, sendTime: sendTime)
- 
-                print("SOCKETDEBUG: SENT MESSAGE", socketMessage)
-                self.delegate?.didReceiveMessage(message: socketMessage)
-                self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
-
-            } else {
-                print("SOCKETDEBUG: Data in received message has incorrect format.")
+            guard let response = data[0] as? String,
+                  let modeledData: MessageItem = MessageItem.parse(data: response)
+            else {
+                debugPrint("SOCKETDEBUG: Raw message data: \(data)" )
+                return
             }
+            debugPrint("******")
+            dump(modeledData)
+            debugPrint("******")
+            let socketMessage = MessageItem(message: modeledData.message ,
+                                            senderId: modeledData.senderId,
+                                            receiverId: modeledData.receiverId,
+                                            sendTime: modeledData.sendTime)
+            print("receiveddebugSOCKET: \(socketMessage)")
+            self.delegate?.didReceiveMessage(message: socketMessage)
+            self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
         }
-
         
         socket?.on(clientEvent: .disconnect) { data, _ in
             debugPrint("disconnected")
@@ -142,4 +144,24 @@ class SocketIOManager {
         }
     }
     
+}
+
+
+extension Decodable {
+    static func parse<T: Decodable>(data: String) -> T! {
+        let jsonData = data.data(using: .utf8)!
+        return try? JSONDecoder().decode(T.self, from: jsonData)
+    }
+    
+    static func parse<T: Decodable>(jsonData: Data) -> T {
+        return try! JSONDecoder().decode(T.self, from: jsonData)
+    }
+}
+
+enum SocketListeners: String {
+    case message
+}
+
+enum SocketEmits: String {
+    case message
 }

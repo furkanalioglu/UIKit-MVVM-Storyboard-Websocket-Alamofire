@@ -76,6 +76,7 @@
 		91DEF29C2A7BF76B0072C6FF /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DEF29B2A7BF76B0072C6FF /* SplashViewModel.swift */; };
 		91DEF2A02A7CDCA30072C6FF /* MessagesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DEF29E2A7CDCA30072C6FF /* MessagesCell.swift */; };
 		91DEF2A12A7CDCA30072C6FF /* MessagesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91DEF29F2A7CDCA30072C6FF /* MessagesCell.xib */; };
+		91E31F1E2A839A8B00F2FF23 /* SentMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +173,7 @@
 		91DEF29B2A7BF76B0072C6FF /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
 		91DEF29E2A7CDCA30072C6FF /* MessagesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesCell.swift; sourceTree = "<group>"; };
 		91DEF29F2A7CDCA30072C6FF /* MessagesCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessagesCell.xib; sourceTree = "<group>"; };
+		91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -317,6 +319,7 @@
 			children = (
 				913B6E402A7B9B3400B9D5C4 /* MessageItem.swift */,
 				91934F252A7CE05700D827B3 /* MessagesCellItem.swift */,
+				91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -790,6 +793,7 @@
 				913B6E072A7A32CA00B9D5C4 /* EditProfileController.swift in Sources */,
 				914A7F482A78D7AC00499D49 /* UsersController.swift in Sources */,
 				910C24A82A78DF2300E70900 /* RegisterModel.swift in Sources */,
+				91E31F1E2A839A8B00F2FF23 /* SentMessage.swift in Sources */,
 				91934F392A81044B00D827B3 /* DateExtension.swift in Sources */,
 				91DEF2A02A7CDCA30072C6FF /* MessagesCell.swift in Sources */,
 				913B6E0E2A7A337400B9D5C4 /* EditProfileCell.swift in Sources */,

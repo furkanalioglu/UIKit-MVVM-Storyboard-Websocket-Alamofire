@@ -8,6 +8,7 @@
 import Foundation
 import Moya
 import UIKit
+import SocketIO
 
 
 enum API{
@@ -51,10 +52,12 @@ extension MoyaProvider {
                     } else {
                         AuthService.instance.requestRefreshToken { error, string in
                             if let error = error {
-                                RootManager.switchRoot(.auth)
+                                print("LIFEDEBUG CAN NOT REQUEST \(error.localizedDescription)")
                                 AppConfig.instance.currentUser = nil
+                                RootManager.switchRoot(.auth)
                             } else {
                                 UserDefaults.standard.set(string?.accessToken, forKey: userToken)
+                                self.request(target, completion: completion)
                             }
                         }
                     }

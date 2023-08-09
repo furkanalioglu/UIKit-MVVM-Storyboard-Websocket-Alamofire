@@ -45,3 +45,4 @@ extension SplashController : SplashControllerDelegate {
         }
     }
 }
+

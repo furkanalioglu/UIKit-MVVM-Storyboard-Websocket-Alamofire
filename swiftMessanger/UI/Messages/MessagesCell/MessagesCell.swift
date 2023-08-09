@@ -34,8 +34,8 @@ class MessagesCell: UITableViewCell {
         messageImageView.image = UIImage(named: "prsn")
         messageSenderLabel.text = message.username
         messageContentLabel.text = message.lastMsg
-        messageSenderLabel.textColor = message.isSeen ?? false ? .gray : .green
-//        messageSentTimeLabel.text = message.sendTime
+        messageSenderLabel.textColor = message.isSeen ?? false ? .black : .green
+        messageSentTimeLabel.text = message.sendTime?.timeElapsedSinceDate()
     }
     
 }

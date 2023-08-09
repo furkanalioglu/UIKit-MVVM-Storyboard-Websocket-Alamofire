@@ -35,6 +35,7 @@ extension SettingsController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             performSegue(withIdentifier: viewModel.segueId, sender: nil)
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 }

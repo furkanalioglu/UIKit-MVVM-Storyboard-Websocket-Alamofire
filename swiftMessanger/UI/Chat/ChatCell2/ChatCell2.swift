@@ -18,7 +18,6 @@ class ChatCell2: UITableViewCell {
 
     @IBOutlet weak var leftStack: UIStackView!
     @IBOutlet weak var rightStack: UIStackView!
-    
     @IBOutlet weak var messageLabrl: UILabel!
     
     
@@ -39,12 +38,12 @@ class ChatCell2: UITableViewCell {
     
     private func configureUI() {
         messageLabrl.text = message?.message
-        messageLabrl.layer.borderWidth = 2
         guard let message = message else { return }
         guard let currentUserId = AppConfig.instance.currentUserId else { return }
         let isCurrentUserSender = message.senderId == Int(currentUserId)
 
         rightStack.isHidden = isCurrentUserSender
+        messageLabrl.textAlignment = isCurrentUserSender ? .right : .left
         leftStack.isHidden = !isCurrentUserSender
     }
     

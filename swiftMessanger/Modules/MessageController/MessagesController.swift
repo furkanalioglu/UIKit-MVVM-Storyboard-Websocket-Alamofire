@@ -72,6 +72,11 @@ extension MessagesController : UITableViewDelegate {
         viewModel.messages?[indexPath.row].isSeen = true
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    //TODO: - HEIGHT FOR ROW
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70 
+    }
 }
 
 

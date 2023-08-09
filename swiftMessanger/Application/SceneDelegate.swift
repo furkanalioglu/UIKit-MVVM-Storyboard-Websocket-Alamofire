@@ -42,11 +42,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {
 //        checkAndReconnectSocketIfPossible()
+//        SocketIOManager.shared().establishConnection()
 
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-//        SocketIOManager.shared.closeConnection()
+//        SocketIOManager.shared().closeConnection()
 
     }
 

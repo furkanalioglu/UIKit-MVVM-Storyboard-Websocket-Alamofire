@@ -21,7 +21,7 @@ class SettingsCell: UITableViewCell {
     
     private func configureUI() {
         guard let user = AppConfig.instance.currentUser else { return }
-        usernameLabel.text = user.firstName + user.lastName
+        usernameLabel.text = user.username
         userStatusLabel.text = user.status
     }
 

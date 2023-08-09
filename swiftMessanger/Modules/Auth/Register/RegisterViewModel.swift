@@ -43,7 +43,13 @@ class RegisterViewModel {
                 let gender = gender else {
               return nil
           }
-        return RegisterModel(username: email, email: email, password: password, firstName: firstName, lastName: lastName, age: age, gender: gender)
+        return RegisterModel(username: email,
+                             email: email,
+                             password: password,
+                             firstName: firstName,
+                             lastName: lastName,
+                             age: age,
+                             gender: gender)
     }
     
     func registerUser(firstName: String?, lastName: String?, age: String?, gender: String?) {
