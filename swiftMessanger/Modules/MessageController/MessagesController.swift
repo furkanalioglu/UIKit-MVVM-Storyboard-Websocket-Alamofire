@@ -39,6 +39,7 @@ class MessagesController: UIViewController{
         tableView.reloadData()
         
         NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
         
     }
     
@@ -58,6 +59,10 @@ class MessagesController: UIViewController{
         if AppConfig.instance.dynamicLinkId != nil  && AppConfig.instance.currentChat == nil{
             performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
         }
+    }
+    
+    @objc func handleUserDidEnterForeground() {
+        viewModel.getAllMessages()
     }
     
 }

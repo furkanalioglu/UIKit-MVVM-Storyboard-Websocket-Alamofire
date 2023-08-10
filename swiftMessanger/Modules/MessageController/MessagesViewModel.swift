@@ -24,7 +24,7 @@ class MessagesViewModel {
     
     var messages: [MessagesCellItem]?
     
-    private func getAllMessages() {
+    func getAllMessages() {
         UserService.instance.getAllMessages { error, messages in
             if let error = error {
                 print(error.localizedDescription)

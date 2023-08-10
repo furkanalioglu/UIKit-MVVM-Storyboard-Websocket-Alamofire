@@ -107,7 +107,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 }
 
-extension Notification.Name {
+extension Notification.Name{
     static let notificationArrived = Notification.Name("notificationArrived")
+    static let userDidEnterForeground = Notification.Name("userDidEnterForeground")
 }
 

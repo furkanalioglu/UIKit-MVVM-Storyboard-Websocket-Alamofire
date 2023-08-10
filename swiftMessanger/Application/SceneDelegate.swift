@@ -41,8 +41,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-//        checkAndReconnectSocketIfPossible()
-//        SocketIOManager.shared().establishConnection()
+        NotificationCenter.default.post(name: .userDidEnterForeground,object: nil)
+
 
     }
     
