@@ -11,6 +11,7 @@ class MessagesViewModel {
     lazy var chatSegueId: String = { return "toShowChat" }()
 
     lazy var usersSegueId: String = { return "toShowUsers" }()
+    
     let cellId = "MessagesCell"
     
     weak var delegate : MessagesControllerDelegate?
@@ -23,9 +24,6 @@ class MessagesViewModel {
     
     var messages: [MessagesCellItem]?
     
-    
-    
-    
     private func getAllMessages() {
         UserService.instance.getAllMessages { error, messages in
             if let error = error {
@@ -34,11 +32,8 @@ class MessagesViewModel {
                 self.delegate?.messageDatasReceived(error: error)
             }else{
                 self.messages = messages
-                print("MESSAGECONTROLLERDEBUG:\(messages)")
                 self.delegate?.messageDatasReceived(error: nil)
-                
             }
-            
         }
     }
     

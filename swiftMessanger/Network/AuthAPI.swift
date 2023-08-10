@@ -20,6 +20,7 @@ enum AuthAPI {
     case getSpecificUser(userId: Int)
     case requestRefreshToken
     case handleMessageSeen(userId: Int)
+    case logout
 }
 
 extension AuthAPI: TargetType {
@@ -45,12 +46,14 @@ extension AuthAPI: TargetType {
             return "auth/refreshToken"
         case .handleMessageSeen(let userId):
             return "chats/\(userId)/seen"
+        case .logout:
+            return "auth/logout"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .register, .login, .requestRefreshToken:
+        case .register, .login, .requestRefreshToken, .logout:
             return .post
         case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen:
             return .get
@@ -89,7 +92,6 @@ extension AuthAPI: TargetType {
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case .getAllMessages:
             return .requestPlain
-            
         case .updateCurrentUser(let updateModel):
             let parameters : [String: Any] = [
                 "firstName": updateModel.firstName,
@@ -105,12 +107,14 @@ extension AuthAPI: TargetType {
             return .requestPlain
         case .handleMessageSeen:
             return .requestPlain
+        case .logout:
+            return .requestPlain
         }
     }
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
             print("LIFEDEBUG",AuthService.instance.getRefreshToken())

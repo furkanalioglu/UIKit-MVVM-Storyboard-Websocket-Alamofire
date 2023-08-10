@@ -53,16 +53,20 @@ class ChatController: UIViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControl
-
-        
         setupTapGesture()
-        
         print("MESSAGEDEBUG:",viewModel.messages)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         guard let uid = viewModel.user?.id else { fatalError( "Coudl not get user id")}
         viewModel.handleMessageSeen(forUserId: uid)
+        AppConfig.instance.currentChat = nil
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        AppConfig.instance.dynamicLinkId = nil
+        AppConfig.instance.currentChat = viewModel.user?.id
     }
     
     

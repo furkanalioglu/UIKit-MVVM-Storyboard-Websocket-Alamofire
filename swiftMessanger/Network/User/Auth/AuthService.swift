@@ -12,7 +12,7 @@ import Moya
 final class AuthService {
     
     private var provider = MoyaProvider<AuthAPI>(plugins: [NetworkLoggerPlugin(configuration: .init(formatter: .init(responseData: JSONResponseDataFormatter),
-    logOptions: .verbose))])
+                                                                                                    logOptions: .verbose))])
     
     func getToken() -> String? {
         return UserDefaults.standard.string(forKey: userToken)
@@ -37,7 +37,7 @@ final class AuthService {
             }
         }
     }
-    	
+    
     func login(withLoginModel loginModel: LoginModel, completion: @escaping(Error?) -> Void) {
         provider.requestJSON(target: .login(loginUser: loginModel),retryCount: 1) { apiResult in
             switch apiResult{
@@ -48,7 +48,7 @@ final class AuthService {
                     UserDefaults.standard.set(loginResponse.accessToken, forKey: userToken)
                     UserDefaults.standard.set(loginResponse.userId, forKey: currentUserIdK)
                     print("IDKDEBUG: \(UserDefaults.standard.set(loginResponse.userId, forKey: currentUserIdK))")
-                    UserDefaults.standard.set(loginResponse.refreshToken, forKey: refreshToken)                    
+                    UserDefaults.standard.set(loginResponse.refreshToken, forKey: refreshToken)
                     print(loginResponse.accessToken)
                     print("debugLOGINNNN: \(loginResponse.userId)")
                     completion(nil)
@@ -78,6 +78,17 @@ final class AuthService {
                 }
             case .failure(let error ):
                 completion(error,nil)
+            }
+        }
+    }
+    
+    func logout(completion: @escaping(Error?) -> Void) {
+        provider.requestJSON(target: .logout) { apiResult in
+            switch apiResult{
+            case .success(let response):
+                completion(nil)
+            case .failure(let error):
+                completion(error)
             }
         }
     }

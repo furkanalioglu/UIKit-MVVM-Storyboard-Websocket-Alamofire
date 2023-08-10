@@ -42,6 +42,7 @@ extension SplashController : SplashControllerDelegate {
             return
         }
         
+        
         if error == nil {
             RootManager.switchRoot(.tabBar,sender: viewModel.messages)
         }

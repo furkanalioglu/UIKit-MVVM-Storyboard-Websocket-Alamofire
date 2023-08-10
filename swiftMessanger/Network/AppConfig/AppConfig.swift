@@ -14,6 +14,9 @@ class AppConfig {
     
     private init() {}
 
+    lazy var pushToken  : String? = nil
+    lazy var dynamicLinkId : Int? = nil
+    lazy var currentChat : Int? = nil
     
     var currentUser: CurrentUserModel? {
         didSet {

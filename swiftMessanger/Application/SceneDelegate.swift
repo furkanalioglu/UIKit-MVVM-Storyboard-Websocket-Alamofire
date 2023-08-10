@@ -17,7 +17,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         handleAppLaunch(scene: scene)
     }
     
-    //Handle Root Controller
     private func handleAppLaunch(scene: UIScene) {
         RootManager.switchRoot(.splash)
     }
@@ -29,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
+    
 
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
@@ -45,7 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        SocketIOManager.shared().establishConnection()
 
     }
-
+    
     func sceneDidEnterBackground(_ scene: UIScene) {
 //        SocketIOManager.shared().closeConnection()
 
@@ -57,6 +57,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            SocketIOManager.shared.establishConnection(withToken: token)
 //        }
     }
+    
+    
+    
 }
 
 

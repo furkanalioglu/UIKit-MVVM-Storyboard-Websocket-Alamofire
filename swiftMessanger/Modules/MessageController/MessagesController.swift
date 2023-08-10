@@ -37,6 +37,9 @@ class MessagesController: UIViewController{
         viewModel.delegate = self
         SocketIOManager.shared().delegate = self
         tableView.reloadData()
+        
+        NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,6 +49,15 @@ class MessagesController: UIViewController{
     
     @IBAction func showSheetButton(_ sender: Any) {
         performSegue(withIdentifier: viewModel.usersSegueId, sender: nil)
+    }
+    
+    @objc func handleNotificationArrived() {
+        guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
+        let user = viewModel.messages?[index]
+        //CHANGE LATER!!!!!!!
+        if AppConfig.instance.dynamicLinkId != nil  && AppConfig.instance.currentChat == nil{
+            performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
+        }
     }
     
 }
@@ -83,22 +95,21 @@ extension MessagesController : UITableViewDelegate {
 //MARK: - SEGUE
 extension MessagesController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        debugPrint("segue_id", segue.identifier)
-        debugPrint("segue_id", segue.destination)
         if segue.identifier == viewModel.usersSegueId,
            let navigationController = segue.destination as? UINavigationController,
            let usersSheet = navigationController.topViewController as? UsersController {
             usersSheet.viewModel.selectUserDelegate = self
         }
         
-        if segue.destination is ChatController {
+        if segue.identifier == viewModel.chatSegueId {
             guard let data = sender as? MessagesCellItem else { return }
             let vc = segue.destination as? ChatController
             vc?.viewModel.user = data
             vc?.viewModel.seenDelegate = self
         }
+        
     }
-}
+} 
 
 
 extension MessagesController : DidSelectUserProtocol {
@@ -115,6 +126,15 @@ extension MessagesController : MessagesControllerDelegate {
             return
         }else{
             tableView.reloadData()
+            if AppConfig.instance.dynamicLinkId != nil {
+                print("DYNAMICDEBUG: PERFORMING SEGU)")
+                guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
+                let user = viewModel.messages?[index]
+                print("DYNAMICDEBUG index:  \(index) user: \(user)" )
+                performSegue(withIdentifier: viewModel.chatSegueId, sender: viewModel.messages?[index])
+            }else{
+                print("DYNAMICDEBUG: COULD NOT SEND SEGUE")
+            }
         }
     }
     

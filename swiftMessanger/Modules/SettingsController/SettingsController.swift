@@ -68,9 +68,16 @@ extension SettingsController : UITableViewDataSource {
 
 extension SettingsController : LogoutCellProtocol{
     func didTapLogoutButton() {
+        AuthService.instance.logout { err in
+            if let err = err {
+                print(err.localizedDescription)
+                return
+            }
+        }
         SocketIOManager.shared().closeConnection()
 
         AppConfig.instance.currentUser = nil
+        AppConfig.instance.pushToken = nil
         UserDefaults.standard.removeObject(forKey: userToken)
         UserDefaults.standard.removeObject(forKey: currentUserIdK)
         UserDefaults.standard.removeObject(forKey: refreshToken)

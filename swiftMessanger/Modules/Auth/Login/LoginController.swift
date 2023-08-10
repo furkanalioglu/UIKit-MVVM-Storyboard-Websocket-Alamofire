@@ -37,7 +37,8 @@ class LoginController: UIViewController, StoryboardSwitch{
     @IBAction func loginButtonHandler(_ sender: Any) {
         guard let email = emailTextField.text else { return }
         guard let pass = passwordTextField.text  else { return }
-        viewModel.loginUser(withEmail: email, password: pass, pushToken: String(UUID().uuidString))
+        let pushToken = UUID().uuidString
+        viewModel.loginUser(withEmail: email, password: pass, pushToken: pushToken)
     }
     
     @IBAction func signUpButtonHandler(_ sender: Any) {

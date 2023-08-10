@@ -18,7 +18,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
 }
 struct SocketURL {
     static let baseURL: URL = {
-        guard let url = URL(string: "ws://10.82.0.93:3000/token=") else {
+        guard let url = URL(string: "ws://10.82.0.74:3000/token=") else {
             fatalError("Invalid base URL.")
         }
         return url

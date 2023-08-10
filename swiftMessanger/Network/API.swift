@@ -13,7 +13,7 @@ import SocketIO
 
 enum API{
     static var baseURLString: String {
-        return "http://10.82.0.93:3000/api/v1/"
+        return "http://10.82.0.74:3000/api/v1/"
     }
     
     static var baseURL : URL {
