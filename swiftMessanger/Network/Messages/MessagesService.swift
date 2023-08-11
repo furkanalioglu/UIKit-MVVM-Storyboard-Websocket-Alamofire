@@ -44,4 +44,44 @@ class MessagesService {
             }
         }
     }
+    
+    func createGroup(withGroupModel groupModel: CreateGroupModel, completion: @escaping(Error?) -> Void){
+        provider.requestJSON(target: .createGroup(groupModel: groupModel)) { apiResult in
+            switch apiResult{
+            case .success(let response):
+                print("GROUPDEBUG CERATED GROUP")
+                completion(nil)
+            case .failure(let error):
+                completion(error)
+            }
+        }
+    }
+    
+    func getAllGroups(completion: @escaping(Error?, [GroupCell]?) -> Void) {
+        provider.requestJSON(target: .getAllGroups) { apiResult in
+            switch apiResult {
+            case .success(let response):
+                let groupsResponse = try? response.map([GroupCell].self)
+                print("GROUPDEBUG :\(groupsResponse)")
+                completion(nil, groupsResponse)
+            case .failure(let error):
+                completion(error,nil)
+            }
+        }
+    }
+    
+    func getGroupMessages(groupId: Int,page: Int, completion: @escaping(Error?, [MessageItem]?) -> Void) {
+        provider.requestJSON(target: .getMessagesForGroup(groupId: groupId, page: page)){ result in 
+            switch result {
+            case .success(let response):
+                let messagesResponse = try? JSONDecoder().decode([MessageItem].self, from: response.data)
+                print("MESSAGELOG2:", messagesResponse)
+                completion(nil, messagesResponse.self)
+            case .failure(let error):
+                print("MESSAGELOGError: \(error.localizedDescription)")
+                completion(error, nil)
+            }
+        }
+    }
+
 }

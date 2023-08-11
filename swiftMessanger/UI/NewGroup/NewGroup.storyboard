@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Create Group-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="NewGroupController" customModule="swiftMessanger" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Umx-lA-Imf">
+                                <rect key="frame" x="0.0" y="103" width="393" height="715"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Umx-lA-Imf" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="Dcl-nj-bzT"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="Umx-lA-Imf" secondAttribute="bottom" id="Z3j-Ep-EEm"/>
+                            <constraint firstItem="Umx-lA-Imf" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="hg9-Kx-Zki"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="Umx-lA-Imf" secondAttribute="trailing" id="iLN-7t-IJa"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Create Group" largeTitleDisplayMode="never" id="mkL-Oc-zAC">
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="wU5-7C-BTv">
+                            <connections>
+                                <action selector="nextButtonHandler:" destination="Y6W-OH-hqX" id="Mdi-rI-3Lp"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="nextButtonLabel" destination="wU5-7C-BTv" id="NHX-HI-iRq"/>
+                        <outlet property="tableView" destination="Umx-lA-Imf" id="IM4-EH-rg6"/>
+                        <segue destination="RDC-Z6-8mb" kind="show" identifier="toShowGroupEditController" id="swD-TU-6d8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1057.2519083969464" y="-34.507042253521128"/>
+        </scene>
+        <!--NewGroupEditController-->
+        <scene sceneID="xKw-6J-vFi">
+            <objects>
+                <viewControllerPlaceholder storyboardName="NewGroupEdit" referencedIdentifier="NewGroupEditController" id="RDC-Z6-8mb" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="vxi-vS-gBR"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rh5-ra-Dtb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1704" y="-51"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Bbv-i7-n0j">
+            <objects>
+                <navigationController storyboardIdentifier="NewGroupController" automaticallyAdjustsScrollViewInsets="NO" id="xD9-7B-4NN" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="I24-rY-J4n">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="p19-kc-jrI"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y8X-kN-wJH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="130.53435114503816" y="-34.507042253521128"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

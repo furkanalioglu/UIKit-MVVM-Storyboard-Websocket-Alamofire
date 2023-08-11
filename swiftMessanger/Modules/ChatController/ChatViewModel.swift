@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 class ChatViewModel {
     
@@ -20,6 +21,14 @@ class ChatViewModel {
         }
     }
     
+    var groupUsers : GroupCell? {
+        didSet{
+            guard let gid = groupUsers?.id else { return }
+            fetchGroupMessagesForSelectedGroup(gid: gid, page: 1)
+            
+        }
+    }
+    
     var currentPage = 1 {
         didSet {
             guard let uid = user?.id else { return }
@@ -28,10 +37,16 @@ class ChatViewModel {
             fetchMessagesForSelectedUser(userId: String(uid), page: currentPage)
         }
     }
+    
+    var player: AVPlayer?
+    var playbackDurationToAdd: Double = 0.5 // Duration to add every time a message is received
+    var endPlaybackTime: CMTime?
+    
 
 
     var messages : [MessageItem]?
     var newMessages : [MessageItem]?
+    var socketMessages = [MessageItem]()
     
     weak var delegate : ChatControllerDelegate?
     weak var seenDelegate : ChatMessageSeenDelegate?
@@ -58,6 +73,17 @@ class ChatViewModel {
 
                 }
             }
+        }
+    }
+    
+    func fetchGroupMessagesForSelectedGroup(gid : Int, page: Int ){
+        MessagesService.instance.getGroupMessages(groupId: gid, page: page) { err, messages in
+            if err != nil {
+                print(err?.localizedDescription)
+                return
+            }
+            
+            self.messages = messages
         }
     }
     

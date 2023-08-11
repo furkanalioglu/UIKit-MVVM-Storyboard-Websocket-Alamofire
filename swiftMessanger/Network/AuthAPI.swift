@@ -21,6 +21,10 @@ enum AuthAPI {
     case requestRefreshToken
     case handleMessageSeen(userId: Int)
     case logout
+    case getAllGroupUsers
+    case createGroup(groupModel : CreateGroupModel)
+    case getAllGroups
+    case getMessagesForGroup(groupId: Int, page: Int)
 }
 
 extension AuthAPI: TargetType {
@@ -48,14 +52,22 @@ extension AuthAPI: TargetType {
             return "chats/\(userId)/seen"
         case .logout:
             return "auth/logout"
+        case .getAllGroupUsers:
+            return "auth/allUsers"
+        case .createGroup:
+            return "auth/createGroup"
+        case .getAllGroups:
+            return "auth/groups"
+        case .getMessagesForGroup(let groupId, _):
+            return "chats/group/\(groupId)"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .register, .login, .requestRefreshToken, .logout:
+        case .register, .login, .requestRefreshToken, .logout, .createGroup:
             return .post
-        case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen:
+        case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .getAllGroupUsers,.getAllGroups,.getMessagesForGroup:
             return .get
         case .updateCurrentUser:
             return .patch
@@ -109,15 +121,28 @@ extension AuthAPI: TargetType {
             return .requestPlain
         case .logout:
             return .requestPlain
+        case .getAllGroupUsers:
+            return .requestPlain
+        case .createGroup(let groupModel):
+            let parameters : [String : Any] = [
+                "groupName" : groupModel.groupName,
+                "ids": groupModel.ids
+            ]
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+        case .getAllGroups:
+            return .requestPlain
+        case .getMessagesForGroup(groupId: let groupId, page: let page):
+            let parameters : [String: Any] = ["page": page]
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         }
+        
     }
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
-            print("LIFEDEBUG",AuthService.instance.getRefreshToken())
             return ["Authorization": "Bearer \(AuthService.instance.getRefreshToken() ?? "")"]
         default:
             return [:]

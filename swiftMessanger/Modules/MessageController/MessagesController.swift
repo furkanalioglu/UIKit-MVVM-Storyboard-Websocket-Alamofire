@@ -10,6 +10,7 @@ import UIKit
 protocol MessagesControllerDelegate : AnyObject {
     func messageDatasReceived(error: Error?)
     func newMessageCellDataReceived(error : Error?)
+    func groupDatasReceived(error: Error?)
 }
 
 
@@ -27,8 +28,12 @@ class MessagesController: UIViewController{
         }
     }
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
+    
     private func registerNibs() {
         tableView.register(UINib(nibName: viewModel.cellId, bundle: nil), forCellReuseIdentifier: viewModel.cellId)
+        tableView.register(UINib(nibName: viewModel.headerId, bundle: nil),forHeaderFooterViewReuseIdentifier: viewModel.headerId)
         
     }
     
@@ -40,7 +45,6 @@ class MessagesController: UIViewController{
         
         NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -53,9 +57,11 @@ class MessagesController: UIViewController{
     }
     
     @objc func handleNotificationArrived() {
-        guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
+        guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else {
+            self.viewModel.getAllMessages()
+            return
+        }
         let user = viewModel.messages?[index]
-        //CHANGE LATER!!!!!!!
         if AppConfig.instance.dynamicLinkId != nil  && AppConfig.instance.currentChat == nil{
             performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
         }
@@ -65,34 +71,67 @@ class MessagesController: UIViewController{
         viewModel.getAllMessages()
     }
     
+    @IBAction func segmentedControlHandler(_ sender: Any) {
+        let segment = segmentedControl.selectedSegmentIndex == 0 ? SegmentedIndex.messages : SegmentedIndex.groups
+        viewModel.switchSegment(to: segment)
+        tableView.reloadData()
+    }
 }
 
 extension MessagesController : UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.messages?.count ?? 0
+        return viewModel.currentSegment == .messages ? viewModel.messages?.count ?? 0  : viewModel.groups?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellId) as? MessagesCell else {
             fatalError("COULD NOT LOAD MESSAGES CELL")
         }
-        cell.message = viewModel.messages?[indexPath.row]
+        
+        switch viewModel.currentSegment {
+         case .messages:
+             cell.message = viewModel.messages?[indexPath.row]
+         case .groups:
+             cell.group = viewModel.groups?[indexPath.row]
+         }
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
 }
 
 
 extension MessagesController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
-        performSegue(withIdentifier: viewModel.chatSegueId, sender: userId)
-        viewModel.messages?[indexPath.row].isSeen = true
-        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch viewModel.currentSegment {
+         case .messages:
+            
+            guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
+            performSegue(withIdentifier: viewModel.chatSegueId, sender: userId)
+            viewModel.messages?[indexPath.row].isSeen = true
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+         case .groups:
+            guard let groupId = viewModel.groups?[indexPath.row] else { fatalError("could not find group")}
+            performSegue(withIdentifier: viewModel.chatSegueId, sender: groupId)
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
     
     //TODO: - HEIGHT FOR ROW
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70 
+        return 70
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: viewModel.headerId) as? MessagesHeader else { fatalError("Could not load header!!!")}
+        header.viewModel.delegate = self
+        return header
     }
 }
 
@@ -107,12 +146,21 @@ extension MessagesController {
         }
         
         if segue.identifier == viewModel.chatSegueId {
-            guard let data = sender as? MessagesCellItem else { return }
-            let vc = segue.destination as? ChatController
-            vc?.viewModel.user = data
-            vc?.viewModel.seenDelegate = self
+            switch viewModel.currentSegment{
+            case .groups:
+                guard let data = sender as? GroupCell else { return }
+                let vc = segue.destination as? ChatController
+                vc?.viewModel.groupUsers = data
+            case .messages:
+                guard let data = sender as? MessagesCellItem else { return }
+                let vc = segue.destination as? ChatController
+                vc?.viewModel.user = data
+                vc?.viewModel.seenDelegate = self
+            }
         }
         
+        
+        //add segue events for group here
     }
 } 
 
@@ -152,6 +200,16 @@ extension MessagesController : MessagesControllerDelegate {
             tableView.reloadData()
         }
     }
+    
+    func groupDatasReceived(error: Error?) {
+        if let error = error {
+            print("COULD NOT LOAD",error.localizedDescription)
+            return
+        }else{
+            viewModel.groups = viewModel.groups?.sorted(by: {$0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
+            tableView.reloadData()
+        }
+    }
 }
 
 extension MessagesController : SocketIOManagerDelegate {
@@ -178,5 +236,11 @@ extension MessagesController: ChatMessageSeenDelegate {
         }else{
             print("Seendebug: Could not find message with index \(String(describing: senderId))")
         }
+    }
+}
+
+extension MessagesController: MessagesHeaderProtocol {
+    func userDidTapNewGroupButton() {
+        performSegue(withIdentifier: viewModel.newGroupSegueId, sender: nil)
     }
 }

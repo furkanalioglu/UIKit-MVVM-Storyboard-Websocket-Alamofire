@@ -14,6 +14,12 @@ class MessagesCell: UITableViewCell {
             configureUI()
         }
     }
+    
+    var group : GroupCell? {
+        didSet{
+            configureUI()
+        }
+    }
 
     @IBOutlet weak var messageImageView: UIImageView!
     @IBOutlet weak var messageSenderLabel: UILabel!
@@ -36,6 +42,14 @@ class MessagesCell: UITableViewCell {
         messageContentLabel.text = message.lastMsg
         messageSenderLabel.textColor = message.isSeen ?? false ? .black : .green
         messageSentTimeLabel.text = message.sendTime?.timeElapsedSinceDate()
+        
+    }
+    
+    private func configureGroupUI() {
+        guard let group = group else { return }
+        messageSenderLabel.text = group.groupName
+        messageContentLabel.text = group.lastMsg
+        messageSenderLabel.text = group.sendTime
     }
     
 }

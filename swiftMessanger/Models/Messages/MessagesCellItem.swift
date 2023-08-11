@@ -15,4 +15,7 @@ struct MessagesCellItem: Codable {
     var lastMsg: String
     var sendTime : String?
     var isSeen : Bool?
+    var selectedForCell: Bool? = false
+    
+    
 }

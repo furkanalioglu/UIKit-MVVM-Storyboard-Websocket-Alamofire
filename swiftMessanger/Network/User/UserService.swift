@@ -83,4 +83,18 @@ class UserService {
             }
         }
     }
+    
+    func getAllUsersForGroups(completion: @escaping(Error?, [MessagesCellItem]?) -> Void) {
+        provider.requestJSON(target: .getAllGroupUsers) { apiResult in
+            switch apiResult {
+            case .success(let response):
+                let usersResponse = try? response.map([MessagesCellItem].self)
+            
+                print("asdasdasd \(usersResponse)")
+                completion(nil,usersResponse)
+            case .failure(let error):
+                completion(error, nil)
+            }
+        }
+    }
 }
