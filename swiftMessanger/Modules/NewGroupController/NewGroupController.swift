@@ -39,8 +39,6 @@ class NewGroupController: UIViewController {
     @IBAction func nextButtonHandler(_ sender: Any) {
         performSegue(withIdentifier: viewModel.segueId, sender: viewModel.selectedUsers)
     }
-    
-    
 }
 
 extension NewGroupController : UITableViewDelegate {
@@ -95,3 +93,5 @@ extension NewGroupController : NewGroupControllerProtocol {
         }
     }
 }
+
+

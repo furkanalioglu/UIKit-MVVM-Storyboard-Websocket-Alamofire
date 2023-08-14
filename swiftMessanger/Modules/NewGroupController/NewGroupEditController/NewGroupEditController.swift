@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol UserCreatedNewGroupProtocol : AnyObject {
+    func userDidCreategroup(error: String?)
+}
+
 class NewGroupEditController: UIViewController {
     
     let viewModel = NewGroupEditViewModel()
@@ -33,11 +37,11 @@ class NewGroupEditController: UIViewController {
     
     @IBAction func createButtonAction(_ sender: Any) {
         let groupModel = CreateGroupModel(groupName: viewModel.groupName, ids: viewModel.savedUsers)
-        MessagesService.instance.createGroup(withGroupModel:groupModel) { err in
-            if err != nil {
+        MessagesService.instance.createGroup(withGroupModel:groupModel) { err, groups in
+            if let err = err {
                 return
             }else{
-                print("GROUPDEBUG: createddddd \(err)")
+                NotificationCenter.default.post(name: .newGroupCreated, object:groups)
             }
         }
         dismiss(animated: true)

@@ -39,6 +39,8 @@ class MessagesController: UIViewController{
         
         NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(newGroupCreated), name: .newGroupCreated, object: nil)
+
     }
     
     private func setupRefreshControl() {
@@ -61,6 +63,14 @@ class MessagesController: UIViewController{
         }
     }
     
+    @objc func newGroupCreated(notification: Notification) {
+        viewModel.groups = [GroupCell]()
+        if let newGroup = notification.object as? [GroupCell] {  // Assuming the groups variable is of type [GroupModel]
+            viewModel.groups = newGroup.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
+        }
+        tableView.reloadData()
+    }
+    
     @objc func refreshControlHandler() {
         viewModel.getAllGroups()
         viewModel.getAllMessages()
@@ -68,6 +78,7 @@ class MessagesController: UIViewController{
     
     @objc func handleUserDidEnterForeground() {
         viewModel.getAllMessages()
+        viewModel.getAllGroups()
     }
     
     @IBAction func segmentedControlHandler(_ sender: Any) {
@@ -152,6 +163,10 @@ extension MessagesController {
                 print("SEGUEDEBUG: could not send segue")
             }
         }
+        
+//        if segue.identifier == viewModel.newGroupSegueId, let chatVC = segue.destination as? NewGroupController {
+//            chatVC.viewModel.delegate = self
+//        }
     }
-} 
+}
 

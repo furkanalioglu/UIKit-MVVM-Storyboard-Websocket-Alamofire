@@ -13,5 +13,4 @@ class NewGroupEditViewModel {
     var savedUsers = [Int]()
     
     var groupName = ""
-    
 }

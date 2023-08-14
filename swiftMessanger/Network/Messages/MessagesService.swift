@@ -45,14 +45,16 @@ class MessagesService {
         }
     }
     
-    func createGroup(withGroupModel groupModel: CreateGroupModel, completion: @escaping(Error?) -> Void){
+    func createGroup(withGroupModel groupModel: CreateGroupModel, completion: @escaping(Error?, [GroupCell]?) -> Void){
         provider.requestJSON(target: .createGroup(groupModel: groupModel)) { apiResult in
             switch apiResult{
             case .success(let response):
+                let newGroupsResponse = try? response.map([GroupCell].self)
+                print("DEBUGRESGOPNSE : \(response)")
                 print("GROUPDEBUG CERATED GROUP")
-                completion(nil)
+                completion(nil,newGroupsResponse)
             case .failure(let error):
-                completion(error)
+                completion(error,nil)
             }
         }
     }

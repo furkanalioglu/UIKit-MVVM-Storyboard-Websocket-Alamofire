@@ -111,5 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension Notification.Name{
     static let notificationArrived = Notification.Name("notificationArrived")
     static let userDidEnterForeground = Notification.Name("userDidEnterForeground")
+    static let newGroupCreated = Notification.Name("newGroupCreated")
+
 }
 
