@@ -36,6 +36,8 @@ extension MessagesController : MessagesControllerDelegate {
                 performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
             }
         }
+        self.refreshControl.endRefreshing()
+
     }
     
     func newMessageCellDataReceived(error: Error?) {
@@ -56,6 +58,7 @@ extension MessagesController : MessagesControllerDelegate {
             viewModel.groups = viewModel.groups?.sorted(by: {$0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
             tableView.reloadData()
         }
+        self.refreshControl.endRefreshing()
     }
 }
 

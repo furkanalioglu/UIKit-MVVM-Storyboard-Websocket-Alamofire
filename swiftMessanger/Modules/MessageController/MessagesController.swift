@@ -10,6 +10,7 @@ import UIKit
 class MessagesController: UIViewController{
     
     let viewModel = MessagesViewModel()
+    let refreshControl = UIRefreshControl()
     
     @IBOutlet weak var showSheetButtonOutlet: UINavigationItem!
     
@@ -34,8 +35,15 @@ class MessagesController: UIViewController{
         SocketIOManager.shared().delegate = self
         tableView.reloadData()
         
+        setupRefreshControl()
+        
         NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshControlHandler), for: .valueChanged)
+        tableView.addSubview(refreshControl)
     }
     
     @IBAction func showSheetButton(_ sender: Any) {
@@ -51,6 +59,11 @@ class MessagesController: UIViewController{
         if AppConfig.instance.dynamicLinkId != nil  && AppConfig.instance.currentChat == nil{
             performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
         }
+    }
+    
+    @objc func refreshControlHandler() {
+        viewModel.getAllGroups()
+        viewModel.getAllMessages()
     }
     
     @objc func handleUserDidEnterForeground() {
