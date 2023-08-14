@@ -92,11 +92,14 @@ extension MessagesController: ChatMessageSeenDelegate {
             if let groupIndex = viewModel.groups?.firstIndex(where: {$0.id == senderId}) {
                 viewModel.groups?[groupIndex].isSeen = true
                 tableView.reloadData()
+                print("SEENDEBUG: group \(groupIndex) is setting to seen")
             }
         case .messages:
             if let messageIndex = viewModel.messages?.firstIndex(where: {$0.id == senderId}) {
                 viewModel.messages?[messageIndex].isSeen = true
                 tableView.reloadData()
+                print("SEENDEBUG: message \(messageIndex) is setting to seen")
+
             }else{
                 print("Seendebug: Could not find message with index \(String(describing: senderId))")
             }

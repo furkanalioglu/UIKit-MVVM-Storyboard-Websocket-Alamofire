@@ -101,14 +101,26 @@ class ChatViewModel {
                 self.delegate?.datasReceived(error: err?.localizedDescription)
                 return
             }
-            self.messages = messages
-            print("MESSAGEDEBUG : \(messages)")
-            self.delegate?.datasReceived(error: nil)
+            if self.messages == nil {
+                self.messages = messages
+                self.newMessages = messages
+                self.delegate?.datasReceived(error: nil)
+                print("MESSAGES FETCHED")
+            }else{
+                if self.newMessages?.count ?? 0 > 0 {
+                    self.newMessages = messages
+                    self.messages?.insert(contentsOf: self.newMessages!, at: 0)
+                    self.delegate?.datasReceived(error: nil)
+                    print("COULD NOT FETCG MSSAGES")
+                    
+                }
+            }
         }
     }
     
     func fetchNewMessages() {
         currentPage += 1
+        print("PAGEBUG: \(currentPage)")
     }
     
     func handleMessageSeen(forUserId userId: Int) {
