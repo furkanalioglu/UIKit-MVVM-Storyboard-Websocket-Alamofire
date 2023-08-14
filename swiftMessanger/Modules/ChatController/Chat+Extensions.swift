@@ -18,9 +18,6 @@ protocol ChatMessageSeenDelegate : AnyObject {
     func chatMessageReceivedFromUser(error: String?, message: MessageItem)
 }
 
-
-
-
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
         tableView.refreshControl?.endRefreshing()
@@ -28,11 +25,28 @@ extension ChatController : ChatControllerDelegate {
         if let count = viewModel.messages?.count, count > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
-        
     }
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
+    func didReceiveGroupChatMessage(groupMessage: MessageItem) {
+        switch viewModel.chatType {
+        case .user(let user):
+            print("User received email")
+        case .group(let group):
+            if groupMessage.senderId != Int(AppConfig.instance.currentUserId ?? "") {
+                viewModel.messages?.append(groupMessage)
+                viewModel.socketMessages.append(groupMessage)
+                print("receiveddebugSOCKET arrived appending....")
+                viewModel.socketMessages.removeAll()
+                tableView.reloadData()
+                scrollToBottom(animated: true)
+            }
+        default:
+            print("err")
+        }
+    }
+    
     func scrollToBottom(animated: Bool = true) {
         guard let msgCount = viewModel.messages?.count, msgCount > 0 else {
             return
@@ -57,14 +71,7 @@ extension ChatController : SocketIOManagerChatDelegate {
                 scrollToBottom(animated: true)
             }
         case .group:
-            if message.senderId != Int(AppConfig.instance.currentUserId ?? "") {
-                viewModel.messages?.append(message)
-                viewModel.socketMessages.append(message)
-                print("receiveddebugSOCKET arrived appending....")
-                viewModel.socketMessages.removeAll()
-                tableView.reloadData()
-                scrollToBottom(animated: true)
-            }
+            print("Received group message")
         case .none:
             debugPrint("Received a message for an unidentified chat type.")
         }

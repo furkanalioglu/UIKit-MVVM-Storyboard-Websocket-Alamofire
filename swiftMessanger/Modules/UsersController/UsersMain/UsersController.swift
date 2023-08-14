@@ -17,6 +17,7 @@ protocol DidSelectUserProtocol : AnyObject {
 class UsersController: UIViewController {
     
     let viewModel = UsersViewModel()
+    let searchController = UISearchController(searchResultsController: nil)
     
     @IBOutlet weak var tableView: UITableView!{
         didSet{
@@ -34,6 +35,17 @@ class UsersController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.viewModel.delegate = self
+        setupSearchConrtoller()
+    }
+    
+    private func setupSearchConrtoller()  {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search name or number"
+        searchController.searchBar.delegate = self
+
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
     }
 }
 
@@ -41,15 +53,14 @@ class UsersController: UIViewController {
 //MARK: - Datasource
 extension UsersController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.users?.count ?? 10
+        return viewModel.filteredUsers?.count ?? 10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellNib) as? UsersCell else { fatalError("DEBUG2: Could not load users cell")}
-        cell.user = viewModel.users?[indexPath.row]
+        cell.user = viewModel.filteredUsers?[indexPath.row]
         return cell
     }
-    
 }
 
 //MARK: - Delegate
@@ -59,13 +70,14 @@ extension UsersController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let user = viewModel.users?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
+        self.searchController.searchBar.endEditing(true)
+        self.dismiss(animated: true)
+        guard let user = viewModel.filteredUsers?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
         print("Preparing to call delegate with user: \(user.id)")  // Debug print statement
         viewModel.selectUserDelegate?.didSelectUser(user: user)
         self.dismiss(animated: true)
     }
 }
-
 
 extension UsersController : UsersControllerProtocol {
     func didReceivedDatas(error: String?) {
@@ -74,5 +86,23 @@ extension UsersController : UsersControllerProtocol {
         }else{
             tableView.reloadData()
         }
+    }
+}
+
+extension UsersController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        var searchText = searchController.searchBar.text ?? ""
+        searchText = searchText.lowercased()
+        if !searchText.isEmpty {
+            viewModel.filterUsers(searchText: searchText)
+        }else{
+            viewModel.filteredUsers = viewModel.users
+        }
+        tableView.reloadData()
+    }
+}
+extension UsersController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
 }

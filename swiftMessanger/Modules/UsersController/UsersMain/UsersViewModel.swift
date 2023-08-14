@@ -19,6 +19,7 @@ class UsersViewModel {
     }
     
     var users : [MessagesCellItem]?
+    var filteredUsers: [MessagesCellItem]?
     var currentUser : CurrentUserModel?
 
     
@@ -30,9 +31,17 @@ class UsersViewModel {
                 return
             }
             self.users = users
-            print("fetched users")
-            print("userdebug: \(users)")
+            self.filteredUsers = users
             self.delegate?.didReceivedDatas(error: nil)
         }
+    }
+    
+    func filterUsers(searchText: String) {
+        if searchText.count > 3 && !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            filteredUsers = users?.filter({$0.username.contains(searchText)})
+        }else{
+            filteredUsers = users
+        }
+        
     }
 }

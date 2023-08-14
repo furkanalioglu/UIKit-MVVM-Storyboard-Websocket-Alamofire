@@ -1,10 +1,3 @@
-//
-//  MessagesViewModel.swift
-//  swiftMessanger
-//
-//  Created by Furkan Alioglu on 2.08.2023.
-//
-
 import Foundation
 
 enum SegmentedIndex : Int {
@@ -14,11 +7,8 @@ enum SegmentedIndex : Int {
 class MessagesViewModel {
     //MARK: - Properties
     lazy var chatSegueId: String = { return "toShowChat" }()
-    
     lazy var usersSegueId: String = { return "toShowUsers" }()
-    
     lazy var newGroupSegueId : String = { return "toShowNewGroup" }()
-    
     
     let cellId = "MessagesCell"
     let headerId = "MessagesHeader"
@@ -28,7 +18,6 @@ class MessagesViewModel {
     init() {
         getAllMessages()
     }
-    
     
     var messages: [MessagesCellItem]?
     var groups : [GroupCell]?
@@ -54,8 +43,6 @@ class MessagesViewModel {
         }
     }
     
-    
-    
     func getAllMessages() {
         UserService.instance.getAllMessages { error, messages in
             if let error = error {
@@ -80,7 +67,7 @@ class MessagesViewModel {
         }
     }
     
-    func generateMessageForUser(forUserId userId: Int, message: MessageItem){
+    func generateMessageForUser(forUserId userId: Int, message: MessageItem,isGroupMessage: Bool){
         UserService.instance.getSpecificUser(userId: userId) { error, user in
             if let error = error {
                 print("specificdebug: \(error.localizedDescription)")
@@ -89,30 +76,32 @@ class MessagesViewModel {
             }
             guard let user = user else { return }
             print(user)
-            if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-                let newMessage = MessagesCellItem( id:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
-                print("MESSAGELOFGGG generate message from current user: \(message)")
-                print("NEW",newMessage)
-                
-                self.messages?.append(newMessage)
-                self.delegate?.newMessageCellDataReceived(error: nil)
-            }else{
-                let newMessage = MessagesCellItem(id:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true)
-                self.messages?.append(newMessage)
-                self.delegate?.newMessageCellDataReceived(error: nil)
+                if !isGroupMessage{
+                    if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+                        let newMessage = MessagesCellItem( id:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
+                        print("MESSAGELOFGGG generate message from current user: \(message)")
+                        print("NEW",newMessage)
+                        
+                        self.messages?.append(newMessage)
+                        self.delegate?.newMessageCellDataReceived(error: nil)
+                    }else{
+                        let newMessage = MessagesCellItem(id:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true)
+                        self.messages?.append(newMessage)
+                        self.delegate?.newMessageCellDataReceived(error: nil)
+                    }
+                }else{
+                    print("Did not completed")
+                }
             }
-        }
     }
     
-    
-    private func updateMessageAtIndex(index: Int, withMessage message: MessageItem) {
-        switch currentSegment {
-        case .messages:
+    private func updateMessageAtIndex(index: Int, withMessage message: MessageItem,isGroupMessage: Bool) {
+        if !isGroupMessage{
             messages?[index].lastMsg = message.message
             messages?[index].sendTime = Date().toString()
             print("GROUPDEBUG : GENERATE MESSAGE \(message)")
             messages?[index].isSeen = false
-        case .groups:
+        }else{
             groups?[index].lastMsg = message.message
             groups?[index].sendTime = Date().toString()
             groups?[index].isSeen = false
@@ -121,41 +110,40 @@ class MessagesViewModel {
     }
     
     func handleIncomingMessage(message: MessageItem) {
-        switch currentSegment {
-        case .messages:
-            if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-                if let index = messages?.firstIndex(where: {$0.id == message.receiverId}) {
-                    print("MESSAGELOFGGG updaet message: \(message)")
-                    updateMessageAtIndex(index: index, withMessage: message)
-                }
-                else {
-                    print("MESSAGELOFGGG generate message: \(message)")
-                    generateMessageForUser(forUserId: message.receiverId, message: message)
-                }
-            } else {	
-                if let index = messages?.firstIndex(where: {$0.id == message.senderId}) {
-                    print("MESSAGELOFGGG generate message: \(message)")
-                    updateMessageAtIndex(index: index, withMessage: message)
-                } else {
-                    print("MESSAGELOFGGG updaet message: \(message)")
-                    generateMessageForUser(forUserId: message.senderId, message: message)
-                }
+        if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+            if let index = messages?.firstIndex(where: {$0.id == message.receiverId}) {
+                print("MESSAGELOFGGG updaet message: \(message)")
+                updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: false)
             }
-        case .groups:
-            if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-                if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
-                    updateMessageAtIndex(index: index, withMessage: message)
-                }else{
-                    generateMessageForUser(forUserId: message.receiverId, message: message)
-                }
-            }else{
-                if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
-                    updateMessageAtIndex(index: index, withMessage: message)
-                }else{
-                    generateMessageForUser(forUserId: message.senderId, message: message)
-                }
+            else {
+                print("MESSAGELOFGGG generate message: \(message)")
+                generateMessageForUser(forUserId: message.receiverId, message: message,isGroupMessage: false)
+            }
+        } else {
+            if let index = messages?.firstIndex(where: {$0.id == message.senderId}) {
+                print("MESSAGELOFGGG generate message: \(message)")
+                updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: false)
+            } else {
+                print("MESSAGELOFGGG updaet message: \(message)")
+                generateMessageForUser(forUserId: message.senderId, message: message,isGroupMessage: false)
             }
         }
     }
-
+    
+    func handleIncomingGroupMessage(message:MessageItem) {
+        if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+            if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
+                updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: true)
+            }else{
+                generateMessageForUser(forUserId: message.receiverId, message: message,isGroupMessage: true)
+            }
+        }else{
+            if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
+                updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: true)
+            }else{
+                generateMessageForUser(forUserId: message.senderId, message: message,isGroupMessage: true)
+            }
+        }
+    }
+    
 }

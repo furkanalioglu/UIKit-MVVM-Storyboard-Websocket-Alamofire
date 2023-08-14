@@ -11,10 +11,12 @@ import Starscream
 
 protocol SocketIOManagerDelegate: AnyObject {
     func didReceiveMessage(message: MessageItem)
+    func didReceiveGroupMessage(groupMessage: MessageItem)
 }
 
 protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
+    func didReceiveGroupChatMessage(groupMessage : MessageItem)
 }
 struct SocketURL {
     static let baseURL: URL = {
@@ -70,8 +72,6 @@ class SocketIOManager {
         self.manager = newManager
         self.socket = newSocket
         debugPrint("connecTParam", newManager.defaultSocket.manager?.socketURL ?? "")
-        print("USER DEFAULTS IS \(UserDefaults.standard.string(forKey: userToken))")
-        print("SOCKET DEBUG2: \(newManager.socketURL.absoluteString)")
         self.connectFunc()
         addHandlers()
     }
@@ -139,8 +139,8 @@ class SocketIOManager {
                                             receiverId: modeledData.receiverId,
                                             sendTime: modeledData.sendTime)
             print("receiveddebugSOCKET: \(socketMessage)")
-            self.delegate?.didReceiveMessage(message: socketMessage)
-            self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
+            self.delegate?.didReceiveGroupMessage(groupMessage: socketMessage)
+            self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)
             
         }
         
@@ -173,6 +173,7 @@ extension Decodable {
 
 enum SocketListeners: String {
     case message
+    
 }
 
 enum SocketEmits: String {

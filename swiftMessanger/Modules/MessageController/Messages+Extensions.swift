@@ -62,10 +62,16 @@ extension MessagesController : MessagesControllerDelegate {
 
 //MARK: - Delegates
 extension MessagesController : SocketIOManagerDelegate {
+    func didReceiveGroupMessage(groupMessage: MessageItem) {
+        viewModel.handleIncomingGroupMessage(message: groupMessage)
+        viewModel.groups = viewModel.groups?.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
+        tableView.reloadData()
+
+    }
+    
     func didReceiveMessage(message: MessageItem) {
         viewModel.handleIncomingMessage(message: message)
         viewModel.messages = viewModel.messages?.sorted(by: { $0.sendTime?.toDate() ?? Date() > $1.sendTime?.toDate() ?? Date()})
-        viewModel.groups = viewModel.groups?.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
         tableView.reloadData()
     }
 }

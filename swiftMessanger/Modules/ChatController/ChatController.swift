@@ -87,7 +87,6 @@ class ChatController: UIViewController {
             self.tableView.scrollIndicatorInsets = .zero
         }
         self.scrollToBottom(animated: true)
-        
     }
     
     @objc func handleRefresh() {
@@ -132,7 +131,6 @@ class ChatController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-    
 }
 
 extension ChatController : UITableViewDelegate {}

@@ -23,11 +23,9 @@ class MessagesController: UIViewController{
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
-    
     private func registerNibs() {
         tableView.register(UINib(nibName: viewModel.cellId, bundle: nil), forCellReuseIdentifier: viewModel.cellId)
         tableView.register(UINib(nibName: viewModel.headerId, bundle: nil),forHeaderFooterViewReuseIdentifier: viewModel.headerId)
-        
     }
     
     override func viewDidLoad() {
@@ -81,7 +79,6 @@ extension MessagesController : UITableViewDataSource{
          case .groups:
              cell.group = viewModel.groups?[indexPath.row]
          }
-        
         return cell
     }
     
@@ -131,7 +128,6 @@ extension MessagesController {
             usersSheet.viewModel.selectUserDelegate = self
         }
         
-
         if segue.identifier == viewModel.chatSegueId, let chatVC = segue.destination as? ChatController {
             if let selectedMessage = sender as? MessagesCellItem {
                 chatVC.viewModel.chatType = .user(selectedMessage)
