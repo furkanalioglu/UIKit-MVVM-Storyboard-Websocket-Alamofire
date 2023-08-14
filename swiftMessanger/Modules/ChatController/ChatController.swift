@@ -44,47 +44,42 @@ class ChatController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if viewModel.user != nil {
-            navigationItem.title = viewModel.user?.username
-        }else{
-            navigationItem.title = viewModel.groupUsers?.groupName
-        }
+        navigationItem.title = viewModel.navigationTitle
         navigationItem.largeTitleDisplayMode = .never
 
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
         viewModel.delegate = self
         SocketIOManager.shared().chatDelegate = self
         
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
-        tableView.refreshControl = refreshControl
         setupTapGesture()
-        print("MESSAGEDEBUG:",viewModel.messages)
-        
-        videoCell.isHidden = true
-        configureVideo()
+        setupRefreshControl()
+        setupNotificationObservers()
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
-        if viewModel.user != nil {
-            guard let uid = viewModel.user?.id else { fatalError( "Coudl not get user id")}
-            viewModel.handleMessageSeen(forUserId: uid)
+        switch viewModel.chatType {
+        case .user(let user):
             AppConfig.instance.currentChat = nil
-            viewModel.player?.pause()
-            viewModel.user = nil
+            viewModel.handleMessageSeen(forUserId: user.id)
+        case .group(let group):
+            AppConfig.instance.currentChat = nil
+            viewModel.handleMessageSeen(forUserId: group.id)
+        default:
+            print("Error")
         }
-
-        
-        
+        viewModel.player?.pause()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         AppConfig.instance.dynamicLinkId = nil
-        AppConfig.instance.currentChat = viewModel.user?.id
+        switch viewModel.chatType {
+        case .user(let user):
+            AppConfig.instance.currentChat = user.id
+        case .group(let group):
+            AppConfig.instance.currentChat = group.id
+        default:
+            print("Error")
+        }
     }
     
     
@@ -96,7 +91,6 @@ class ChatController: UIViewController {
                 self.view.layoutIfNeeded()
             }
             self.scrollToBottom(animated: true)
-            
         }
     }
     
@@ -137,46 +131,27 @@ class ChatController: UIViewController {
         view.endEditing(true)
     }
     
-    private func configureVideo() {
-        guard let path = Bundle.main.path(forResource: "superanimation1_3", ofType:"mp4") else {
-            debugPrint("video.m4v not found")
-            return
+    private func setupVideoLayer() {
+        if let configurationLayer = viewModel.configureVideo() {
+            configurationLayer.frame = self.videoCell.bounds
+            self.videoCell.layer.addSublayer(configurationLayer)
         }
-        viewModel.player = AVPlayer(url: URL(fileURLWithPath: path))
-        let playerLayer = AVPlayerLayer(player: viewModel.player)
-        playerLayer.frame = self.videoCell.bounds
-        self.videoCell.layer.addSublayer(playerLayer)
     }
     
-    private func playVideoForDuration(_ duration: Double) {
-        
-        guard let player = viewModel.player else { return }
-        
-        let currentTime = player.currentTime()
-        let endTime = CMTimeAdd(currentTime, CMTimeMakeWithSeconds(duration, preferredTimescale: 600))
-        viewModel.endPlaybackTime = endTime
-        
-        player.play()
-        videoCell.isHidden = false
-        
-        player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
-            guard let strongSelf = self else { return }
-            
-            if CMTimeCompare(time, strongSelf.viewModel.endPlaybackTime!) != -1 { // if time is not less than endPlaybackTime
-                strongSelf.viewModel.player?.pause()
-            }else{
-//                self?.videoCell?.isHidden = true
-            }
-        }
-//        videoCell.isHidden = true
-
+    private func setupRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+    }
+    
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
 }
 
-extension ChatController : UITableViewDelegate {
-}
-
+extension ChatController : UITableViewDelegate {}
 
 extension ChatController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -188,9 +163,7 @@ extension ChatController : UITableViewDataSource {
         cell.message = viewModel.messages?[indexPath.row]
         return cell
     }
-    
 }
-
 
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
@@ -214,24 +187,24 @@ extension ChatController : SocketIOManagerChatDelegate {
     }
     
     func didReceiveChatMessage(message: MessageItem) {
-        if message.senderId == viewModel.user?.id || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
-            viewModel.messages?.append(message)
-            debugPrint("*****")
-            dump(message)
-            
-            viewModel.socketMessages.append(message)
-            let count = Double(viewModel.socketMessages.count) * viewModel.playbackDurationToAdd
-            
-            if message.senderId != Int(AppConfig.instance.currentUserId ?? "") {
-                playVideoForDuration(count)
-                print("VIDEO APPENDED FOR  \(count)")
+        switch viewModel.chatType {
+        case .user(let user):
+            if message.senderId == user.id || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
+                viewModel.messages?.append(message)
+                viewModel.socketMessages.append(message)
+                let count = Double(viewModel.socketMessages.count) * viewModel.playbackDurationToAdd
+                if message.senderId != Int(AppConfig.instance.currentUserId ?? "") {
+                    viewModel.playVideoForDuration(count)
+                }
+                viewModel.socketMessages.removeAll()
+                tableView.reloadData()
+                scrollToBottom(animated: true)
             }
-            viewModel.socketMessages.removeAll()
-
-            print("receiveddebug: \(message)")
-            debugPrint("*****")
-            tableView.reloadData()
-            scrollToBottom(animated: true)
+        case .group(let group):
+            print("Group message received \(group.id)")
+            //handle group receivedMessage
+        case .none:
+            debugPrint("Received a message for an unidentified chat type.")
         }
     }
 }

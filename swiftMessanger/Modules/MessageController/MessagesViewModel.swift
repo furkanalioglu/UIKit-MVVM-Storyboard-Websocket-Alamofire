@@ -12,6 +12,7 @@ enum SegmentedIndex : Int {
 }
 
 class MessagesViewModel {
+    //MARK: - Properties
     lazy var chatSegueId: String = { return "toShowChat" }()
 
     lazy var usersSegueId: String = { return "toShowUsers" }()
@@ -26,7 +27,6 @@ class MessagesViewModel {
     
     init() {
         getAllMessages()
-        // coming from Splash
     }
     
     
@@ -37,7 +37,6 @@ class MessagesViewModel {
     
     func switchSegment(to segment: SegmentedIndex) {
         self.currentSegment = segment
-        
         switch segment {
         case .messages:
             getAllMessages()
@@ -45,6 +44,16 @@ class MessagesViewModel {
             getAllGroups()
         }
     }
+    
+    var arrayCount : Int {
+        switch currentSegment {
+        case .messages:
+            return messages?.count ?? 0
+        case .groups:
+            return groups?.count ?? 0
+        }
+    }
+    
 
     
     func getAllMessages() {
@@ -63,7 +72,6 @@ class MessagesViewModel {
     func getAllGroups(){
         MessagesService.instance.getAllGroups { err, results in
             if err != nil {
-                print(err?.localizedDescription)
                 self.delegate?.groupDatasReceived(error: err)
                 return
             }
@@ -73,7 +81,6 @@ class MessagesViewModel {
     }
     
     func generateMessageForUser(forUserId userId: Int, message: MessageItem){
-        //MOVE THIS TO SOCKETIO DELEGATE
         UserService.instance.getSpecificUser(userId: userId) { error, user in
             if let error = error {
                 print("specificdebug: \(error.localizedDescription)")

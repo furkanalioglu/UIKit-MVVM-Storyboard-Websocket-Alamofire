@@ -18,7 +18,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
 }
 struct SocketURL {
     static let baseURL: URL = {
-        guard let url = URL(string: "ws://10.82.0.69:3000/token=") else {
+        guard let url = URL(string: "ws://10.82.0.113:3000/token=") else {
             fatalError("Invalid base URL.")
         }
         return url
@@ -102,7 +102,7 @@ class SocketIOManager {
     
     func sendMessage(message: String, toUser: String) {
         guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
-        let myMessage = SentMessage(senderId: userId, message: message)
+        let myMessage = SentMessage(receiverId: userId, message: message)
         socket?.emit(SocketEmits.message.rawValue, myMessage.toData())
 
     }

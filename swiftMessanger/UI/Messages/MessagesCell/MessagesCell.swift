@@ -17,7 +17,7 @@ class MessagesCell: UITableViewCell {
     
     var group : GroupCell? {
         didSet{
-            configureUI()
+            configureGroupUI()
         }
     }
 
@@ -49,7 +49,7 @@ class MessagesCell: UITableViewCell {
         guard let group = group else { return }
         messageSenderLabel.text = group.groupName
         messageContentLabel.text = group.lastMsg
-        messageSenderLabel.text = group.sendTime
+        messageSentTimeLabel.text = group.sendTime.timeElapsedSinceDate()
     }
     
 }

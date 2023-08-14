@@ -47,11 +47,6 @@ class MessagesController: UIViewController{
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
-        print("SORTEDDEBUG",viewModel.messages?.first)
-    }
-    
     @IBAction func showSheetButton(_ sender: Any) {
         performSegue(withIdentifier: viewModel.usersSegueId, sender: nil)
     }
@@ -80,15 +75,13 @@ class MessagesController: UIViewController{
 
 extension MessagesController : UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.currentSegment == .messages ? viewModel.messages?.count ?? 0  : viewModel.groups?.count ?? 0
+        return viewModel.arrayCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellId) as? MessagesCell else {
             fatalError("COULD NOT LOAD MESSAGES CELL")
         }
-        
         switch viewModel.currentSegment {
          case .messages:
              cell.message = viewModel.messages?[indexPath.row]
@@ -109,16 +102,16 @@ extension MessagesController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         switch viewModel.currentSegment {
-         case .messages:
-            
+        case .messages:
             guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
             performSegue(withIdentifier: viewModel.chatSegueId, sender: userId)
             viewModel.messages?[indexPath.row].isSeen = true
             tableView.deselectRow(at: indexPath, animated: true)
             
-         case .groups:
+        case .groups:
             guard let groupId = viewModel.groups?[indexPath.row] else { fatalError("could not find group")}
             performSegue(withIdentifier: viewModel.chatSegueId, sender: groupId)
+            //isSeen here
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -145,22 +138,16 @@ extension MessagesController {
             usersSheet.viewModel.selectUserDelegate = self
         }
         
-        if segue.identifier == viewModel.chatSegueId {
-            switch viewModel.currentSegment{
-            case .groups:
-                guard let data = sender as? GroupCell else { return }
-                let vc = segue.destination as? ChatController
-                vc?.viewModel.groupUsers = data
-            case .messages:
-                guard let data = sender as? MessagesCellItem else { return }
-                let vc = segue.destination as? ChatController
-                vc?.viewModel.user = data
-                vc?.viewModel.seenDelegate = self
+
+        if segue.identifier == viewModel.chatSegueId, let chatVC = segue.destination as? ChatController {
+            if let selectedMessage = sender as? MessagesCellItem {
+                chatVC.viewModel.chatType = .user(selectedMessage)
+            }else if let selectedGroup = sender as? GroupCell{
+                chatVC.viewModel.chatType = .group(selectedGroup)
+            }else{
+                print("SEGUEDEBUG: could not send segue")
             }
         }
-        
-        
-        //add segue events for group here
     }
 } 
 
@@ -180,13 +167,9 @@ extension MessagesController : MessagesControllerDelegate {
         }else{
             tableView.reloadData()
             if AppConfig.instance.dynamicLinkId != nil {
-                print("DYNAMICDEBUG: PERFORMING SEGU)")
                 guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
                 let user = viewModel.messages?[index]
-                print("DYNAMICDEBUG index:  \(index) user: \(user)" )
-                performSegue(withIdentifier: viewModel.chatSegueId, sender: viewModel.messages?[index])
-            }else{
-                print("DYNAMICDEBUG: COULD NOT SEND SEGUE")
+                performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
             }
         }
     }
@@ -212,6 +195,8 @@ extension MessagesController : MessagesControllerDelegate {
     }
 }
 
+
+//MARK: - Delegates
 extension MessagesController : SocketIOManagerDelegate {
     func didReceiveMessage(message: MessageItem) {
         //MARK: - UNTESTEDCHANGES

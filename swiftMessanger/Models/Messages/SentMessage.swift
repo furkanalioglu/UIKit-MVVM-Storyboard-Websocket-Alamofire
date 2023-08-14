@@ -8,6 +8,6 @@
 import Foundation
 
 struct SentMessage : Codable {
-    let senderId : Int
+    let receiverId : Int
     let message : String
 }

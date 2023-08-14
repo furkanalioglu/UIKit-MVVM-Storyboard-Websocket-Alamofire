@@ -8,45 +8,65 @@
 import Foundation
 import AVFoundation
 
+enum ChatType {
+    case user(MessagesCellItem)
+    case group(GroupCell)
+}
+
 class ChatViewModel {
     
     let cellNib = "ChatCell2"
     
-    var user : MessagesCellItem? {
-        didSet {
-            guard let uid = user?.id else { return }
-            print("FETCHING CONVERSATIONS DEBUG")
-            fetchMessagesForSelectedUser(userId: String(uid),page: 1)
-            print("FETCHING DEBUG: \(messages)")
+    var chatType : ChatType? {
+        didSet{
+            switch chatType {
+            case .user(let user):
+                fetchMessagesForSelectedUser(userId: String(user.id), page: 1)
+            case .group(let group):
+                fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
+            default:
+                print("CHATVIEWMODELDEBUG: COULD NOT FIND GROUP/USER")
+            }
         }
     }
     
-    var groupUsers : GroupCell? {
-        didSet{
-            guard let gid = groupUsers?.id else { return }
-            fetchGroupMessagesForSelectedGroup(gid: gid, page: 1)
-            
+    var navigationTitle: String {
+        switch chatType{
+        case .group(let group):
+            return group.groupName
+        case .user(let user):
+            return user.username
+        default:
+            print("Could not set navigationtitle")
+            return "Error"
         }
     }
+    
     
     var currentPage = 1 {
         didSet {
-            guard let uid = user?.id else { return }
-            print("FETCHING CONVERSATIONS DEBUG")
-
-            fetchMessagesForSelectedUser(userId: String(uid), page: currentPage)
+            switch chatType {
+            case .group(let group):
+                fetchGroupMessagesForSelectedGroup(gid: group.id, page: currentPage)
+            case .user(let user):
+                fetchMessagesForSelectedUser(userId: String(user.id), page: currentPage)
+            default:
+                break
+            }
         }
     }
     
     var player: AVPlayer?
-    var playbackDurationToAdd: Double = 0.5 // Duration to add every time a message is received
+    var playbackDurationToAdd: Double = 0.5
     var endPlaybackTime: CMTime?
     
-
-
+    
+    
     var messages : [MessageItem]?
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
+    
+    
     
     weak var delegate : ChatControllerDelegate?
     weak var seenDelegate : ChatMessageSeenDelegate?
@@ -58,7 +78,6 @@ class ChatViewModel {
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
             }
-            //FIRSTFETCH
             if self.messages == nil {
                 self.messages = messages
                 self.newMessages = messages
@@ -70,7 +89,7 @@ class ChatViewModel {
                     self.messages?.insert(contentsOf: self.newMessages!, at: 0)
                     self.delegate?.datasReceived(error: nil)
                     print("COULD NOT FETCG MSSAGES")
-
+                    
                 }
             }
         }
@@ -79,10 +98,8 @@ class ChatViewModel {
     func fetchGroupMessagesForSelectedGroup(gid : Int, page: Int ){
         MessagesService.instance.getGroupMessages(groupId: gid, page: page) { err, messages in
             if err != nil {
-                print(err?.localizedDescription)
                 return
             }
-            
             self.messages = messages
         }
     }
@@ -94,31 +111,66 @@ class ChatViewModel {
     func handleMessageSeen(forUserId userId: Int) {
         MessagesService.instance.handleMessageSeen(forUserId: userId) { err in
             if let error = err {
-                print("SEENDEBUG: ", err?.localizedDescription)
                 self.seenDelegate?.chatMessageSeen(error: error.localizedDescription, forId: nil)
                 return
             }
             self.seenDelegate?.chatMessageSeen(error: nil, forId: userId)
-            print("MESSAGE SEEN SUCCESSS!!")
         }
     }
     
     func sendMessage(myText: String?){
         guard let currentUserId = AppConfig.instance.currentUserId,
-              let receiverUserId = user?.id,
               let text = myText,
               !text.isEmpty,
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        else {
-            print("Error: Invalid data provided for sending a message.")
-            return
-        }
-        print("DEBUG \(receiverUserId)")
+        else { return }
         let message = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: receiverUserId, sendTime: Date().toString())
-        messages?.append(myMessage)
-
-        seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-        SocketIOManager.shared().sendMessage(message: text, toUser: String(receiverUserId))
+        
+        switch chatType {
+        case .group(let group):
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString())
+            messages?.append(myMessage)
+            seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
+            //Fix here
+//            SocketIOManager.shared().sendMessage(message: text, toUser: String(receiverUserId))
+        case .user(let user):
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.id, sendTime: Date().toString())
+            messages?.append(myMessage)
+            seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
+            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.id))
+        default:
+            print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
+        }
+    }
+    
+    
+    func configureVideo(ofType type: String = "mp4") -> AVPlayerLayer? {
+        guard let path = Bundle.main.path(forResource:  "superanimation1_3" , ofType: type) else {
+            debugPrint("superanimation1_3.\(type) not found")
+            return nil
+        }
+        player = AVPlayer(url: URL(fileURLWithPath: path))
+        return AVPlayerLayer(player: player)
+    }
+    
+    
+    func playVideoForDuration(_ duration: Double) {
+        
+        guard let player = self.player else { return }
+        
+        let currentTime = player.currentTime()
+        let endTime = CMTimeAdd(currentTime, CMTimeMakeWithSeconds(duration, preferredTimescale: 600))
+        endPlaybackTime = endTime
+        
+        player.play()
+        
+        player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
+            guard let strongSelf = self else { return }
+            
+            if CMTimeCompare(time, strongSelf.endPlaybackTime!) != -1 { // if time is not less than endPlaybackTime
+                strongSelf.player?.pause()
+            }else{
+            }
+        }
     }
 }
