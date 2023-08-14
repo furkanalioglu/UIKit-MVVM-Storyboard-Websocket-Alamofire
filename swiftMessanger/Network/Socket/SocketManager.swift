@@ -30,7 +30,7 @@ class SocketIOManager {
     
     private static var privateShared : SocketIOManager?
     
-    class func shared() -> SocketIOManager { // change class to final to prevent override
+    class func shared() -> SocketIOManager { 
         guard let uwShared = privateShared else {
             privateShared = SocketIOManager()
             return privateShared!
@@ -48,14 +48,6 @@ class SocketIOManager {
     private init() {}
     
     func establishConnection() {
-//        guard self.manager == nil,
-//              self.socket == nil,
-//              AppConfig.instance.currentUser != nil
-//        else {
-//            print("DEBUGSOCKET: COULD NOT GET SOCKET")
-//            return }
-//        guard self.manager == nil else{ fatalError("SOCKET")}
-//        guard self.socket == nil else { fatalError("SOCKET")}
         guard AppConfig.instance.currentUser != nil else {fatalError("SOCKET")}
                 
         guard let token = UserDefaults.standard.string(forKey: userToken),
@@ -104,7 +96,12 @@ class SocketIOManager {
         guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
         let myMessage = SentMessage(receiverId: userId, message: message)
         socket?.emit(SocketEmits.message.rawValue, myMessage.toData())
-
+    }
+    
+    func sendGroupMessage(message: String, toGroup: String) {
+        guard let gid = Int(toGroup) else { fatalError("group does not exist") }
+        let myMessage = SentMessage(receiverId: gid, message: message)
+        socket?.emit("message:group", myMessage.toData())
     }
     
     private func addHandlers() {
@@ -120,9 +117,6 @@ class SocketIOManager {
                 debugPrint("SOCKETDEBUG: Raw message data: \(data)" )
                 return
             }
-            debugPrint("******")
-            dump(modeledData)
-            debugPrint("******")
             let socketMessage = MessageItem(message: modeledData.message ,
                                             senderId: modeledData.senderId,
                                             receiverId: modeledData.receiverId,
@@ -132,6 +126,25 @@ class SocketIOManager {
             self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
         }
         
+        socket?.on("message:group") { (data, _ ) in
+            print("SOCKETDEBUG: Raw message data: \(data)")
+            guard let response = data[0] as? String,
+                  let modeledData: MessageItem = MessageItem.parse(data: response)
+            else {
+                debugPrint("SOCKETDEBUG: Raw message data: \(data)" )
+                return
+            }
+            let socketMessage = MessageItem(message: modeledData.message ,
+                                            senderId: modeledData.senderId,
+                                            receiverId: modeledData.receiverId,
+                                            sendTime: modeledData.sendTime)
+            print("receiveddebugSOCKET: \(socketMessage)")
+            self.delegate?.didReceiveMessage(message: socketMessage)
+            self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
+            
+        }
+        
+                
         socket?.on(clientEvent: .disconnect) { data, _ in
             debugPrint("disconnected")
         }

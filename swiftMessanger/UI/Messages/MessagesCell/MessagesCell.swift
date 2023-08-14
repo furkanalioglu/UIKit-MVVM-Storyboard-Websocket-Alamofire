@@ -47,9 +47,12 @@ class MessagesCell: UITableViewCell {
     
     private func configureGroupUI() {
         guard let group = group else { return }
+        messageImageView.image = UIImage(named: "prsn")
         messageSenderLabel.text = group.groupName
         messageContentLabel.text = group.lastMsg
         messageSentTimeLabel.text = group.sendTime.timeElapsedSinceDate()
+        messageSenderLabel.textColor = group.isSeen ? .black : .green
+
     }
     
 }

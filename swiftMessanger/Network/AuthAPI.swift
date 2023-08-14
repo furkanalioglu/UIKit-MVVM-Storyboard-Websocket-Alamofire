@@ -140,7 +140,7 @@ extension AuthAPI: TargetType {
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
             return ["Authorization": "Bearer \(AuthService.instance.getRefreshToken() ?? "")"]

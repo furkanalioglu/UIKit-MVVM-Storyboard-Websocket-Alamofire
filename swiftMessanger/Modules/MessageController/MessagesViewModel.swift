@@ -14,7 +14,7 @@ enum SegmentedIndex : Int {
 class MessagesViewModel {
     //MARK: - Properties
     lazy var chatSegueId: String = { return "toShowChat" }()
-
+    
     lazy var usersSegueId: String = { return "toShowUsers" }()
     
     lazy var newGroupSegueId : String = { return "toShowNewGroup" }()
@@ -54,7 +54,7 @@ class MessagesViewModel {
         }
     }
     
-
+    
     
     func getAllMessages() {
         UserService.instance.getAllMessages { error, messages in
@@ -106,29 +106,56 @@ class MessagesViewModel {
     
     
     private func updateMessageAtIndex(index: Int, withMessage message: MessageItem) {
-        messages?[index].lastMsg = message.message
-        messages?[index].sendTime = Date().toString()
-        print("MESSAGELOFGGG : GENERATE MESSAGE \(message)")
-        messages?[index].isSeen = false
+        switch currentSegment {
+        case .messages:
+            messages?[index].lastMsg = message.message
+            messages?[index].sendTime = Date().toString()
+            print("GROUPDEBUG : GENERATE MESSAGE \(message)")
+            messages?[index].isSeen = false
+        case .groups:
+            groups?[index].lastMsg = message.message
+            groups?[index].sendTime = Date().toString()
+            groups?[index].isSeen = false
+            print("GROUPDEBUG UPDATING GROUPS ")
+        }
     }
     
     func handleIncomingMessage(message: MessageItem) {
-        if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-            if let index = messages?.firstIndex(where: {$0.id == message.receiverId}) {
-                print("MESSAGELOFGGG updaet message: \(message)")
-                updateMessageAtIndex(index: index, withMessage: message)
-            } else {
-                print("MESSAGELOFGGG generate message: \(message)")
-                generateMessageForUser(forUserId: message.receiverId, message: message)
+        switch currentSegment {
+        case .messages:
+            if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+                if let index = messages?.firstIndex(where: {$0.id == message.receiverId}) {
+                    print("MESSAGELOFGGG updaet message: \(message)")
+                    updateMessageAtIndex(index: index, withMessage: message)
+                }
+                else {
+                    print("MESSAGELOFGGG generate message: \(message)")
+                    generateMessageForUser(forUserId: message.receiverId, message: message)
+                }
+            } else {	
+                if let index = messages?.firstIndex(where: {$0.id == message.senderId}) {
+                    print("MESSAGELOFGGG generate message: \(message)")
+                    updateMessageAtIndex(index: index, withMessage: message)
+                } else {
+                    print("MESSAGELOFGGG updaet message: \(message)")
+                    generateMessageForUser(forUserId: message.senderId, message: message)
+                }
             }
-        } else {
-            if let index = messages?.firstIndex(where: {$0.id == message.senderId}) {
-                print("MESSAGELOFGGG generate message: \(message)")
-                updateMessageAtIndex(index: index, withMessage: message)
-            } else {
-                print("MESSAGELOFGGG updaet message: \(message)")
-                generateMessageForUser(forUserId: message.senderId, message: message)
+        case .groups:
+            if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+                if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
+                    updateMessageAtIndex(index: index, withMessage: message)
+                }else{
+                    generateMessageForUser(forUserId: message.receiverId, message: message)
+                }
+            }else{
+                if let index = groups?.firstIndex(where: {$0.id == message.receiverId}) {
+                    updateMessageAtIndex(index: index, withMessage: message)
+                }else{
+                    generateMessageForUser(forUserId: message.senderId, message: message)
+                }
             }
         }
     }
+
 }

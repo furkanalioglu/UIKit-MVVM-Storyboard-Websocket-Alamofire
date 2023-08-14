@@ -11,7 +11,8 @@ struct GroupCell : Codable {
     let id : Int
     let groupName : String
     let url : String
-    let sendTime: String
-    let lastMsg: String
+    var sendTime: String
+    var lastMsg: String
+    var isSeen : Bool
 }
 

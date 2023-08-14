@@ -61,6 +61,12 @@ extension NewGroupEditController : UICollectionViewDataSource {
     }
 }
 
+extension NewGroupEditController : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: 100)
+    }
+}
+
 extension NewGroupEditController : NewGroupEditCellTextFieldProtocol {
     func textDidChange(text: String) {
         viewModel.groupName = text

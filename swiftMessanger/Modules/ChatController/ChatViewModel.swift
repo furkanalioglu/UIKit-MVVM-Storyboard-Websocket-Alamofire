@@ -98,9 +98,12 @@ class ChatViewModel {
     func fetchGroupMessagesForSelectedGroup(gid : Int, page: Int ){
         MessagesService.instance.getGroupMessages(groupId: gid, page: page) { err, messages in
             if err != nil {
+                self.delegate?.datasReceived(error: err?.localizedDescription)
                 return
             }
             self.messages = messages
+            print("MESSAGEDEBUG : \(messages)")
+            self.delegate?.datasReceived(error: nil)
         }
     }
     
@@ -131,8 +134,8 @@ class ChatViewModel {
             let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString())
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-            //Fix here
-//            SocketIOManager.shared().sendMessage(message: text, toUser: String(receiverUserId))
+            SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id))
+            print("MESSAGELOFGGG \(group.id)")
         case .user(let user):
             let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.id, sendTime: Date().toString())
             messages?.append(myMessage)
