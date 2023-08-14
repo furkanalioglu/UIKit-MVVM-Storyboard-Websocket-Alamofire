@@ -17,14 +17,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="449" height="151"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="p5X-Ay-O3M">
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="p5X-Ay-O3M">
                         <rect key="frame" x="6" y="6" width="437" height="139"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="zeQ-IM-e8M">
-                                <rect key="frame" x="142" y="0.0" width="153" height="98.666666666666671"/>
+                                <rect key="frame" x="8" y="0.0" width="421" height="118.66666666666667"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="SiG-LK-LMC">
-                                        <rect key="frame" x="0.0" y="25.333333333333329" width="50" height="48.666666666666671"/>
+                                        <rect key="frame" x="0.0" y="35.333333333333336" width="50" height="48.666666666666679"/>
                                         <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="9Pu-m1-bjx"/>
@@ -32,7 +32,7 @@
                                         </constraints>
                                     </imageView>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group Subject" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b2R-wa-eHL">
-                                        <rect key="frame" x="60" y="40" width="93" height="18.666666666666671"/>
+                                        <rect key="frame" x="60" y="50" width="361" height="18.666666666666671"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                         <connections>
@@ -48,6 +48,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="zeQ-IM-e8M" firstAttribute="leading" secondItem="p5X-Ay-O3M" secondAttribute="leading" constant="8" id="7LJ-Ys-yAR"/>
+                            <constraint firstAttribute="trailing" secondItem="zeQ-IM-e8M" secondAttribute="trailing" constant="8" id="UsL-r7-Vkz"/>
+                        </constraints>
                     </stackView>
                 </subviews>
             </view>

@@ -90,7 +90,8 @@ class MessagesViewModel {
                         self.delegate?.newMessageCellDataReceived(error: nil)
                     }
                 }else{
-                    print("Did not completed")
+                    self.getAllGroups()
+//                    self.delegate?.newMessageCellDataReceived(error: nil)
                 }
             }
     }
