@@ -33,4 +33,5 @@ class NewGroupViewModel {
             self.delegate?.datasReceived(error: nil)
         }
     }
+    
 }

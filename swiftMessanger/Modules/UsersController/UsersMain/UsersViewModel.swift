@@ -37,7 +37,7 @@ class UsersViewModel {
     }
     
     func filterUsers(searchText: String) {
-        if searchText.count > 3 && !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if searchText.count > 1 && !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             filteredUsers = users?.filter({$0.username.contains(searchText)})
         }else{
             filteredUsers = users

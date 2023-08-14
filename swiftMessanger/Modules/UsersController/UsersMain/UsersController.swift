@@ -42,7 +42,6 @@ class UsersController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search name or number"
-        searchController.searchBar.delegate = self
 
         navigationItem.searchController = searchController
         definesPresentationContext = true
@@ -99,10 +98,5 @@ extension UsersController: UISearchResultsUpdating {
             viewModel.filteredUsers = viewModel.users
         }
         tableView.reloadData()
-    }
-}
-extension UsersController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
     }
 }

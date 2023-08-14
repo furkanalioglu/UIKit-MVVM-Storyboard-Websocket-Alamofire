@@ -20,6 +20,7 @@ class ChatCell2: UITableViewCell {
     @IBOutlet weak var rightStack: UIStackView!
     @IBOutlet weak var messageLabrl: UILabel!
     @IBOutlet weak var messageBuble: UIView!
+    @IBOutlet weak var senderNameLabel: UILabel!
     
     
     override func awakeFromNib() {
@@ -42,7 +43,8 @@ class ChatCell2: UITableViewCell {
         guard let message = message else { return }
         guard let currentUserId = AppConfig.instance.currentUserId else { return }
         let isCurrentUserSender = message.senderId == Int(currentUserId)
-
+        senderNameLabel.text = String(message.senderId)
+        senderNameLabel.font = UIFont.systemFont(ofSize: 10)
         rightStack.isHidden = isCurrentUserSender
         messageLabrl.textAlignment = isCurrentUserSender ? .right : .left
         messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink

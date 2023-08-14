@@ -15,18 +15,32 @@ protocol NewGroupEditCellTextFieldProtocol : AnyObject{
 class NewGroupEditCell: UICollectionViewCell {
 
     @IBOutlet weak var groupNameTextField: UITextField!
+    @IBOutlet weak var selectedUsersLabel: UILabel!
+    
+    var selectedUsers : [Int] = [] {
+        didSet {
+            configureUI()
+        }
+    }
     
     weak var delegate : NewGroupEditCellTextFieldProtocol?
     var text = ""
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        configureUI()
+
     }
     
     @IBAction func groupNameTextFieldHandler(_ sender: Any) {
         guard let text = groupNameTextField.text else { return }
         delegate?.textDidChange(text: text)
+    }
+    
+    
+    private func configureUI() {
+        let formattedString = selectedUsers.map { String($0) }.joined(separator: ", ")
+        selectedUsersLabel.text = "[\(formattedString)]"
     }
     
 

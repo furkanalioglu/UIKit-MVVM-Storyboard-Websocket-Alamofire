@@ -25,8 +25,14 @@
                                 <rect key="frame" x="0.0" y="0.0" width="0.0" height="119"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E7i-R8-UWD">
+                                <rect key="frame" x="0.0" y="0.0" width="41.333333333333336" height="119"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <view contentMode="scaleToFill" horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AHI-bH-6H1">
-                                <rect key="frame" x="0.0" y="0.0" width="531" height="119"/>
+                                <rect key="frame" x="41.333333333333314" y="0.0" width="531" height="119"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m70-rk-VBR">
                                         <rect key="frame" x="8" y="8" width="515" height="103"/>
@@ -54,7 +60,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bdW-cW-GJq">
-                                <rect key="frame" x="531" y="0.0" width="124" height="119"/>
+                                <rect key="frame" x="572.33333333333337" y="0.0" width="82.666666666666629" height="119"/>
                             </stackView>
                         </subviews>
                     </stackView>
@@ -72,6 +78,7 @@
                 <outlet property="messageBuble" destination="AHI-bH-6H1" id="3rL-A7-vf5"/>
                 <outlet property="messageLabrl" destination="m70-rk-VBR" id="1fH-cN-kGh"/>
                 <outlet property="rightStack" destination="bdW-cW-GJq" id="vaD-lP-yJT"/>
+                <outlet property="senderNameLabel" destination="E7i-R8-UWD" id="jTr-wu-gI3"/>
             </connections>
             <point key="canvasLocation" x="-1391.6030534351144" y="6.6901408450704229"/>
         </tableViewCell>

@@ -33,6 +33,7 @@ class NewGroupController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        nextButtonLabel.isEnabled = false
     }
     
     @IBAction func nextButtonHandler(_ sender: Any) {
@@ -58,6 +59,7 @@ extension NewGroupController : UITableViewDelegate {
             viewModel.selectedUsers.append(user.id)
         }
         tableView.reloadData()
+        nextButtonLabel.isEnabled = !viewModel.selectedUsers.isEmpty
     }
 }
 
@@ -77,15 +79,10 @@ extension NewGroupController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == viewModel.segueId {
             print("SAVED USERS LOG  segued")
-            guard let data = sender as? [Int] else { return }
             let vc = segue.destination as? NewGroupEditController
             vc?.viewModel.savedUsers = viewModel.selectedUsers
-            print("SAVED USERS LOG : \(vc?.viewModel.savedUsers)")
         }
-        
-        //add segue events for group here
     }
-    
 }
 
 extension NewGroupController : NewGroupControllerProtocol {

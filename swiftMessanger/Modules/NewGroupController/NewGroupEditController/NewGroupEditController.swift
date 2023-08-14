@@ -57,6 +57,7 @@ extension NewGroupEditController : UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: viewModel.cellNib, for: indexPath) as? NewGroupEditCell else { fatalError( "Could not load cel!!!")}
         cell.delegate = self
+        cell.selectedUsers = viewModel.savedUsers
         return cell
     }
 }
@@ -70,6 +71,6 @@ extension NewGroupEditController : UICollectionViewDelegateFlowLayout {
 extension NewGroupEditController : NewGroupEditCellTextFieldProtocol {
     func textDidChange(text: String) {
         viewModel.groupName = text
-        createButtonLabel.isEnabled = !viewModel.groupName.isEmpty && !viewModel.groupName.trimmingCharacters(in: .whitespaces).isEmpty
+        createButtonLabel.isEnabled = !viewModel.groupName.isEmpty && !viewModel.groupName.trimmingCharacters(in: .whitespaces).isEmpty && viewModel.groupName.count < 25
     }
 }

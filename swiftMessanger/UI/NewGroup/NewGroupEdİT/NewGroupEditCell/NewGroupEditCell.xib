@@ -17,39 +17,51 @@
                 <rect key="frame" x="0.0" y="0.0" width="449" height="151"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="zeQ-IM-e8M">
-                        <rect key="frame" x="8" y="8" width="433" height="135"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="p5X-Ay-O3M">
+                        <rect key="frame" x="6" y="6" width="437" height="139"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="SiG-LK-LMC">
-                                <rect key="frame" x="0.0" y="43.666666666666664" width="50" height="48.666666666666664"/>
-                                <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="9Pu-m1-bjx"/>
-                                    <constraint firstAttribute="width" constant="50" id="VXX-uR-y7W"/>
-                                </constraints>
-                            </imageView>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group Subject" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b2R-wa-eHL">
-                                <rect key="frame" x="60" y="58.333333333333321" width="373" height="18.666666666666664"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <action selector="groupNameTextFieldHandler:" destination="gTV-IL-0wX" eventType="editingChanged" id="GyQ-Db-sIM"/>
-                                </connections>
-                            </textField>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="zeQ-IM-e8M">
+                                <rect key="frame" x="142" y="0.0" width="153" height="98.666666666666671"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="SiG-LK-LMC">
+                                        <rect key="frame" x="0.0" y="25.333333333333329" width="50" height="48.666666666666671"/>
+                                        <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="9Pu-m1-bjx"/>
+                                            <constraint firstAttribute="width" constant="50" id="VXX-uR-y7W"/>
+                                        </constraints>
+                                    </imageView>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group Subject" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b2R-wa-eHL">
+                                        <rect key="frame" x="60" y="40" width="93" height="18.666666666666671"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="groupNameTextFieldHandler:" destination="gTV-IL-0wX" eventType="editingChanged" id="GyQ-Db-sIM"/>
+                                        </connections>
+                                    </textField>
+                                </subviews>
+                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTN-SJ-x0S">
+                                <rect key="frame" x="198" y="118.66666666666667" width="41.333333333333343" height="20.333333333333329"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                     </stackView>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
-                <constraint firstItem="zeQ-IM-e8M" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="883-A0-KV3"/>
-                <constraint firstAttribute="trailing" secondItem="zeQ-IM-e8M" secondAttribute="trailing" constant="8" id="8eh-ak-S82"/>
-                <constraint firstAttribute="bottom" secondItem="zeQ-IM-e8M" secondAttribute="bottom" constant="8" id="pqI-KP-XjK"/>
-                <constraint firstItem="zeQ-IM-e8M" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="8" id="tMO-Gs-Oj3"/>
+                <constraint firstAttribute="trailing" secondItem="p5X-Ay-O3M" secondAttribute="trailing" constant="6" id="4t7-Jg-Flh"/>
+                <constraint firstItem="p5X-Ay-O3M" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="6" id="50T-lg-O6F"/>
+                <constraint firstItem="p5X-Ay-O3M" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="6" id="CgP-HN-hIu"/>
+                <constraint firstAttribute="bottom" secondItem="p5X-Ay-O3M" secondAttribute="bottom" constant="6" id="gfO-xD-M2G"/>
             </constraints>
             <size key="customSize" width="449" height="151"/>
             <connections>
                 <outlet property="groupNameTextField" destination="b2R-wa-eHL" id="1KT-yh-pVd"/>
+                <outlet property="selectedUsersLabel" destination="KTN-SJ-x0S" id="7HQ-GF-tb8"/>
             </connections>
             <point key="canvasLocation" x="434.35114503816794" y="24.295774647887324"/>
         </collectionViewCell>
