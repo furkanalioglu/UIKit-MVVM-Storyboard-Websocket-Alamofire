@@ -14,8 +14,8 @@
             filePath = "swiftMessanger/Modules/MessageController/MessagesViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "handleIncomingMessage(message:)"
             landmarkType = "7">
          </BreakpointContent>

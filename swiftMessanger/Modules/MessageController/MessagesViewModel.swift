@@ -79,9 +79,6 @@ class MessagesViewModel {
                 if !isGroupMessage{
                     if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
                         let newMessage = MessagesCellItem( id:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
-                        print("MESSAGELOFGGG generate message from current user: \(message)")
-                        print("NEW",newMessage)
-                        
                         self.messages?.append(newMessage)
                         self.delegate?.newMessageCellDataReceived(error: nil)
                     }else{
@@ -91,7 +88,6 @@ class MessagesViewModel {
                     }
                 }else{
                     self.getAllGroups()
-//                    self.delegate?.newMessageCellDataReceived(error: nil)
                 }
             }
     }
@@ -146,5 +142,4 @@ class MessagesViewModel {
             }
         }
     }
-    
 }

@@ -11,6 +11,6 @@ class UserModel : Codable{
     let id: Int
     let username: String
     let status: String
-    let url: String
-    let lastMsg: String
+    let photoUrl: String
+    let groupRole: String
 }

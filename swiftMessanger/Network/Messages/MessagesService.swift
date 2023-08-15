@@ -72,11 +72,11 @@ class MessagesService {
         }
     }
     
-    func getGroupMessages(groupId: Int,page: Int, completion: @escaping(Error?, [MessageItem]?) -> Void) {
+    func getGroupMessages(groupId: Int,page: Int, completion: @escaping(Error?, GroupMessageModel?) -> Void) {
         provider.requestJSON(target: .getMessagesForGroup(groupId: groupId, page: page)){ result in 
             switch result {
             case .success(let response):
-                let messagesResponse = try? JSONDecoder().decode([MessageItem].self, from: response.data)
+                let messagesResponse = try? response.map(GroupMessageModel.self)
                 print("MESSAGELOG2:", messagesResponse)
                 completion(nil, messagesResponse.self)
             case .failure(let error):

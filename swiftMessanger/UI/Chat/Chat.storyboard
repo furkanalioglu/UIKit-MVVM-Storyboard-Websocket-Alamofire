@@ -88,6 +88,7 @@
                         <outlet property="sendMessageButton" destination="BAk-Ef-dsW" id="VV9-JY-DdJ"/>
                         <outlet property="tableView" destination="gQF-xJ-CwD" id="aCc-C3-NYy"/>
                         <outlet property="videoCell" destination="vVZ-m3-lXv" id="iNW-gw-64C"/>
+                        <segue destination="WRa-Bq-wzj" kind="show" identifier="toShowInformation" id="RsT-s7-2fr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -99,6 +100,16 @@
                 </collectionViewFlowLayout>
             </objects>
             <point key="canvasLocation" x="139.69465648854961" y="3.5211267605633805"/>
+        </scene>
+        <!--ChatInformationController-->
+        <scene sceneID="QQ4-cd-10S">
+            <objects>
+                <viewControllerPlaceholder storyboardName="ChatInformation" referencedIdentifier="ChatInformationController" id="WRa-Bq-wzj" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="wSV-LB-wVb"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jg5-9H-iF4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="998" y="-9"/>
         </scene>
     </scenes>
     <resources>

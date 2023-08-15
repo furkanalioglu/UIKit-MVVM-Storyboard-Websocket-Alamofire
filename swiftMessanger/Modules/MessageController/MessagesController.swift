@@ -65,7 +65,7 @@ class MessagesController: UIViewController{
     
     @objc func newGroupCreated(notification: Notification) {
         viewModel.groups = [GroupCell]()
-        if let newGroup = notification.object as? [GroupCell] {  // Assuming the groups variable is of type [GroupModel]
+        if let newGroup = notification.object as? [GroupCell] {
             viewModel.groups = newGroup.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
         }
         tableView.reloadData()
@@ -163,10 +163,6 @@ extension MessagesController {
                 print("SEGUEDEBUG: could not send segue")
             }
         }
-        
-//        if segue.identifier == viewModel.newGroupSegueId, let chatVC = segue.destination as? NewGroupController {
-//            chatVC.viewModel.delegate = self
-//        }
     }
 }
 

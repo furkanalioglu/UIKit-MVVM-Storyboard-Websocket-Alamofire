@@ -13,6 +13,8 @@ class ChatController: UIViewController {
     @IBOutlet weak var videoCell: UIView!
     
     
+    
+    
     @IBOutlet weak var tableView: UITableView! {
         didSet{
             tableView.delegate = self
@@ -28,11 +30,11 @@ class ChatController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = viewModel.navigationTitle
-        navigationItem.largeTitleDisplayMode = .never
-
+        
         viewModel.delegate = self
         SocketIOManager.shared().chatDelegate = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
         
         setupTapGesture()
         setupRefreshControl()
@@ -97,6 +99,15 @@ class ChatController: UIViewController {
         }
     }
     
+    @objc func handleUserDidEnterForeground() {
+        scrollToBottom(animated: true)
+        print("HANDLE RELOAD NEW MESSAGES HERE!!")
+    }
+    
+    @objc func rightBarButtonTapped() {
+        performSegue(withIdentifier: viewModel.segueId, sender: viewModel.userInformations)
+    }
+    
     @IBAction func sendMessageAction(_ sender: Any) {
         viewModel.sendMessage(myText: messageTextField.text)
         messageTextField.text = ""
@@ -104,6 +115,8 @@ class ChatController: UIViewController {
         tableView.reloadData()
         scrollToBottom(animated: true)
     }
+    
+    
     
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
@@ -114,13 +127,16 @@ class ChatController: UIViewController {
         view.endEditing(true)
     }
     
-    private func setupVideoLayer() {
-        if let configurationLayer = viewModel.configureVideo() {
-            configurationLayer.frame = self.videoCell.bounds
-            self.videoCell.layer.addSublayer(configurationLayer)
-        }
+    @objc func startEventTapped() {
+        print("Staretedd")
     }
     
+    private func setupVideoLayer() {
+        videoCell.backgroundColor = .green
+        videoCell.isHidden = !viewModel.isGroupOwner
+    }
+    
+    //MARK: - Functions
     private func setupRefreshControl() {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
@@ -131,6 +147,32 @@ class ChatController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
+    
+    func setupNavigationController() {
+        switch viewModel.chatType {
+        case .group(_):
+            navigationItem.title = viewModel.navigationTitle
+            navigationItem.largeTitleDisplayMode = .never
+            var rightBarButtonItems: [UIBarButtonItem] = []
+            
+            let rightButtonImage = UIImage(systemName: "info.circle")
+            let infoButton = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(rightBarButtonTapped))
+            rightBarButtonItems.append(infoButton)
+            
+            if viewModel.isGroupOwner {
+                let startEventButtonImage = UIImage(systemName: "flag.checkered")
+                let startEventButton = UIBarButtonItem(image:startEventButtonImage, style: .plain, target: self, action: #selector(startEventTapped))
+                rightBarButtonItems.append(startEventButton)
+            }
+            navigationItem.rightBarButtonItems = rightBarButtonItems
+        case .user(_):
+            navigationItem.title = viewModel.navigationTitle
+            navigationItem.largeTitleDisplayMode = .never
+        default:
+            break
+        }
+    }
+    
 }
 
 extension ChatController : UITableViewDelegate {}

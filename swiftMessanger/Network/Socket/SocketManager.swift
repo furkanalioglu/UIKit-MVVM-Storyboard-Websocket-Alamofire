@@ -20,7 +20,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
 }
 struct SocketURL {
     static let baseURL: URL = {
-        guard let url = URL(string: "ws://10.82.0.113:3000/token=") else {
+        guard let url = URL(string: "ws://10.82.0.101:3000/token=") else {
             fatalError("Invalid base URL.")
         }
         return url
@@ -101,7 +101,7 @@ class SocketIOManager {
     func sendGroupMessage(message: String, toGroup: String) {
         guard let gid = Int(toGroup) else { fatalError("group does not exist") }
         let myMessage = SentMessage(receiverId: gid, message: message)
-        socket?.emit("message:group", myMessage.toData())
+        socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
     }
     
     private func addHandlers() {
@@ -126,7 +126,7 @@ class SocketIOManager {
             self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
         }
         
-        socket?.on("message:group") { (data, _ ) in
+        socket?.on(SocketListeners.groupMessage.listenerString) { (data, _ ) in
             print("SOCKETDEBUG: Raw message data: \(data)")
             guard let response = data[0] as? String,
                   let modeledData: MessageItem = MessageItem.parse(data: response)
@@ -172,10 +172,28 @@ extension Decodable {
 }
 
 enum SocketListeners: String {
-    case message
+    case message,groupMessage
+    
+    var listenerString : String {
+        switch self {
+        case .groupMessage:
+            return "message:group"
+        case .message:
+            return "message"
+        }
+    }
     
 }
 
 enum SocketEmits: String {
-    case message
+    case message, groupMessage
+    
+    var emitString : String {
+        switch self {
+        case .groupMessage:
+            return "message:group"
+        case .message:
+            return "message"
+        }
+    }
 }

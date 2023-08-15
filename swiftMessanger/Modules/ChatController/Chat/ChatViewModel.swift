@@ -16,6 +16,7 @@ enum ChatType {
 class ChatViewModel {
     
     let cellNib = "ChatCell2"
+    lazy var segueId = "toShowInformation"
     
     var chatType : ChatType? {
         didSet{
@@ -42,6 +43,13 @@ class ChatViewModel {
         }
     }
     
+    var isGroupOwner: Bool {
+        if let currentUserInfo = userInformations?.first(where: { $0.id == Int(AppConfig.instance.currentUserId ?? "")}) {
+            return currentUserInfo.groupRole != "User"
+        }
+        return false
+    }
+    
     
     var currentPage = 1 {
         didSet {
@@ -61,11 +69,11 @@ class ChatViewModel {
     var endPlaybackTime: CMTime?
     
     
-    
     var messages : [MessageItem]?
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
     
+    var userInformations: [UserModel]?
     
     
     weak var delegate : ChatControllerDelegate?
@@ -89,7 +97,6 @@ class ChatViewModel {
                     self.messages?.insert(contentsOf: self.newMessages!, at: 0)
                     self.delegate?.datasReceived(error: nil)
                     print("COULD NOT FETCG MSSAGES")
-                    
                 }
             }
         }
@@ -101,14 +108,15 @@ class ChatViewModel {
                 self.delegate?.datasReceived(error: err?.localizedDescription)
                 return
             }
-            if self.messages == nil {
-                self.messages = messages
-                self.newMessages = messages
+            if self.messages == nil{
+                self.messages = messages?.messages
+                self.newMessages = messages?.messages
+                self.userInformations = messages?.users
                 self.delegate?.datasReceived(error: nil)
                 print("MESSAGES FETCHED")
             }else{
                 if self.newMessages?.count ?? 0 > 0 {
-                    self.newMessages = messages
+                    self.newMessages = messages?.messages
                     self.messages?.insert(contentsOf: self.newMessages!, at: 0)
                     self.delegate?.datasReceived(error: nil)
                     print("COULD NOT FETCG MSSAGES")
@@ -117,6 +125,8 @@ class ChatViewModel {
             }
         }
     }
+    
+    
     
     func fetchNewMessages() {
         currentPage += 1

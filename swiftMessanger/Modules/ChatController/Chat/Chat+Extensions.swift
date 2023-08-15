@@ -22,6 +22,8 @@ extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
         tableView.refreshControl?.endRefreshing()
         tableView.reloadData()
+        setupNavigationController()
+
         if let count = viewModel.messages?.count, count > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
@@ -77,4 +79,18 @@ extension ChatController : SocketIOManagerChatDelegate {
         }
     }
 }
+
+
+extension ChatController{
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == viewModel.segueId, let chatVC = segue.destination as? ChatInformationController {
+            if let selectedUsers = sender as? [UserModel] {
+                chatVC.viewModel.users = viewModel.userInformations
+            }else{
+                print("SEGUEDEBUG: could not send segue")
+            }
+        }
+    }
+}
+
 

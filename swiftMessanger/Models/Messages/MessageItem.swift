@@ -12,4 +12,7 @@ struct MessageItem: Codable{
     let senderId : Int
     let receiverId: Int
     let sendTime : String
+
 }
+
+
