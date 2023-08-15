@@ -6,14 +6,12 @@ import AVKit
 class ChatController: UIViewController {
     
     let viewModel = ChatViewModel()
+
     
     @IBOutlet weak var inputViewBottonAnchor: NSLayoutConstraint!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var videoCell: UIView!
-    
-    
-    
     
     @IBOutlet weak var tableView: UITableView! {
         didSet{
@@ -128,7 +126,17 @@ class ChatController: UIViewController {
     }
     
     @objc func startEventTapped() {
-        print("Staretedd")
+        setupRaceView()
+        switch viewModel.chatType{
+        case .group(let group):
+            if !videoCell.isHidden{
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100")
+            }else{
+                viewModel.rView = nil
+            }
+        default:
+            print("EventDebug: Could not emit race event")
+        }
     }
     
     private func setupVideoLayer() {
@@ -146,6 +154,19 @@ class ChatController: UIViewController {
     private func setupNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func setupRaceView() {
+        if videoCell.isHidden  {
+            videoCell.isHidden = false
+            let raceView = RaceView(frame: .zero, users: viewModel.topUserInformations)
+            self.viewModel.rView = raceView
+            videoCell.addSubview(self.viewModel.rView!)
+            raceView.fillSuperview()
+        }else{
+            videoCell.isHidden = true
+            //END RACE !!
+        }
     }
     
     func setupNavigationController() {

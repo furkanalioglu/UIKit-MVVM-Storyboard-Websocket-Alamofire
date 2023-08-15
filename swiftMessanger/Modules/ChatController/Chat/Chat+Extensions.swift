@@ -31,6 +31,24 @@ extension ChatController : ChatControllerDelegate {
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
+    func didReceiveNewEventUser(userModel: GroupEventModel) {
+        switch viewModel.chatType {
+        case .group(let group):
+            let newUser = GroupEventModel(userId: userModel.userId, itemCount: userModel.itemCount, groupId: userModel.groupId)
+            viewModel.topUserInformations.append(newUser)
+            print("eventdebug:",viewModel.topUserInformations.count)
+            if viewModel.rView?.userCircles.count ?? 0 < 3{
+                viewModel.rView?.generateNewUserCircle(withGroupModel: userModel)
+            }else{
+                viewModel.rView?.updateUserCircles()
+            }
+            print("EVENTDEBUG: \(userModel)")
+        default:
+            break
+            
+        }
+    }
+    
     func didReceiveGroupChatMessage(groupMessage: MessageItem) {
         switch viewModel.chatType {
         case .user(let user):
@@ -43,6 +61,9 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.socketMessages.removeAll()
                 tableView.reloadData()
                 scrollToBottom(animated: true)
+                if viewModel.rView != nil  {
+                    print("EVENTDEBUG: MOVE CIRCLES")
+                }
             }
         default:
             print("err")

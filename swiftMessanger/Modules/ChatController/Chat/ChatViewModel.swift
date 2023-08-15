@@ -15,6 +15,8 @@ enum ChatType {
 
 class ChatViewModel {
     
+    var  rView: RaceView? = nil
+    
     let cellNib = "ChatCell2"
     lazy var segueId = "toShowInformation"
     
@@ -74,6 +76,7 @@ class ChatViewModel {
     var socketMessages = [MessageItem]()
     
     var userInformations: [UserModel]?
+    var topUserInformations =  [GroupEventModel]()
     
     
     weak var delegate : ChatControllerDelegate?

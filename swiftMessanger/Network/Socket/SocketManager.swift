@@ -17,6 +17,7 @@ protocol SocketIOManagerDelegate: AnyObject {
 protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
     func didReceiveGroupChatMessage(groupMessage : MessageItem)
+    func didReceiveNewEventUser(userModel: GroupEventModel)
 }
 struct SocketURL {
     static let baseURL: URL = {
@@ -104,6 +105,21 @@ class SocketIOManager {
         socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
     }
     
+    func sendRaceEventRequest(groupId: String, seconds: String) {
+        guard let groupId = Int(groupId) else { fatalError("Group id does not exist")}
+        guard let seconds = Int(seconds) else { fatalError("Seconds does not exist")}
+        let request = RaceEvent(groupId: groupId, seconds: seconds)
+        
+        socket?.emitWithAck("event:create", request.toData()).timingOut(after: 10, callback: { data in
+            guard let response = data[0] as? [String: Any],
+                  let status = response["status"] as? Int else {
+                print("Failed to parse response")
+                return
+            }
+            print("emitDebug:", status)
+        })
+    }
+    
     private func addHandlers() {
         socket?.on(clientEvent: .connect) { data, _ in
             debugPrint("SOCKETDEBUG: connected to socket")
@@ -141,6 +157,19 @@ class SocketIOManager {
             print("receiveddebugSOCKET: \(socketMessage)")
             self.delegate?.didReceiveGroupMessage(groupMessage: socketMessage)
             self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)
+            
+        }
+        
+        socket?.on("event") {(data, _) in
+            guard let respose = data[0] as? String,
+                  let modeledData : GroupEventModel = GroupEventModel.parse(data: respose)
+            else{
+                debugPrint("SOCKETDEBUG: Raw event data: \(data)" )
+                return
+            }
+            let newGroupEventModel = GroupEventModel(userId: modeledData.userId, itemCount: modeledData.itemCount, groupId: modeledData.groupId)
+            print("EVENTDEBUG receibed model")
+            self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventModel)
             
         }
         

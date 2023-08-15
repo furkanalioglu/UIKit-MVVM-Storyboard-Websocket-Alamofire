@@ -55,6 +55,12 @@
 		9171B34C2A8B5A0600C698EC /* ChatInformationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9171B34A2A8B5A0600C698EC /* ChatInformationCell.xib */; };
 		9171B34E2A8B5C4400C698EC /* ChatInformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B34D2A8B5C4400C698EC /* ChatInformationViewModel.swift */; };
 		9171B3502A8B5ED600C698EC /* GroupMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B34F2A8B5ED600C698EC /* GroupMessageModel.swift */; };
+		9171B3522A8B827800C698EC /* NSLayoutExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3512A8B827800C698EC /* NSLayoutExtensions.swift */; };
+		9171B3552A8B832600C698EC /* RaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3542A8B832600C698EC /* RaceView.swift */; };
+		9171B3572A8B9C7500C698EC /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3562A8B9C7500C698EC /* ColorExtensions.swift */; };
+		9171B3592A8BA29700C698EC /* RaceEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3582A8BA29700C698EC /* RaceEvent.swift */; };
+		9171B35B2A8BABF400C698EC /* RaceHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B35A2A8BABF400C698EC /* RaceHandler.swift */; };
+		9171B35D2A8BB05A00C698EC /* GroupEventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B35C2A8BB05A00C698EC /* GroupEventModel.swift */; };
 		918B337A2A77E0EE00AB0EB8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918B33792A77E0EE00AB0EB8 /* AppDelegate.swift */; };
 		918B337C2A77E0EE00AB0EB8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918B337B2A77E0EE00AB0EB8 /* SceneDelegate.swift */; };
 		918B337E2A77E0EE00AB0EB8 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918B337D2A77E0EE00AB0EB8 /* LoginController.swift */; };
@@ -175,6 +181,12 @@
 		9171B34A2A8B5A0600C698EC /* ChatInformationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatInformationCell.xib; sourceTree = "<group>"; };
 		9171B34D2A8B5C4400C698EC /* ChatInformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInformationViewModel.swift; sourceTree = "<group>"; };
 		9171B34F2A8B5ED600C698EC /* GroupMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMessageModel.swift; sourceTree = "<group>"; };
+		9171B3512A8B827800C698EC /* NSLayoutExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSLayoutExtensions.swift; sourceTree = "<group>"; };
+		9171B3542A8B832600C698EC /* RaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceView.swift; sourceTree = "<group>"; };
+		9171B3562A8B9C7500C698EC /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
+		9171B3582A8BA29700C698EC /* RaceEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEvent.swift; sourceTree = "<group>"; };
+		9171B35A2A8BABF400C698EC /* RaceHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceHandler.swift; sourceTree = "<group>"; };
+		9171B35C2A8BB05A00C698EC /* GroupEventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEventModel.swift; sourceTree = "<group>"; };
 		918B33762A77E0EE00AB0EB8 /* swiftMessanger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = swiftMessanger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		918B33792A77E0EE00AB0EB8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		918B337B2A77E0EE00AB0EB8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -451,6 +463,7 @@
 		9171B3402A8B58D300C698EC /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				9171B3532A8B82BB00C698EC /* RaceView */,
 				913B6E1C2A7A4EFA00B9D5C4 /* ChatController.swift */,
 				913B6E262A7A4FD700B9D5C4 /* ChatViewModel.swift */,
 				9171B33B2A8A276300C698EC /* Chat+Extensions.swift */,
@@ -474,6 +487,15 @@
 				9171B34A2A8B5A0600C698EC /* ChatInformationCell.xib */,
 			);
 			path = ChatInformationCell;
+			sourceTree = "<group>";
+		};
+		9171B3532A8B82BB00C698EC /* RaceView */ = {
+			isa = PBXGroup;
+			children = (
+				9171B3542A8B832600C698EC /* RaceView.swift */,
+				9171B35A2A8BABF400C698EC /* RaceHandler.swift */,
+			);
+			path = RaceView;
 			sourceTree = "<group>";
 		};
 		918B336D2A77E0EE00AB0EB8 = {
@@ -664,6 +686,8 @@
 			children = (
 				91934F362A80F90200D827B3 /* UDConstants.swift */,
 				91934F382A81044B00D827B3 /* DateExtension.swift */,
+				9171B3512A8B827800C698EC /* NSLayoutExtensions.swift */,
+				9171B3562A8B9C7500C698EC /* ColorExtensions.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -690,6 +714,8 @@
 				9100AC432A8659AB00AE6FEC /* GroupCellModel.swift */,
 				9100AC452A865A0C00AE6FEC /* CreateGroupModel.swift */,
 				9171B34F2A8B5ED600C698EC /* GroupMessageModel.swift */,
+				9171B3582A8BA29700C698EC /* RaceEvent.swift */,
+				9171B35C2A8BB05A00C698EC /* GroupEventModel.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -932,10 +958,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				91B62E6C2A8616EC00B3C56E /* NewGroupController.swift in Sources */,
+				9171B3572A8B9C7500C698EC /* ColorExtensions.swift in Sources */,
 				9100AC402A864B6200AE6FEC /* NewGroupEditController.swift in Sources */,
 				913B6E112A7A338200B9D5C4 /* EditProfileViewModel.swift in Sources */,
+				9171B35D2A8BB05A00C698EC /* GroupEventModel.swift in Sources */,
 				913B6E142A7A377500B9D5C4 /* AppConfig.swift in Sources */,
 				919CDE942A794D6F00EB5DDE /* CurrentUserModel.swift in Sources */,
+				9171B35B2A8BABF400C698EC /* RaceHandler.swift in Sources */,
 				9171B3432A8B58F700C698EC /* ChatInformationController.swift in Sources */,
 				910C24AE2A78E0D200E70900 /* UsersViewModel.swift in Sources */,
 				913B6E382A7B76E000B9D5C4 /* RegisterViewModel.swift in Sources */,
@@ -961,6 +990,7 @@
 				9171B34B2A8B5A0600C698EC /* ChatInformationCell.swift in Sources */,
 				913B6E3A2A7B886D00B9D5C4 /* Rootmanager.swift in Sources */,
 				918B33A12A77EB4500AB0EB8 /* LoginViewModel.swift in Sources */,
+				9171B3592A8BA29700C698EC /* RaceEvent.swift in Sources */,
 				91934F292A7D1F1B00D827B3 /* SpecificUser.swift in Sources */,
 				913B6E3E2A7B8BDC00B9D5C4 /* RootExtension.swift in Sources */,
 				91B62E732A86193C00B3C56E /* NewGroupViewModel.swift in Sources */,
@@ -992,7 +1022,9 @@
 				913B6E042A7A31A600B9D5C4 /* SettingsViewModel.swift in Sources */,
 				91934F262A7CE05700D827B3 /* MessagesCellItem.swift in Sources */,
 				9171B34E2A8B5C4400C698EC /* ChatInformationViewModel.swift in Sources */,
+				9171B3522A8B827800C698EC /* NSLayoutExtensions.swift in Sources */,
 				9171B33A2A8A273200C698EC /* Messages+Extensions.swift in Sources */,
+				9171B3552A8B832600C698EC /* RaceView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
