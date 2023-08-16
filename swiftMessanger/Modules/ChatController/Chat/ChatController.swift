@@ -31,9 +31,6 @@ class ChatController: UIViewController {
         
         viewModel.delegate = self
         SocketIOManager.shared().chatDelegate = self
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
-        
         setupTapGesture()
         setupRefreshControl()
         setupNotificationObservers()
@@ -48,6 +45,7 @@ class ChatController: UIViewController {
         case .group(let group):
             AppConfig.instance.currentChat = nil
             viewModel.handleMessageSeen(forUserId: group.id)
+            viewModel.rView?.raceTimer?.invalidate()
         default:
             print("Error")
         }
@@ -98,8 +96,18 @@ class ChatController: UIViewController {
     }
     
     @objc func handleUserDidEnterForeground() {
+        viewModel.messages?.removeAll()
+        switch viewModel.chatType{
+        case .group(let group):
+            viewModel.fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
+        case .user(let user):
+            viewModel.fetchMessagesForSelectedUser(userId: String(user.id), page: 1)
+        default:
+            break
+        }
         scrollToBottom(animated: true)
-        //make it empty
+        
+        
         //fetch it again
         print("HANDLE RELOAD NEW MESSAGES HERE!!")
     }
@@ -132,7 +140,7 @@ class ChatController: UIViewController {
         case .group(let group):
             SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100")
         default:
-            print("EventDebug: Could not emit race event")
+            print(" EventDebug: since group not found Could not emit race event")
         }
     }
     
@@ -151,6 +159,7 @@ class ChatController: UIViewController {
     private func setupNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
     }
     
     func setupRaceView() {
@@ -159,6 +168,7 @@ class ChatController: UIViewController {
             let raceView = RaceView(frame: .zero)
             self.viewModel.rView = raceView
             videoCell.addSubview(self.viewModel.rView!)
+//            viewModel.rView?.startTimer()
             raceView.fillSuperview()
         }else{
             videoCell.isHidden = true

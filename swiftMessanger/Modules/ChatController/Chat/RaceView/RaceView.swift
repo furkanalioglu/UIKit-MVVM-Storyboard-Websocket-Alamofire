@@ -15,11 +15,18 @@ class RaceView: UIView {
     
     var totalPoints = 1
     
+    var raceTimer : Timer?
+    var countdownValue: Int = 100
+
+    var timerLabel = UILabel()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupFlag()
         road()
+        setupTimer()
+        
         backgroundColor = .systemGray
     }
     
@@ -37,6 +44,13 @@ class RaceView: UIView {
         flagView.anchor(bottom:bottomAnchor,right: rightAnchor, paddingBottom: 5,paddingRight: 0)
     }
     
+    private func setupTimer() {
+        timerLabel.font = UIFont.systemFont(ofSize: 12)
+        timerLabel.textColor = .black
+        addSubview(timerLabel)
+        timerLabel.anchor(top: topAnchor, right: rightAnchor,paddingRight: 8)
+    }
+    
     private func road() {
         let road = UIView()
         addSubview(road)
@@ -46,13 +60,10 @@ class RaceView: UIView {
     }
     
     func updateUserCircles(newUser: GroupEventModel?) {
-        // Get top 3 users
         let topUsersSlice = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(3)
         let topUsers: [GroupEventModel] = Array(topUsersSlice)
-        
         totalPoints = topUsers.reduce(0, { $0 + $1.itemCount })
         
-        // If there are fewer than 3 users, directly move the circles or generate new ones
         if userModels.count <= 3 {
             if let newUser = newUser {
                 generateNewUserCircle(withUserModel: newUser)
@@ -61,27 +72,21 @@ class RaceView: UIView {
             return
         }
         
-        // If the previous top users are different from the current top users
         if Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId }) {
-            // Find the user from previous top 3 who is no longer in the new top 3
             if let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0) }),
                let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }) {
                 
-                // Remove the circle both from the view and the userCircles array
                 circleToRemove.removeFromSuperview()
                 userCircles.removeAll(where: { $0.userId == userToRemove.userId })
                 
-                // Generate a new circle for the new user in the top 3
                 if let newUser = topUsers.first(where: { !previousTopUsers.contains($0) }) {
                     generateNewUserCircle(withUserModel: newUser)
                 }
             }
         }
         
-        moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
-        
-        // Update the previous top users
-        previousTopUsers = topUsers
+    moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
+    previousTopUsers = topUsers
     }
     
     func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
@@ -114,6 +119,22 @@ class RaceView: UIView {
         newCircle.setWidth(30)
         newCircle.setHeight(30)
         userCircles.append(newCircle)
+        newCircle.layoutIfNeeded()
+        newCircle.makeCircle()
+    }
+    
+    func startTimer() {
+        timerLabel.text = "\(countdownValue)"
+        raceTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let strongSelf = self else { return }
+            
+            strongSelf.countdownValue -= 1
+            strongSelf.timerLabel.text = "\(strongSelf.countdownValue)"
+            
+            if strongSelf.countdownValue <= 0 {
+                strongSelf.removeFromSuperview()
+            }
+        }
     }
 }
 

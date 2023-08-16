@@ -121,6 +121,11 @@ class SocketIOManager {
         })
     }
     
+    func sendFinishEventRequest(groupId: String,timeRemaining: String) {
+        let evnt = RaceEvent(groupId: Int(groupId) ?? 0, seconds: Int(timeRemaining) ?? 0)
+        socket?.emit("event:finish",evnt.toData())
+    }
+    
     
     private func addHandlers() {
         socket?.on(clientEvent: .connect) { data, _ in

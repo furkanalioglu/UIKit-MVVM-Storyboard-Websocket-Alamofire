@@ -36,6 +36,8 @@ extension ChatController : SocketIOManagerChatDelegate {
             setupRaceView()
         }else{
             videoCell.isHidden = true
+            SocketIOManager.shared().sendFinishEventRequest(groupId: String(groupId),timeRemaining: (viewModel.rView?.timerLabel.text)!)
+            viewModel.rView?.raceTimer?.invalidate()
             print("Wait for cooldown")
         }
     }
@@ -46,11 +48,9 @@ extension ChatController : SocketIOManagerChatDelegate {
             if let existedUserIndex = viewModel.rView?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
                 viewModel.rView?.userModels[existedUserIndex].itemCount += 1
                 viewModel.rView?.updateUserCircles(newUser: nil)
-                print("RACEDEBUG: \(viewModel.rView?.userModels[existedUserIndex]) message point += 1 POINTS = \(viewModel.rView?.userModels[existedUserIndex].itemCount) ")
             }else{
                 viewModel.rView?.userModels.append(userModel)
                 viewModel.rView?.updateUserCircles(newUser: userModel)
-                print("RACEDEBUG: New user joined the race\(viewModel.rView?.userModels.count)")
 
             }
         default:
@@ -64,14 +64,16 @@ extension ChatController : SocketIOManagerChatDelegate {
             print("User received email")
         case .group(let group):
             if groupMessage.senderId != Int(AppConfig.instance.currentUserId ?? "") {
-                viewModel.messages?.append(groupMessage)
-                viewModel.socketMessages.append(groupMessage)
-                print("receiveddebugSOCKET arrived appending....")
-                viewModel.socketMessages.removeAll()
-                tableView.reloadData()
-                scrollToBottom(animated: true)
-                if viewModel.rView != nil  {
-                    print("EVENTDEBUG: MOVE CIRCLES")
+                if group.id == groupMessage.receiverId {
+                    viewModel.messages?.append(groupMessage)
+                    viewModel.socketMessages.append(groupMessage)
+                    print("receiveddebugSOCKET arrived appending....")
+                    viewModel.socketMessages.removeAll()
+                    tableView.reloadData()
+                    scrollToBottom(animated: true)
+                    if viewModel.rView != nil  {
+                        print("EVENTDEBUG: MOVE CIRCLES")
+                    }
                 }
             }
         default:

@@ -12,3 +12,6 @@ struct RaceEvent : Codable {
     let groupId: Int
     let seconds: Int
 }
+
+
+

@@ -15,7 +15,7 @@ enum ChatType {
 
 class ChatViewModel {
     
-    var  rView: RaceView? = nil
+    var rView: RaceView? = nil
     
     let cellNib = "ChatCell2"
     lazy var segueId = "toShowInformation"
