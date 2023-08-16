@@ -11,6 +11,7 @@ import Foundation
 struct RaceEvent : Codable {
     let groupId: Int
     let seconds: Int
+    let status : Int
 }
 
 

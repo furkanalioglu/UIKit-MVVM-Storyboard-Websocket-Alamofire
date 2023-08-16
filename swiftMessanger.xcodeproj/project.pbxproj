@@ -498,6 +498,39 @@
 			path = RaceView;
 			sourceTree = "<group>";
 		};
+		9171B35E2A8D06DD00C698EC /* AuthModel */ = {
+			isa = PBXGroup;
+			children = (
+				910C24A72A78DF2300E70900 /* RegisterModel.swift */,
+				919CDE842A790EFC00EB5DDE /* LoginModel.swift */,
+			);
+			path = AuthModel;
+			sourceTree = "<group>";
+		};
+		9171B35F2A8D06F200C698EC /* UserModel */ = {
+			isa = PBXGroup;
+			children = (
+				919CDE8A2A79263000EB5DDE /* UserModel.swift */,
+				919CDE932A794D6F00EB5DDE /* CurrentUserModel.swift */,
+				913B6E192A7A48CA00B9D5C4 /* UpdateUserModel.swift */,
+				91934F282A7D1F1B00D827B3 /* SpecificUser.swift */,
+				91934F332A80F60500D827B3 /* TokenModel.swift */,
+			);
+			path = UserModel;
+			sourceTree = "<group>";
+		};
+		9171B3602A8D070A00C698EC /* GroupModel */ = {
+			isa = PBXGroup;
+			children = (
+				9100AC432A8659AB00AE6FEC /* GroupCellModel.swift */,
+				9100AC452A865A0C00AE6FEC /* CreateGroupModel.swift */,
+				9171B34F2A8B5ED600C698EC /* GroupMessageModel.swift */,
+				9171B3582A8BA29700C698EC /* RaceEvent.swift */,
+				9171B35C2A8BB05A00C698EC /* GroupEventModel.swift */,
+			);
+			path = GroupModel;
+			sourceTree = "<group>";
+		};
 		918B336D2A77E0EE00AB0EB8 = {
 			isa = PBXGroup;
 			children = (
@@ -704,18 +737,9 @@
 		919CDE8C2A79355100EB5DDE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				910C24A72A78DF2300E70900 /* RegisterModel.swift */,
-				919CDE842A790EFC00EB5DDE /* LoginModel.swift */,
-				919CDE8A2A79263000EB5DDE /* UserModel.swift */,
-				919CDE932A794D6F00EB5DDE /* CurrentUserModel.swift */,
-				913B6E192A7A48CA00B9D5C4 /* UpdateUserModel.swift */,
-				91934F282A7D1F1B00D827B3 /* SpecificUser.swift */,
-				91934F332A80F60500D827B3 /* TokenModel.swift */,
-				9100AC432A8659AB00AE6FEC /* GroupCellModel.swift */,
-				9100AC452A865A0C00AE6FEC /* CreateGroupModel.swift */,
-				9171B34F2A8B5ED600C698EC /* GroupMessageModel.swift */,
-				9171B3582A8BA29700C698EC /* RaceEvent.swift */,
-				9171B35C2A8BB05A00C698EC /* GroupEventModel.swift */,
+				9171B3602A8D070A00C698EC /* GroupModel */,
+				9171B35F2A8D06F200C698EC /* UserModel */,
+				9171B35E2A8D06DD00C698EC /* AuthModel */,
 			);
 			path = Auth;
 			sourceTree = "<group>";

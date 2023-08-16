@@ -17,6 +17,8 @@ class RaceView: UIView {
     
     var raceTimer : Timer?
     var countdownValue: Int = 100
+    
+    var isAnyRaceAvaible : Bool = false
 
     var timerLabel = UILabel()
     
@@ -29,6 +31,20 @@ class RaceView: UIView {
         
         backgroundColor = .systemGray
     }
+    
+    
+    init(frame: CGRect, userModels: [GroupEventModel], isAnyRaceAvaible: Bool, timerValue: Int) {
+        self.userModels = userModels
+        self.isAnyRaceAvaible = isAnyRaceAvaible
+        self.countdownValue = timerValue
+        super.init(frame: frame)
+        
+        setupFlag()
+        road()
+        setupTimer()
+        
+    }
+    
     
     
     required init?(coder: NSCoder) {
@@ -64,9 +80,12 @@ class RaceView: UIView {
         let topUsers: [GroupEventModel] = Array(topUsersSlice)
         totalPoints = topUsers.reduce(0, { $0 + $1.itemCount })
         
+        //maybe add logic 
         if userModels.count <= 3 {
             if let newUser = newUser {
-                generateNewUserCircle(withUserModel: newUser)
+                if newUser.userId != Int(AppConfig.instance.currentUserId ?? "") {
+                    generateNewUserCircle(withUserModel: newUser)
+                }
             }
             moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
             return
@@ -80,7 +99,10 @@ class RaceView: UIView {
                 userCircles.removeAll(where: { $0.userId == userToRemove.userId })
                 
                 if let newUser = topUsers.first(where: { !previousTopUsers.contains($0) }) {
-                    generateNewUserCircle(withUserModel: newUser)
+                    if newUser.userId != Int(AppConfig.instance.currentUserId ?? "") {
+                        generateNewUserCircle(withUserModel: newUser)
+
+                    }
                 }
             }
         }
@@ -98,9 +120,7 @@ class RaceView: UIView {
             guard let circle = userCircles.first(where: { $0.userId == user.userId }) else { continue }
             
             let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
-            
             let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
-            
             let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
             
             UIView.animate(withDuration: 0.5) {
@@ -147,6 +167,7 @@ class UserCircle: UIView {
         setupView()
         
     }
+
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

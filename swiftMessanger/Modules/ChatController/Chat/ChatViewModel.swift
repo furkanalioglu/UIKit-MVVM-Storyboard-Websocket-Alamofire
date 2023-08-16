@@ -201,4 +201,14 @@ class ChatViewModel {
             }
         }
     }
+    
+    func finishEventForCurrentUser() {
+        switch chatType {
+        case .group(let group):
+            SocketIOManager.shared().sendRaceEventRequest(groupId:String(group.id)
+                                                          , seconds: "0", status: 1)
+        default:
+            print("kkk")
+        }
+    }
 }

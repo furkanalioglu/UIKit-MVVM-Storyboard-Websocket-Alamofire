@@ -6,7 +6,6 @@ import AVKit
 class ChatController: UIViewController {
     
     let viewModel = ChatViewModel()
-
     
     @IBOutlet weak var inputViewBottonAnchor: NSLayoutConstraint!
     @IBOutlet weak var messageTextField: UITextField!
@@ -106,9 +105,6 @@ class ChatController: UIViewController {
             break
         }
         scrollToBottom(animated: true)
-        
-        
-        //fetch it again
         print("HANDLE RELOAD NEW MESSAGES HERE!!")
     }
     
@@ -129,16 +125,28 @@ class ChatController: UIViewController {
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         view.addGestureRecognizer(tapGesture)
+        let holdGesture = UILongPressGestureRecognizer(target: self ,action: #selector(onHoldSendMessage))
+        holdGesture.minimumPressDuration = 0.5
+        sendMessageButton.addGestureRecognizer(holdGesture)
     }
     
     @objc func handleTap() {
         view.endEditing(true)
     }
+    @objc func onHoldSendMessage() {
+        viewModel.sendMessage(myText: "test")
+        tableView.reloadData()
+        scrollToBottom(animated: true)
+    }
     
     @objc func startEventTapped() {
         switch viewModel.chatType{
         case .group(let group):
-            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100")
+            if videoCell.isHidden{
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 0)
+            }else{
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
+            }
         default:
             print(" EventDebug: since group not found Could not emit race event")
         }

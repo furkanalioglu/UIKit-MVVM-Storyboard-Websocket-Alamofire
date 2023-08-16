@@ -36,7 +36,7 @@ extension ChatController : SocketIOManagerChatDelegate {
             setupRaceView()
         }else{
             videoCell.isHidden = true
-            SocketIOManager.shared().sendFinishEventRequest(groupId: String(groupId),timeRemaining: (viewModel.rView?.timerLabel.text)!)
+//            SocketIOManager.shared().sendRaceEventRequest(groupId: String(groupId),seconds: "0", status:0)
             viewModel.rView?.raceTimer?.invalidate()
             print("Wait for cooldown")
         }
@@ -49,8 +49,11 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.rView?.userModels[existedUserIndex].itemCount += 1
                 viewModel.rView?.updateUserCircles(newUser: nil)
             }else{
-                viewModel.rView?.userModels.append(userModel)
-                viewModel.rView?.updateUserCircles(newUser: userModel)
+                if userModel.userId != Int(AppConfig.instance.currentUserId ?? "") {
+                    viewModel.rView?.userModels.append(userModel)
+                    viewModel.rView?.updateUserCircles(newUser: userModel)
+                }
+
 
             }
         default:

@@ -106,12 +106,12 @@ class SocketIOManager {
         socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
     }
     
-    func sendRaceEventRequest(groupId: String, seconds: String) {
+    func sendRaceEventRequest(groupId: String, seconds: String,status: Int) {
         guard let groupId = Int(groupId) else { fatalError("Group id does not exist")}
         guard let seconds = Int(seconds) else { fatalError("Seconds does not exist")}
-        let request = RaceEvent(groupId: groupId, seconds: seconds)
+        let request = RaceEvent(groupId: groupId, seconds: seconds,status: status)
         
-        socket?.emitWithAck("event:create", request.toData()).timingOut(after: 10, callback: { data in
+        socket?.emitWithAck("event:status", request.toData()).timingOut(after: 10, callback: { data in
             guard let response = data[0] as? [String: Any],
                   let status = response["status"] as? Int else {
                 print("Failed to parse response")
@@ -120,12 +120,6 @@ class SocketIOManager {
             self.chatDelegate?.didSendNewEventRequest(groupId: groupId, seconds: seconds,statusCode: status)
         })
     }
-    
-    func sendFinishEventRequest(groupId: String,timeRemaining: String) {
-        let evnt = RaceEvent(groupId: Int(groupId) ?? 0, seconds: Int(timeRemaining) ?? 0)
-        socket?.emit("event:finish",evnt.toData())
-    }
-    
     
     private func addHandlers() {
         socket?.on(clientEvent: .connect) { data, _ in
