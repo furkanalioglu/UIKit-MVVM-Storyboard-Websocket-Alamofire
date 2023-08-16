@@ -7,8 +7,13 @@
 import UIKit
 
 class RaceView: UIView {
+    var userModels: [GroupEventModel] = []
+    var previousTopUsers : [GroupEventModel] = []
+    
     var userCircles: [UserCircle] = []
     var flagView: UIImageView!
+    
+    var totalPoints = 1
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -18,18 +23,11 @@ class RaceView: UIView {
         backgroundColor = .systemGray
     }
     
-    init(frame: CGRect, users: [GroupEventModel]) {
-        super.init(frame: frame)
-        
-        setupFlag()
-        road()
-        backgroundColor = .systemGray
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setupFlag() {
         let flagImage = UIImage(systemName: "flag")
         flagView = UIImageView(image: flagImage)
@@ -47,29 +45,86 @@ class RaceView: UIView {
         road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
     }
     
-    func updateUserCircles() {
+    func updateUserCircles(newUser: GroupEventModel?) {
+        // Get top 3 users
+        let topUsersSlice = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(3)
+        let topUsers: [GroupEventModel] = Array(topUsersSlice)
         
+        totalPoints = topUsers.reduce(0, { $0 + $1.itemCount })
+        
+        // If there are fewer than 3 users, directly move the circles or generate new ones
+        if userModels.count <= 3 {
+            if let newUser = newUser {
+                generateNewUserCircle(withUserModel: newUser)
+            }
+            moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
+            return
+        }
+        
+        // If the previous top users are different from the current top users
+        if Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId }) {
+            // Find the user from previous top 3 who is no longer in the new top 3
+            if let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0) }),
+               let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }) {
+                
+                // Remove the circle both from the view and the userCircles array
+                circleToRemove.removeFromSuperview()
+                userCircles.removeAll(where: { $0.userId == userToRemove.userId })
+                
+                // Generate a new circle for the new user in the top 3
+                if let newUser = topUsers.first(where: { !previousTopUsers.contains($0) }) {
+                    generateNewUserCircle(withUserModel: newUser)
+                }
+            }
+        }
+        
+        moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
+        
+        // Update the previous top users
+        previousTopUsers = topUsers
     }
     
-    func generateNewUserCircle(withGroupModel user: GroupEventModel) {
-            let circle = UserCircle()
-            circle.setHeight(30)
-            circle.setWidth(30)
-            userCircles.append(circle)
-            addSubview(circle)
-            circle.anchor(left: leftAnchor , bottom:bottomAnchor, paddingLeft: CGFloat((userCircles.count * 10)), paddingBottom: 8)
-            circle.layoutIfNeeded()
-            circle.makeCircle()
-            circle.setUserId(user.userId)
+    func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
+        guard totalPoints > 0 else { return }
+
+        let roadWidth = self.bounds.width - 50 // This represents 100%
+
+        for user in topUsers {
+            guard let circle = userCircles.first(where: { $0.userId == user.userId }) else { continue }
+            
+            let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
+            
+            let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
+            
+            let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
+            
+            UIView.animate(withDuration: 0.5) {
+                circle.frame.origin.x = clampedXPosition
+                self.layoutIfNeeded()
+            }
+        }
     }
     
     
+    func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
+        let newCircle = UserCircle()
+        newCircle.configure(withUser: userModel)
+        addSubview(newCircle)
+        newCircle.anchor(bottom: bottomAnchor, right: rightAnchor,paddingRight: 50)
+        newCircle.setWidth(30)
+        newCircle.setHeight(30)
+        userCircles.append(newCircle)
+    }
 }
 
 class UserCircle: UIView {
+    
+    var userId: Int = 0
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .random
+        setupView()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -89,11 +144,18 @@ class UserCircle: UIView {
         self.layer.masksToBounds = true
     }
     
-    func setUserId(_ id: Int) {
-        userIdLabel.text = String(id)
+    func configure(withUser user: GroupEventModel) {
+        userIdLabel.text = String(user.userId)
+        backgroundColor = .random
+        userId = user.userId
+        makeCircle()
+    }
+    
+    private func setupView() {
+        self.backgroundColor = .random
         addSubview(userIdLabel)
         userIdLabel.centerX(inView: self)
-        userIdLabel.center(inView: self)
+        userIdLabel.centerY(inView: self)
     }
     
 }

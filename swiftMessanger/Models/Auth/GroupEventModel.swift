@@ -7,8 +7,14 @@
 
 import Foundation
 
-struct GroupEventModel : Codable {
+struct GroupEventModel : Codable, Equatable {
     let userId : Int
-    let itemCount : Int
+    var itemCount : Int
     let groupId: Int
+}
+
+extension GroupEventModel{
+    static func == (lhs: GroupEventModel, rhs: GroupEventModel) -> Bool {
+        return lhs.userId == rhs.userId
+    }
 }

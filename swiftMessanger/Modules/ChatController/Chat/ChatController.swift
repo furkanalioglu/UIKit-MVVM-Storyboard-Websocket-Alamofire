@@ -99,6 +99,8 @@ class ChatController: UIViewController {
     
     @objc func handleUserDidEnterForeground() {
         scrollToBottom(animated: true)
+        //make it empty
+        //fetch it again
         print("HANDLE RELOAD NEW MESSAGES HERE!!")
     }
     
@@ -126,14 +128,9 @@ class ChatController: UIViewController {
     }
     
     @objc func startEventTapped() {
-        setupRaceView()
         switch viewModel.chatType{
         case .group(let group):
-            if !videoCell.isHidden{
-                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100")
-            }else{
-                viewModel.rView = nil
-            }
+            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100")
         default:
             print("EventDebug: Could not emit race event")
         }
@@ -156,16 +153,15 @@ class ChatController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    private func setupRaceView() {
+    func setupRaceView() {
         if videoCell.isHidden  {
             videoCell.isHidden = false
-            let raceView = RaceView(frame: .zero, users: viewModel.topUserInformations)
+            let raceView = RaceView(frame: .zero)
             self.viewModel.rView = raceView
             videoCell.addSubview(self.viewModel.rView!)
             raceView.fillSuperview()
         }else{
             videoCell.isHidden = true
-            //END RACE !!
         }
     }
     

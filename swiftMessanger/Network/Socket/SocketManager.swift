@@ -18,10 +18,11 @@ protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
     func didReceiveGroupChatMessage(groupMessage : MessageItem)
     func didReceiveNewEventUser(userModel: GroupEventModel)
+    func didSendNewEventRequest(groupId: Int, seconds: Int,statusCode: Int)
 }
 struct SocketURL {
     static let baseURL: URL = {
-        guard let url = URL(string: "ws://10.82.0.101:3000/token=") else {
+        guard let url = URL(string: "ws://10.82.0.65:3000/token=") else {
             fatalError("Invalid base URL.")
         }
         return url
@@ -116,9 +117,10 @@ class SocketIOManager {
                 print("Failed to parse response")
                 return
             }
-            print("emitDebug:", status)
+            self.chatDelegate?.didSendNewEventRequest(groupId: groupId, seconds: seconds,statusCode: status)
         })
     }
+    
     
     private func addHandlers() {
         socket?.on(clientEvent: .connect) { data, _ in
@@ -170,7 +172,6 @@ class SocketIOManager {
             let newGroupEventModel = GroupEventModel(userId: modeledData.userId, itemCount: modeledData.itemCount, groupId: modeledData.groupId)
             print("EVENTDEBUG receibed model")
             self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventModel)
-            
         }
         
                 

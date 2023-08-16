@@ -31,21 +31,30 @@ extension ChatController : ChatControllerDelegate {
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
+    func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {
+        if statusCode == 0 {
+            setupRaceView()
+        }else{
+            videoCell.isHidden = true
+            print("Wait for cooldown")
+        }
+    }
+    
     func didReceiveNewEventUser(userModel: GroupEventModel) {
         switch viewModel.chatType {
         case .group(let group):
-            let newUser = GroupEventModel(userId: userModel.userId, itemCount: userModel.itemCount, groupId: userModel.groupId)
-            viewModel.topUserInformations.append(newUser)
-            print("eventdebug:",viewModel.topUserInformations.count)
-            if viewModel.rView?.userCircles.count ?? 0 < 3{
-                viewModel.rView?.generateNewUserCircle(withGroupModel: userModel)
+            if let existedUserIndex = viewModel.rView?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+                viewModel.rView?.userModels[existedUserIndex].itemCount += 1
+                viewModel.rView?.updateUserCircles(newUser: nil)
+                print("RACEDEBUG: \(viewModel.rView?.userModels[existedUserIndex]) message point += 1 POINTS = \(viewModel.rView?.userModels[existedUserIndex].itemCount) ")
             }else{
-                viewModel.rView?.updateUserCircles()
+                viewModel.rView?.userModels.append(userModel)
+                viewModel.rView?.updateUserCircles(newUser: userModel)
+                print("RACEDEBUG: New user joined the race\(viewModel.rView?.userModels.count)")
+
             }
-            print("EVENTDEBUG: \(userModel)")
         default:
             break
-            
         }
     }
     
