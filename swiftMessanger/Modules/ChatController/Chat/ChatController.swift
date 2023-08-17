@@ -33,6 +33,8 @@ class ChatController: UIViewController {
         setupTapGesture()
         setupRefreshControl()
         setupNotificationObservers()
+        videoCell.isHidden = true
+
     }
     
     
@@ -45,8 +47,7 @@ class ChatController: UIViewController {
             AppConfig.instance.currentChat = nil
             viewModel.handleMessageSeen(forUserId: group.id)
             viewModel.player?.pause()
-            viewModel.rView?.raceTimer?.invalidate()
-            viewModel.rView?.raceTimer = nil
+            viewModel.rView?.handler?.stopTimer()
             viewModel.rView = nil
             SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
 
@@ -179,10 +180,11 @@ class ChatController: UIViewController {
     func setupRaceView() {
         if videoCell.isHidden  {
             videoCell.isHidden = false
-            let raceView = RaceView(frame: .zero,handler: RaceHandler())
+            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true))
             self.viewModel.rView = raceView
+            self.viewModel.rView?.handler?.startTimer()
             videoCell.addSubview(self.viewModel.rView!)
-//            viewModel.rView?.startTimer()
+            
             raceView.fillSuperview()
         }else{
             videoCell.isHidden = true

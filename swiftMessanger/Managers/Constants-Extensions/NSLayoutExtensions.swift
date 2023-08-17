@@ -96,4 +96,11 @@ extension UIView {
         anchor(top: view.topAnchor, left: view.leftAnchor,
                bottom: view.bottomAnchor, right: view.rightAnchor)
     }
+    
+    func updateLeftAnchor(toConstant value: CGFloat) {
+        for constraint in self.constraints where constraint.firstAttribute == .leading {
+            constraint.constant = value
+            break
+        }
+    }
 }

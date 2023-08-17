@@ -20,24 +20,34 @@ protocol ChatMessageSeenDelegate : AnyObject {
 
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
-        tableView.refreshControl?.endRefreshing()
-        tableView.reloadData()
-        setupNavigationController()
+        if error == nil {
+            
+            tableView.refreshControl?.endRefreshing()
+            tableView.reloadData()
+            setupNavigationController()
+            
+            if let count = viewModel.messages?.count, count > 0 {
+                tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+            }
+            
+            if viewModel.raceDetails == [] {
+                videoCell.isHidden = true
+                print("RACE17DEBUG: Since the view is empty did not show videocell")
+            }else{
+                print("RACE17DEBUG: Started video cell")
+                guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
+                print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
+                
+                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true)
+                viewModel.rView = RaceView(frame: view.frame, handler: handler)
+                videoCell.addSubview(self.viewModel.rView!)
+                videoCell.isHidden = false
+                viewModel.rView?.fillSuperview()
+                viewModel.rView?.handler?.startTimer()
 
-        if let count = viewModel.messages?.count, count > 0 {
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-        }
-        
-        if viewModel.raceDetails == [] {
-            videoCell.isHidden = true
-        }else{
-            videoCell.isHidden = false
-            guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
-            let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true, timerValue: 100)
-            viewModel.rView = RaceView(frame:.zero,handler: handler)
-            videoCell.addSubview(self.viewModel.rView!)
-            viewModel.rView?.fillSuperview()
-
+                
+            }
+            
         }
     }
 }
@@ -48,7 +58,6 @@ extension ChatController : SocketIOManagerChatDelegate {
             setupRaceView()
         }else{
             videoCell.isHidden = true
-            viewModel.rView?.raceTimer?.invalidate()
             print("Wait for cooldown")
         }
     }
@@ -56,21 +65,37 @@ extension ChatController : SocketIOManagerChatDelegate {
     func didReceiveNewEventUser(userModel: GroupEventModel) {
         switch viewModel.chatType {
         case .group(let group):
-            if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
-                viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
-                viewModel.rView?.updateUserCircles(newUser: nil)
-                print("Test")
-            }else{
-                if viewModel.isGroupOwner {
-                    if userModel.userId != Int(AppConfig.instance.currentUserId ?? "") {
-                        viewModel.rView?.handler?.userModels.append(userModel)
-                        viewModel.rView?.updateUserCircles(newUser: userModel)
-                        print("Test")
-                    }
+            print("EVENTDEBUG: CRASH, \(userModel.userId)")
+            if userModel.groupId == group.id && userModel.userId != -1 {
+                if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+                    viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
+                    viewModel.rView?.updateUserCircles(newUser: nil)
+                    print("Test")
                 }else{
                     viewModel.rView?.handler?.userModels.append(userModel)
                     viewModel.rView?.updateUserCircles(newUser: userModel)
                 }
+                
+            }
+            
+            if userModel.groupId == group.id && userModel.userId == -1 {
+                print("EVENTDEBUG: CRASH")
+                videoCell.isHidden = true
+                viewModel.rView = nil
+                viewModel.rView?.handler = nil
+                
+            }
+            
+            if userModel.groupId == group.id && userModel.userId == 0 && userModel.itemCount == 0{
+                guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
+                print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
+
+                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true)
+                viewModel.rView = RaceView(frame: view.frame, handler: handler)
+                videoCell.addSubview(self.viewModel.rView!)
+                videoCell.isHidden = false
+                viewModel.rView?.fillSuperview()
+                viewModel.rView?.handler?.startTimer()
             }
         default:
             break
