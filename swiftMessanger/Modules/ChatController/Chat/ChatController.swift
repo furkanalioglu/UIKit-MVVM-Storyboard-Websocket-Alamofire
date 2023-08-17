@@ -44,11 +44,17 @@ class ChatController: UIViewController {
         case .group(let group):
             AppConfig.instance.currentChat = nil
             viewModel.handleMessageSeen(forUserId: group.id)
+            viewModel.player?.pause()
             viewModel.rView?.raceTimer?.invalidate()
+            viewModel.rView?.raceTimer = nil
+            viewModel.rView = nil
+            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
+
         default:
             print("Error")
         }
-        viewModel.player?.pause()
+
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -173,7 +179,7 @@ class ChatController: UIViewController {
     func setupRaceView() {
         if videoCell.isHidden  {
             videoCell.isHidden = false
-            let raceView = RaceView(frame: .zero)
+            let raceView = RaceView(frame: .zero,handler: RaceHandler())
             self.viewModel.rView = raceView
             videoCell.addSubview(self.viewModel.rView!)
 //            viewModel.rView?.startTimer()

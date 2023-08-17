@@ -74,10 +74,9 @@ class ChatViewModel {
     var messages : [MessageItem]?
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
+    var raceDetails : [GroupEventModel]? = []
     
     var userInformations: [UserModel]?
-    var topUserInformations =  [GroupEventModel]()
-    
     
     weak var delegate : ChatControllerDelegate?
     weak var seenDelegate : ChatMessageSeenDelegate?
@@ -115,6 +114,7 @@ class ChatViewModel {
                 self.messages = messages?.messages
                 self.newMessages = messages?.messages
                 self.userInformations = messages?.users
+                self.raceDetails = messages?.race
                 self.delegate?.datasReceived(error: nil)
                 print("MESSAGES FETCHED")
             }else{
@@ -128,8 +128,6 @@ class ChatViewModel {
             }
         }
     }
-    
-    
     
     func fetchNewMessages() {
         currentPage += 1
@@ -208,7 +206,7 @@ class ChatViewModel {
             SocketIOManager.shared().sendRaceEventRequest(groupId:String(group.id)
                                                           , seconds: "0", status: 1)
         default:
-            print("kkk")
+            break
         }
     }
 }

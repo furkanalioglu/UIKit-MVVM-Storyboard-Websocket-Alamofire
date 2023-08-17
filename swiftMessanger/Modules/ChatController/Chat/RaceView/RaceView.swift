@@ -7,45 +7,25 @@
 import UIKit
 
 class RaceView: UIView {
-    var userModels: [GroupEventModel] = []
-    var previousTopUsers : [GroupEventModel] = []
-    
     var userCircles: [UserCircle] = []
     var flagView: UIImageView!
-    
-    var totalPoints = 1
-    
     var raceTimer : Timer?
     var countdownValue: Int = 100
-    
-    var isAnyRaceAvaible : Bool = false
-
     var timerLabel = UILabel()
+    var handler : RaceHandler?
     
-    override init(frame: CGRect) {
+    init(frame: CGRect, handler: RaceHandler) {
         super.init(frame: frame)
-        
+        self.handler = handler
         setupFlag()
         road()
         setupTimer()
-        
-        backgroundColor = .systemGray
-    }
-    
-    
-    init(frame: CGRect, userModels: [GroupEventModel], isAnyRaceAvaible: Bool, timerValue: Int) {
-        self.userModels = userModels
-        self.isAnyRaceAvaible = isAnyRaceAvaible
-        self.countdownValue = timerValue
-        super.init(frame: frame)
-        
-        setupFlag()
-        road()
-        setupTimer()
+        backgroundColor = .systemRed
+        generateUserCircleInTopList()
+        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+
         
     }
-    
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -76,62 +56,36 @@ class RaceView: UIView {
     }
     
     func updateUserCircles(newUser: GroupEventModel?) {
-        let topUsersSlice = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(3)
-        let topUsers: [GroupEventModel] = Array(topUsersSlice)
-        totalPoints = topUsers.reduce(0, { $0 + $1.itemCount })
+        guard let handler = handler else { return }
+        let totalPoints = handler.totalTopUsersPoints
         
-        //maybe add logic 
-        if userModels.count <= 3 {
-            if let newUser = newUser {
-                if newUser.userId != Int(AppConfig.instance.currentUserId ?? "") {
-                    generateNewUserCircle(withUserModel: newUser)
-                }
+        if handler.userModels.count <= 3 {
+            if handler.shouldGenerateNewUserCircle(for: newUser) && newUser != nil {
+                generateNewUserCircle(withUserModel: newUser!)
+                moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                return
             }
-            moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
-            return
         }
-        
-        if Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId }) {
-            if let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0) }),
-               let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }) {
-                
+        if handler.topUsersNotEqualToPrevious {
+            let updatedTopUsersInfo = handler.removeAndUpdateUser()
+            if let userToRemove = updatedTopUsersInfo.userToRemove,
+               let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
+               let userToAdd = updatedTopUsersInfo.userToAdd{
                 circleToRemove.removeFromSuperview()
                 userCircles.removeAll(where: { $0.userId == userToRemove.userId })
-                
-                if let newUser = topUsers.first(where: { !previousTopUsers.contains($0) }) {
-                    if newUser.userId != Int(AppConfig.instance.currentUserId ?? "") {
-                        generateNewUserCircle(withUserModel: newUser)
-
-                    }
+                if handler.shouldGenerateNewUserCircle(for: userToAdd){
+                    generateNewUserCircle(withUserModel: userToAdd)
+                    moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
                 }
             }
+        }else{
+            moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
         }
-        
-    moveUserCircles(topUsers: topUsers, totalPoints: totalPoints)
-    previousTopUsers = topUsers
+        handler.previousTopUsers = handler.topUsers
     }
-    
-    func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
-        guard totalPoints > 0 else { return }
-
-        let roadWidth = self.bounds.width - 50 // This represents 100%
-
-        for user in topUsers {
-            guard let circle = userCircles.first(where: { $0.userId == user.userId }) else { continue }
-            
-            let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
-            let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
-            let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
-            
-            UIView.animate(withDuration: 0.5) {
-                circle.frame.origin.x = clampedXPosition
-                self.layoutIfNeeded()
-            }
-        }
-    }
-    
     
     func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
+        guard let handler = handler else { return }
         let newCircle = UserCircle()
         newCircle.configure(withUser: userModel)
         addSubview(newCircle)
@@ -141,7 +95,39 @@ class RaceView: UIView {
         userCircles.append(newCircle)
         newCircle.layoutIfNeeded()
         newCircle.makeCircle()
+        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+
     }
+    
+    func generateUserCircleInTopList() {
+        guard let handler = handler else { return }
+        for user in handler.topUsers {
+            if userCircles.first(where: {$0.userId == user.userId}) == nil {
+                generateNewUserCircle(withUserModel: user)
+            }
+        }
+        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+    }
+    
+    func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
+//        guard totalPoints > 0 else { return }
+        let roadWidth = self.bounds.width - 50 // This represents 100%
+        
+        for user in topUsers {
+            guard let circle = userCircles.first(where: { $0.userId == user.userId }) else { continue }
+            
+            let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
+            let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
+            let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
+            print(" \(user.userId) to position \(clampedXPosition)")
+
+            UIView.animate(withDuration: 0.5) {
+                circle.frame.origin.x = clampedXPosition
+                self.layoutIfNeeded()
+            }
+        }
+    }
+    
     
     func startTimer() {
         timerLabel.text = "\(countdownValue)"
@@ -156,7 +142,11 @@ class RaceView: UIView {
             }
         }
     }
+
 }
+
+
+
 
 class UserCircle: UIView {
     
@@ -167,7 +157,7 @@ class UserCircle: UIView {
         setupView()
         
     }
-
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

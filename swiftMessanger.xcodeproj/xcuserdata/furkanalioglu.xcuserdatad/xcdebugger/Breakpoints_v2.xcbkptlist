@@ -3,4 +3,69 @@
    uuid = "EBB16DBA-E11B-435D-A17A-1C5A05A38FD4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E154A7D0-9C93-423F-963B-E8BF681A5060"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "datasReceived(error:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E154A7D0-9C93-423F-963B-E8BF681A5060 - 410b9d68f802f6aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.ChatController.datasReceived(error: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "2744">
+               </Location>
+               <Location
+                  uuid = "E154A7D0-9C93-423F-963B-E8BF681A5060 - 410b9d68f802f6aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.ChatController.datasReceived(error: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "2716">
+               </Location>
+               <Location
+                  uuid = "E154A7D0-9C93-423F-963B-E8BF681A5060 - 410b9d68f802f6aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.ChatController.datasReceived(error: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "2500">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

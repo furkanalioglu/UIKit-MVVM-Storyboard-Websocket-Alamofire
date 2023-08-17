@@ -8,47 +8,50 @@
 import Foundation
 import UIKit
 
-class RaceLogicHandler {
+class RaceHandler {
     
-    var users: [UserModel]?
-    var raceDuration : TimeInterval?
-    private var elapsedTime : TimeInterval = 0
-    private var userProgress : [Int: Float] = [:]
-    private var timer: Timer?
+    var userModels : [GroupEventModel] = []
+    var previousTopUsers : [GroupEventModel] = []
     
-    init(users: [UserModel],raceDuration : TimeInterval) {
-        self.users = users
-        self.raceDuration = raceDuration
-        for user in users {
-            userProgress[user.id] = 0
+    var isAnyRaceAvailable = false
+    var timerValue = 100 // Change it to user's selected value later
+    
+    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool, timerValue: Int) {
+        self.userModels = userModels
+        self.isAnyRaceAvailable = isAnyRaceAvailable
+        self.timerValue = timerValue
+    }
+    
+    init() {
+        
+    }
+    
+    var topUsers : [GroupEventModel] {
+        let topUsersSliced = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(3)
+        return Array(topUsersSliced)
+    }
+    
+    var totalTopUsersPoints : Int {
+        return topUsers.reduce(0, { $0 + $1.itemCount })
+    }
+    
+    var topUsersNotEqualToPrevious : Bool {
+        return Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId })
+    }
+    
+    func removeAndUpdateUser() -> (userToRemove: GroupEventModel?, userToAdd: GroupEventModel?) {
+        let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0) })
+        let userToAdd = topUsers.first(where: { !previousTopUsers.contains($0) })
+        return (userToRemove,userToAdd)
+    }
+    
+    func shouldGenerateNewUserCircle(for newUser: GroupEventModel?) -> Bool {
+        if let newUser = newUser {
+            return newUser.userId != Int(AppConfig.instance.currentUserId ?? "")
         }
+        return false
     }
     
-    func userSentMessage(userId: Int) {
-        userProgress[userId] = min(1.0, (userProgress[userId] ?? 0) + 0.1)
-    }
     
-    func startRace(completion: @escaping(Int,Float) -> Void) {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
-            self.elapsedTime += 1
-            
-            let progressPerSecond = 1.0 / Float(self.raceDuration!)
-            for (userId, progress) in self.userProgress {
-                self.userProgress[userId] = min(1.0, progress + progressPerSecond)
-                completion(userId, self.userProgress[userId] ?? 0)
-            }
-            
-            if self.elapsedTime >= self.raceDuration! {
-                self.stopRace()
-            }
-        })
-    }
-    
-    func stopRace() {
-        timer?.invalidate()
-    }
-    
-    func getProgressForUser(userId: Int) -> Float {
-        return userProgress[userId] ?? 0
-    }
+
 }
