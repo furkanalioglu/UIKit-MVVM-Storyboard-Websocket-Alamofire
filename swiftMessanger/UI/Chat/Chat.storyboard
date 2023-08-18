@@ -89,6 +89,7 @@
                         <outlet property="tableView" destination="gQF-xJ-CwD" id="aCc-C3-NYy"/>
                         <outlet property="videoCell" destination="vVZ-m3-lXv" id="iNW-gw-64C"/>
                         <segue destination="WRa-Bq-wzj" kind="show" identifier="toShowInformation" id="RsT-s7-2fr"/>
+                        <segue destination="QEZ-QO-JRE" kind="presentation" identifier="toShowStart" id="7G8-Yx-Yv6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -100,6 +101,14 @@
                 </collectionViewFlowLayout>
             </objects>
             <point key="canvasLocation" x="139.69465648854961" y="3.5211267605633805"/>
+        </scene>
+        <!--StartRaceController-->
+        <scene sceneID="ATq-QO-pom">
+            <objects>
+                <viewControllerPlaceholder storyboardName="RaceTimer" referencedIdentifier="StartRaceController" id="QEZ-QO-JRE" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VXS-l4-p3F" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="895" y="-161"/>
         </scene>
         <!--ChatInformationController-->
         <scene sceneID="QQ4-cd-10S">

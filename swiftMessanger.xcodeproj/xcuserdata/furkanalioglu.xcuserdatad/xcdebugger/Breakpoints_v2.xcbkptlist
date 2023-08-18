@@ -62,8 +62,8 @@
             filePath = "swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "didReceiveNewEventUser(userModel:)"
             landmarkType = "7">
          </BreakpointContent>

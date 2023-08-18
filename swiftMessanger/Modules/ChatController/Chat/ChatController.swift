@@ -119,6 +119,7 @@ class ChatController: UIViewController {
         performSegue(withIdentifier: viewModel.segueId, sender: viewModel.userInformations)
     }
     
+    
     @IBAction func sendMessageAction(_ sender: Any) {
         viewModel.sendMessage(myText: messageTextField.text)
         messageTextField.text = ""
@@ -150,7 +151,8 @@ class ChatController: UIViewController {
         switch viewModel.chatType{
         case .group(let group):
             if videoCell.isHidden{
-                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "66",status: 0)
+                performSegue(withIdentifier: viewModel.startSegueId, sender: nil)
+                //handle gere
             }else{
                 SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "66",status: 1)
             }
@@ -177,11 +179,11 @@ class ChatController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidEnterForeground), name: .userDidEnterForeground, object: nil)
     }
     
-    func setupRaceView() {
+    func setupRaceView(seconds:Int) {
         if videoCell.isHidden  {
             videoCell.isHidden = false
             //SET TIMER VALUE
-            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: 66))
+            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds))
             self.viewModel.rView = raceView
             self.viewModel.rView?.handler?.startTimer()
             videoCell.addSubview(self.viewModel.rView!)

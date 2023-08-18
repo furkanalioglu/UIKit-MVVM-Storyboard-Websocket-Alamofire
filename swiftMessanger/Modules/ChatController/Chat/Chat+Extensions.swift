@@ -32,11 +32,8 @@ extension ChatController : ChatControllerDelegate {
             
             if viewModel.raceDetails == [] && viewModel.timeLeft == 0{
                 videoCell.isHidden = true
-                print("RACE17DEBUG: Since the view is empty did not show videocell")
             }else{
-                print("RACE17DEBUG: Started video cell")
                 guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
-                print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
                 guard let timeLeft = viewModel.timeLeft else { return }
                 viewModel.rView?.handler?.countdownValue = timeLeft
                 let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
@@ -53,7 +50,7 @@ extension ChatController : ChatControllerDelegate {
 extension ChatController : SocketIOManagerChatDelegate {
     func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {
         if statusCode == 0 {
-            setupRaceView()
+            setupRaceView(seconds: seconds)
         }else{
             videoCell.isHidden = true
             print("Wait for cooldown")
@@ -82,7 +79,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.removeFromSuperview()
                 return
-                
             }
             
             if userModel.groupId == group.id && userModel.userId == 0{
@@ -160,6 +156,20 @@ extension ChatController{
             }else{
                 print("SEGUEDEBUG: could not send segue")
             }
+        }else if segue.identifier == viewModel.startSegueId, let chatVC = segue.destination as? StartRaceController{
+            chatVC.delegate = self
+        }
+    }
+}
+
+extension ChatController: StartControllerProtocol{
+    func userDidTapStartButton(value: Int) {
+        switch viewModel.chatType{
+        case .group(let group):
+            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: String(value),status: 0)
+            dismiss(animated: true)
+        default:
+            break
         }
     }
 }

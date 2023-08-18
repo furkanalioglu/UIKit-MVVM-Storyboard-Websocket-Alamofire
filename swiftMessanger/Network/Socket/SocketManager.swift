@@ -112,7 +112,7 @@ class SocketIOManager {
         guard let seconds = Int(seconds) else { fatalError("Seconds does not exist")}
         let request = RaceEvent(groupId: groupId, seconds: seconds,status: status)
         
-        socket?.emitWithAck("event:status", request.toData()).timingOut(after: 10, callback: { data in
+        socket?.emitWithAck(SocketEmits.status.emitString, request.toData()).timingOut(after: 10, callback: { data in
             guard let response = data[0] as? [String: Any],
                   let status = response["status"] as? Int else {
                 print("Failed to parse response")
@@ -163,7 +163,7 @@ class SocketIOManager {
             
         }
         
-        socket?.on("event") {(data, _) in
+        socket?.on(SocketListeners.event.listenerString) {(data, _) in
             guard let respose = data[0] as? String,
                   let modeledData : GroupEventModel = GroupEventModel.parse(data: respose)
             else{
@@ -204,7 +204,7 @@ extension Decodable {
 }
 
 enum SocketListeners: String {
-    case message,groupMessage
+    case message,groupMessage,event
     
     var listenerString : String {
         switch self {
@@ -212,13 +212,15 @@ enum SocketListeners: String {
             return "message:group"
         case .message:
             return "message"
+        case .event:
+            return "event"
         }
     }
     
 }
 
 enum SocketEmits: String {
-    case message, groupMessage
+    case message, groupMessage,status
     
     var emitString : String {
         switch self {
@@ -226,6 +228,8 @@ enum SocketEmits: String {
             return "message:group"
         case .message:
             return "message"
+        case .status:
+            return "event:status"
         }
     }
 }

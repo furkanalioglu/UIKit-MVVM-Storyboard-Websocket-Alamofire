@@ -19,6 +19,7 @@ class ChatViewModel {
     
     let cellNib = "ChatCell2"
     lazy var segueId = "toShowInformation"
+    lazy var startSegueId = "toShowStart"
     
     var chatType : ChatType? {
         didSet{
