@@ -170,7 +170,9 @@ class SocketIOManager {
                 debugPrint("SOCKETDEBUG: Raw event data: \(data)" )
                 return
             }
-            let newGroupEventModel = GroupEventModel(userId: modeledData.userId, itemCount: modeledData.itemCount, groupId: modeledData.groupId)
+            let newGroupEventModel = GroupEventModel(userId: modeledData.userId,
+                                                     itemCount: modeledData.itemCount,
+                                                     groupId: modeledData.groupId)
             print("EVENTDEBUG receibed model")
             self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventModel)
             self.delegate?.didReceiveNewEnventNotification(groupMessage: newGroupEventModel)

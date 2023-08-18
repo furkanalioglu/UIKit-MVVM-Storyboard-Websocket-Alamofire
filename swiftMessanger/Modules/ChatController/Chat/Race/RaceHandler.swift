@@ -67,6 +67,18 @@ class RaceHandler {
         delegate?.timerDidCompleted()
     }
     
+    func getCurrentUserModel() -> GroupEventModel? {
+        if let currentUserId = Int(AppConfig.instance.currentUserId ?? "") {
+            if let existingUserModel = userModels.first(where: { $0.userId == currentUserId }) {
+                return existingUserModel
+            } else {
+                // Create a model with 0 itemCount if the user isn't in the list
+                return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: -1) // Modify groupId accordingly
+            }
+        }
+        return nil
+    }
+    
     @objc private func handleDisplayLink() {
         let elapsed = CACurrentMediaTime() - startTime
         

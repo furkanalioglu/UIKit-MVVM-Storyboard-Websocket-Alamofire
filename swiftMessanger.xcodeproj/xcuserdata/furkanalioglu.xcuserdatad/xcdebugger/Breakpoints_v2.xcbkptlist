@@ -14,9 +14,9 @@
             filePath = "swiftMessanger/UI/Chat/Race/RaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "generateUserCircleInTopList()"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "generateUserCircleInTopList(groupId:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -62,9 +62,41 @@
             filePath = "swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "didReceiveNewEventUser(userModel:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8C7B8EB0-4BAE-4FE5-A017-0B06CB1FC6D8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/UI/Chat/Race/RaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "updateUserCircles(newUser:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "46C6F2C2-6808-4883-B85B-FB29CAEFD926"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Modules/MessageController/MessagesViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "handleIncomingGroupEvent(groupId:eventStatus:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

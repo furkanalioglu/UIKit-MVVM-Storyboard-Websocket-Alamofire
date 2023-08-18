@@ -20,29 +20,35 @@ protocol ChatMessageSeenDelegate : AnyObject {
 
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
-        if error == nil {
-            
-            tableView.refreshControl?.endRefreshing()
-            tableView.reloadData()
-            setupNavigationController()
-            
-            if let count = viewModel.messages?.count, count > 0 {
-                tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        switch viewModel.chatType{
+        case .group(let group):
+            if error == nil {
+                
+                tableView.refreshControl?.endRefreshing()
+                tableView.reloadData()
+                setupNavigationController()
+                
+                if let count = viewModel.messages?.count, count > 0 {
+                    tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+                }
+                
+                if viewModel.raceDetails == [] && viewModel.timeLeft == 0{
+                    videoCell.isHidden = true
+                }else{
+                    guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
+                    guard let timeLeft = viewModel.timeLeft else { return }
+                    viewModel.rView?.handler?.countdownValue = timeLeft
+                    let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
+                    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
+                    videoCell.addSubview(self.viewModel.rView!)
+                    viewModel.rView?.fillSuperview()
+                    viewModel.rView?.handler?.startTimer()
+                    videoCell.isHidden = false
+                    viewModel.rView?.updateUserCircles(newUser: nil)
+                }
             }
-            
-            if viewModel.raceDetails == [] && viewModel.timeLeft == 0{
-                videoCell.isHidden = true
-            }else{
-                guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
-                guard let timeLeft = viewModel.timeLeft else { return }
-                viewModel.rView?.handler?.countdownValue = timeLeft
-                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
-                viewModel.rView = RaceView(frame: view.frame, handler: handler)
-                videoCell.addSubview(self.viewModel.rView!)
-                viewModel.rView?.fillSuperview()
-                viewModel.rView?.handler?.startTimer()
-                videoCell.isHidden = false
-            }
+        default:
+            break
         }
     }
 }
@@ -68,7 +74,11 @@ extension ChatController : SocketIOManagerChatDelegate {
                     print("Test")
                 }else{
                     viewModel.rView?.handler?.userModels.append(userModel)
-                    viewModel.rView?.updateUserCircles(newUser: userModel)
+                    if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}){
+                        viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
+                        viewModel.rView?.updateUserCircles(newUser: userModel)
+                    }
+
                 }
             }
             
@@ -78,6 +88,7 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.raceDetails = []
                 viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.removeFromSuperview()
+                
                 return
             }
             
@@ -85,12 +96,12 @@ extension ChatController : SocketIOManagerChatDelegate {
                 guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                 print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
                 videoCell.isHidden = false
-
                 let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue: userModel.itemCount)
-                viewModel.rView = RaceView(frame: view.frame, handler: handler)
+                viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                 videoCell.addSubview(self.viewModel.rView!)
                 viewModel.rView?.fillSuperview()
                 viewModel.rView?.handler?.startTimer()
+                viewModel.rView?.updateUserCircles(newUser: nil)
             }
         default:
             break

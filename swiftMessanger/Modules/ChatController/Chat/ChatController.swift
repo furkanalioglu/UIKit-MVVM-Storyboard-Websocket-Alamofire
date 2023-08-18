@@ -180,23 +180,29 @@ class ChatController: UIViewController {
     }
     
     func setupRaceView(seconds:Int) {
-        if videoCell.isHidden  {
-            videoCell.isHidden = false
-            //SET TIMER VALUE
-            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds))
-            self.viewModel.rView = raceView
-            self.viewModel.rView?.handler?.startTimer()
-            videoCell.addSubview(self.viewModel.rView!)
-            
-            raceView.fillSuperview()
-        }else{
-            videoCell.isHidden = true
+        switch viewModel.chatType{
+        case .group(let group):
+            if videoCell.isHidden  {
+                //SET TIMER VALUE
+                let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds),groupId: group.id)
+                self.viewModel.rView = raceView
+                self.viewModel.rView?.handler?.startTimer()
+                videoCell.addSubview(self.viewModel.rView!)
+                
+                raceView.fillSuperview()
+                videoCell.isHidden = false
+            }else{
+                videoCell.isHidden = true
+            }
+        default:
+            break
         }
+
     }
     
     func setupNavigationController() {
         switch viewModel.chatType {
-        case .group(_):
+        case .group:
             navigationItem.title = viewModel.navigationTitle
             navigationItem.largeTitleDisplayMode = .never
             var rightBarButtonItems: [UIBarButtonItem] = []
@@ -211,7 +217,7 @@ class ChatController: UIViewController {
                 rightBarButtonItems.append(startEventButton)
             }
             navigationItem.rightBarButtonItems = rightBarButtonItems
-        case .user(_):
+        case .user:
             navigationItem.title = viewModel.navigationTitle
             navigationItem.largeTitleDisplayMode = .never
         default:

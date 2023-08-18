@@ -13,7 +13,7 @@ class RaceView: UIView {
     var handler : RaceHandler?
     
     
-    init(frame: CGRect, handler: RaceHandler) {
+    init(frame: CGRect, handler: RaceHandler,groupId: Int) {
         super.init(frame: frame)
         self.handler = handler
         setupFlag()
@@ -22,7 +22,8 @@ class RaceView: UIView {
         handler.delegate = self
         print("refreshing view")
         backgroundColor = .systemRed
-        generateUserCircleInTopList()
+        generateUserCircleInTopList(groupId: groupId)
+
     }
     
     required init?(coder: NSCoder) {
@@ -56,11 +57,17 @@ class RaceView: UIView {
     func updateUserCircles(newUser: GroupEventModel?) {
         guard let handler = handler else { return }
         var totalPoints = handler.totalTopUsersPoints
-        if totalPoints == 0 {
-            totalPoints += 1
+//        if totalPoints == 0 {
+//            totalPoints += 1
+//        }
+        if let currentUserModel = handler.getCurrentUserModel() {
+            if !handler.topUsers.contains(where: { $0.userId == currentUserModel.userId }) {
+                handler.userModels.append(currentUserModel)
+                generateNewUserCircle(withUserModel: currentUserModel)
+            }
         }
         
-        if handler.userModels.count <= 3  && newUser != nil{
+        if handler.userModels.count <= 4  && newUser != nil{
             generateNewUserCircle(withUserModel: newUser!)
             moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             backgroundColor = .green // CREATED
@@ -72,13 +79,13 @@ class RaceView: UIView {
             if let userToRemove = updatedTopUsersInfo.userToRemove,
                let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
                let userToAdd = updatedTopUsersInfo.userToAdd{
-                circleToRemove.removeFromSuperview()
-                userCircles.removeAll(where: { $0.userId == userToRemove.userId })
-                
-                generateNewUserCircle(withUserModel: userToAdd)
-                moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-                backgroundColor = .yellow // CHANGED
-                
+                if userToRemove.userId != Int(AppConfig.instance.currentUserId ?? "")!{
+                    circleToRemove.removeFromSuperview()
+                    userCircles.removeAll(where: { $0.userId == userToRemove.userId })
+                    generateNewUserCircle(withUserModel: userToAdd)
+                    moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                    backgroundColor = .yellow // CHANGED
+                }
             }
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
@@ -99,26 +106,29 @@ class RaceView: UIView {
         let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: self.leadingAnchor)
         leadingConstraint.isActive = true
         newCircle.leadingConstraing = leadingConstraint
+        newCircle.anchor(bottom: self.bottomAnchor)
         
         newCircle.configure(withUser: userModel)
         moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
     }
     
-    func generateUserCircleInTopList() {
+    func generateUserCircleInTopList(groupId: Int) {
         guard let handler = handler else { return }
-        let totalPoints = handler.totalTopUsersPoints
         for user in handler.topUsers {
             if userCircles.first(where: {$0.userId == user.userId}) == nil {
                 generateNewUserCircle(withUserModel: user)
             }
         }
+
     }
     
     func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
-        
-        debugPrint("current_frame", self.frame.width, UIScreen.main.bounds.size.width )
-        let roadWidth = self.frame.width - 50 // This represents 100%
-                    
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            debugPrint("current_frame", self.frame.width, UIScreen.main.bounds.size.width )
+            let roadWidth = self.frame.width - 50 // This represents 100%
+            
+            
             for user in topUsers {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
                 debugPrint(user.itemCount, "to position")
@@ -129,13 +139,14 @@ class RaceView: UIView {
                 let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
                 
                 circle.leadingConstraing?.constant = clampedXPosition
-                circle.anchor(bottom: self.bottomAnchor)
-
+                //                circle.anchor(bottom: self.bottomAnchor)
+                
                 print(" \(user.userId) to position \(clampedXPosition)")
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
                 }
             }
+        }
     }
     
 }
