@@ -101,6 +101,8 @@
 		91B62E702A86178D00B3C56E /* NewGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B62E6E2A86178D00B3C56E /* NewGroupCell.swift */; };
 		91B62E712A86178D00B3C56E /* NewGroupCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91B62E6F2A86178D00B3C56E /* NewGroupCell.xib */; };
 		91B62E732A86193C00B3C56E /* NewGroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B62E722A86193C00B3C56E /* NewGroupViewModel.swift */; };
+		91C9A7DC2A8F8623009EBD56 /* RaceTimer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */; };
+		91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */; };
 		91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 91DEF2922A7BED790072C6FF /* SocketIO */; };
 		91DEF2962A7BF6F00072C6FF /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91DEF2952A7BF6F00072C6FF /* Splash.storyboard */; };
 		91DEF2992A7BF74B0072C6FF /* SplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DEF2982A7BF74B0072C6FF /* SplashController.swift */; };
@@ -230,6 +232,8 @@
 		91B62E6E2A86178D00B3C56E /* NewGroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupCell.swift; sourceTree = "<group>"; };
 		91B62E6F2A86178D00B3C56E /* NewGroupCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewGroupCell.xib; sourceTree = "<group>"; };
 		91B62E722A86193C00B3C56E /* NewGroupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewModel.swift; sourceTree = "<group>"; };
+		91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RaceTimer.storyboard; sourceTree = "<group>"; };
+		91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRaceController.swift; sourceTree = "<group>"; };
 		91DEF2952A7BF6F00072C6FF /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		91DEF2982A7BF74B0072C6FF /* SplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashController.swift; sourceTree = "<group>"; };
 		91DEF29B2A7BF76B0072C6FF /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
@@ -396,6 +400,7 @@
 				913B6E1F2A7A4F1000B9D5C4 /* Chat.storyboard */,
 				91934F2B2A80BA6000D827B3 /* ChatCell2 */,
 				9171B3452A8B592C00C698EC /* ChatInformation.storyboard */,
+				91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */,
 				9171B3632A8E1E0D00C698EC /* Race */,
 				9171B3482A8B59E400C698EC /* ChatInformationCell */,
 			);
@@ -496,6 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				9171B35A2A8BABF400C698EC /* RaceHandler.swift */,
+				91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */,
 			);
 			path = Race;
 			sourceTree = "<group>";
@@ -958,6 +964,7 @@
 				918B339B2A77EA7D00AB0EB8 /* Register.storyboard in Resources */,
 				91DEF2A12A7CDCA30072C6FF /* MessagesCell.xib in Resources */,
 				919CDE972A7A244600EB5DDE /* Settings.storyboard in Resources */,
+				91C9A7DC2A8F8623009EBD56 /* RaceTimer.storyboard in Resources */,
 				913B6E182A7A3B0B00B9D5C4 /* LogoutCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1035,6 +1042,7 @@
 				91934F2E2A80BA8800D827B3 /* ChatCell2.swift in Sources */,
 				913B6E412A7B9B3400B9D5C4 /* MessageItem.swift in Sources */,
 				9171B33C2A8A276300C698EC /* Chat+Extensions.swift in Sources */,
+				91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */,
 				918B337C2A77E0EE00AB0EB8 /* SceneDelegate.swift in Sources */,
 				91B62E702A86178D00B3C56E /* NewGroupCell.swift in Sources */,
 				913B6E272A7A4FD700B9D5C4 /* ChatViewModel.swift in Sources */,

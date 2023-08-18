@@ -14,5 +14,6 @@ struct GroupCell : Codable {
     var sendTime: String
     var lastMsg: String
     var isSeen : Bool
+    var isEvent: Bool
 }
 

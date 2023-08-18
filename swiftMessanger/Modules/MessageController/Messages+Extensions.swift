@@ -37,7 +37,6 @@ extension MessagesController : MessagesControllerDelegate {
             }
         }
         self.refreshControl.endRefreshing()
-
     }
     
     func newMessageCellDataReceived(error: Error?) {
@@ -65,11 +64,16 @@ extension MessagesController : MessagesControllerDelegate {
 
 //MARK: - Delegates
 extension MessagesController : SocketIOManagerDelegate {
+    func didReceiveNewEnventNotification(groupMessage: GroupEventModel) {
+        viewModel.handleIncomingGroupEvent(groupId: groupMessage.groupId,eventStatus: groupMessage.userId)
+        tableView.reloadData()
+        print("NEWEVENTDEBUG: HANDLED DEBUG \(groupMessage)")
+    }
+    
     func didReceiveGroupMessage(groupMessage: MessageItem) {
         viewModel.handleIncomingGroupMessage(message: groupMessage)
         viewModel.groups = viewModel.groups?.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
         tableView.reloadData()
-
     }
     
     func didReceiveMessage(message: MessageItem) {
@@ -102,7 +106,7 @@ extension MessagesController: ChatMessageSeenDelegate {
                 viewModel.messages?[messageIndex].isSeen = true
                 tableView.reloadData()
                 print("SEENDEBUG: message \(messageIndex) is setting to seen")
-
+                
             }else{
                 print("Seendebug: Could not find message with index \(String(describing: senderId))")
             }

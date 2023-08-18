@@ -20,7 +20,6 @@ class RaceHandler {
     var userModels : [GroupEventModel] = []
     var previousTopUsers : [GroupEventModel] = []
     
-    
     var isAnyRaceAvailable = false
     
     var displayLink: CADisplayLink?
@@ -28,10 +27,10 @@ class RaceHandler {
     var startTime: CFTimeInterval = 0.0
     var countdownValue: Int = 100
     
-    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool) {
+    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int) {
         self.userModels = userModels
         self.isAnyRaceAvailable = isAnyRaceAvailable
-//        self.countdownValue = timerValue
+        self.countdownValue = countdownValue
         print("RACE17,: CREATING RACEHANDLER")
     }
     

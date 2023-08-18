@@ -150,9 +150,9 @@ class ChatController: UIViewController {
         switch viewModel.chatType{
         case .group(let group):
             if videoCell.isHidden{
-                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 0)
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "66",status: 0)
             }else{
-                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "66",status: 1)
             }
         default:
             print(" EventDebug: since group not found Could not emit race event")
@@ -180,7 +180,8 @@ class ChatController: UIViewController {
     func setupRaceView() {
         if videoCell.isHidden  {
             videoCell.isHidden = false
-            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true))
+            //SET TIMER VALUE
+            let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: 66))
             self.viewModel.rView = raceView
             self.viewModel.rView?.handler?.startTimer()
             videoCell.addSubview(self.viewModel.rView!)

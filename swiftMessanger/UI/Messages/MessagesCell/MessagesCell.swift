@@ -25,6 +25,7 @@ class MessagesCell: UITableViewCell {
     @IBOutlet weak var messageSenderLabel: UILabel!
     @IBOutlet weak var messageContentLabel: UILabel!
     @IBOutlet weak var messageSentTimeLabel: UILabel!
+    @IBOutlet weak var liveNotificationView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -52,6 +53,7 @@ class MessagesCell: UITableViewCell {
         messageContentLabel.text = group.lastMsg
         messageSentTimeLabel.text = group.sendTime.timeElapsedSinceDate()
         messageSenderLabel.textColor = group.isSeen ? .black : .green
+        liveNotificationView.backgroundColor = group.isEvent ? .systemRed : .white
 
     }
     

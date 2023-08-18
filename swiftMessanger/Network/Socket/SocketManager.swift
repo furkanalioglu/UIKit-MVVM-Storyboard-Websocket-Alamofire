@@ -12,6 +12,7 @@ import Starscream
 protocol SocketIOManagerDelegate: AnyObject {
     func didReceiveMessage(message: MessageItem)
     func didReceiveGroupMessage(groupMessage: MessageItem)
+    func didReceiveNewEnventNotification(groupMessage: GroupEventModel)
 }
 
 protocol SocketIOManagerChatDelegate: AnyObject {
@@ -159,6 +160,7 @@ class SocketIOManager {
             self.delegate?.didReceiveGroupMessage(groupMessage: socketMessage)
             self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)
             
+            
         }
         
         socket?.on("event") {(data, _) in
@@ -171,6 +173,7 @@ class SocketIOManager {
             let newGroupEventModel = GroupEventModel(userId: modeledData.userId, itemCount: modeledData.itemCount, groupId: modeledData.groupId)
             print("EVENTDEBUG receibed model")
             self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventModel)
+            self.delegate?.didReceiveNewEnventNotification(groupMessage: newGroupEventModel)
         }
         
                 

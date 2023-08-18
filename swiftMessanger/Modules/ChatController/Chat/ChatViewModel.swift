@@ -75,6 +75,7 @@ class ChatViewModel {
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
     var raceDetails : [GroupEventModel]? = []
+    var timeLeft : Int?
     
     var userInformations: [UserModel]?
     
@@ -115,6 +116,7 @@ class ChatViewModel {
                 self.newMessages = messages?.messages
                 self.userInformations = messages?.users
                 self.raceDetails = messages?.race
+                self.timeLeft = messages?.timeLeft
                 self.delegate?.datasReceived(error: nil)
                 print("MESSAGES FETCHED")
             }else{

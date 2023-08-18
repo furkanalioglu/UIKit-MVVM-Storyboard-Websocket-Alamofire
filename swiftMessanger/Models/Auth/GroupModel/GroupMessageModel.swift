@@ -11,4 +11,5 @@ struct GroupMessageModel : Codable{
     let messages : [MessageItem]
     let users : [UserModel]
     let race : [GroupEventModel]
+    let timeLeft : Int
 }

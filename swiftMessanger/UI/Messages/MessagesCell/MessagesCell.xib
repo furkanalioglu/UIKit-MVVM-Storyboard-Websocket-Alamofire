@@ -83,6 +83,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="liveNotificationView" destination="Y6P-cV-Mlu" id="ut9-In-op4"/>
                 <outlet property="messageContentLabel" destination="uaW-xL-A9R" id="c7B-hN-hhN"/>
                 <outlet property="messageImageView" destination="qKP-P8-xrf" id="VsA-Xd-KQo"/>
                 <outlet property="messageSenderLabel" destination="dG3-Ki-bHZ" id="MXT-ER-OLB"/>

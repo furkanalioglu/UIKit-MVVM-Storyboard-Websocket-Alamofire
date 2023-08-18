@@ -125,7 +125,6 @@ extension MessagesController : UITableViewDelegate {
         case .groups:
             guard let groupId = viewModel.groups?[indexPath.row] else { fatalError("could not find group")}
             performSegue(withIdentifier: viewModel.chatSegueId, sender: groupId)
-            //isSeen here
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -158,6 +157,7 @@ extension MessagesController {
                 chatVC.viewModel.seenDelegate = self
             }else if let selectedGroup = sender as? GroupCell{
                 chatVC.viewModel.chatType = .group(selectedGroup)
+//                chatVC.videoCell.isHidden = !selectedGroup.isEvent
                 chatVC.viewModel.seenDelegate = self
             }else{
                 print("SEGUEDEBUG: could not send segue")

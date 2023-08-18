@@ -142,4 +142,19 @@ class MessagesViewModel {
             }
         }
     }
+    
+    func handleIncomingGroupEvent(groupId: Int,eventStatus: Int){
+        //find group id
+        guard let groupIndex = groups?.firstIndex(where: {$0.id == groupId}) else { return }
+        if eventStatus == 0 {
+            groups?[groupIndex].isEvent = true
+            groups?[groupIndex].sendTime = Date().toString()
+        }else if eventStatus == -1{
+            groups?[groupIndex].isEvent = false
+        }
+//        self.groups = groups?.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
+        
+        //set cell color
+        
+    }
 }

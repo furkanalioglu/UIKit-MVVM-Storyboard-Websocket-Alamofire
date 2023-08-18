@@ -30,24 +30,22 @@ extension ChatController : ChatControllerDelegate {
                 tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
             }
             
-            if viewModel.raceDetails == [] {
+            if viewModel.raceDetails == [] && viewModel.timeLeft == 0{
                 videoCell.isHidden = true
                 print("RACE17DEBUG: Since the view is empty did not show videocell")
             }else{
                 print("RACE17DEBUG: Started video cell")
                 guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                 print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
-                
-                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true)
+                guard let timeLeft = viewModel.timeLeft else { return }
+                viewModel.rView?.handler?.countdownValue = timeLeft
+                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
                 viewModel.rView = RaceView(frame: view.frame, handler: handler)
                 videoCell.addSubview(self.viewModel.rView!)
-                videoCell.isHidden = false
                 viewModel.rView?.fillSuperview()
                 viewModel.rView?.handler?.startTimer()
-
-                
+                videoCell.isHidden = false
             }
-            
         }
     }
 }
@@ -75,14 +73,14 @@ extension ChatController : SocketIOManagerChatDelegate {
                     viewModel.rView?.handler?.userModels.append(userModel)
                     viewModel.rView?.updateUserCircles(newUser: userModel)
                 }
-                
             }
             
             if userModel.groupId == group.id && userModel.userId == -1 {
                 print("EVENTDEBUG: CRASH")
                 videoCell.isHidden = true
-                viewModel.rView = nil
-                viewModel.rView?.handler = nil
+                viewModel.raceDetails = []
+                viewModel.rView?.handler?.stopTimer()
+                viewModel.rView?.removeFromSuperview()
                 return
                 
             }
@@ -90,11 +88,11 @@ extension ChatController : SocketIOManagerChatDelegate {
             if userModel.groupId == group.id && userModel.userId == 0{
                 guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                 print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
+                videoCell.isHidden = false
 
-                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true)
+                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue: userModel.itemCount)
                 viewModel.rView = RaceView(frame: view.frame, handler: handler)
                 videoCell.addSubview(self.viewModel.rView!)
-                videoCell.isHidden = false
                 viewModel.rView?.fillSuperview()
                 viewModel.rView?.handler?.startTimer()
             }
