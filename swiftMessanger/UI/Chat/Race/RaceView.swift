@@ -11,11 +11,13 @@ class RaceView: UIView {
     var flagView: UIImageView!
     var timerLabel = UILabel()
     var handler : RaceHandler?
+    var groupId: Int?
     
     
     init(frame: CGRect, handler: RaceHandler,groupId: Int) {
         super.init(frame: frame)
         self.handler = handler
+        self.groupId = groupId
         setupFlag()
         road()
         setupTimer()
@@ -60,7 +62,7 @@ class RaceView: UIView {
 //        if totalPoints == 0 {
 //            totalPoints += 1
 //        }
-        if let currentUserModel = handler.getCurrentUserModel() {
+        if let currentUserModel = handler.getCurrentUserModel(groupId: groupId!) {
             if !handler.topUsers.contains(where: { $0.userId == currentUserModel.userId }) {
                 handler.userModels.append(currentUserModel)
                 generateNewUserCircle(withUserModel: currentUserModel)
@@ -77,15 +79,15 @@ class RaceView: UIView {
         if handler.topUsersNotEqualToPrevious {
             let updatedTopUsersInfo = handler.removeAndUpdateUser()
             if let userToRemove = updatedTopUsersInfo.userToRemove,
+               userToRemove.userId != Int(AppConfig.instance.currentUserId ?? "")!,
                let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
                let userToAdd = updatedTopUsersInfo.userToAdd{
-                if userToRemove.userId != Int(AppConfig.instance.currentUserId ?? "")!{
                     circleToRemove.removeFromSuperview()
                     userCircles.removeAll(where: { $0.userId == userToRemove.userId })
                     generateNewUserCircle(withUserModel: userToAdd)
                     moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
                     backgroundColor = .yellow // CHANGED
-                }
+                
             }
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)

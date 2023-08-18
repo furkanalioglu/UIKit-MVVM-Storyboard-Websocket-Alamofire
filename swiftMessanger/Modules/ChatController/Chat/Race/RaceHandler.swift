@@ -35,7 +35,7 @@ class RaceHandler {
     }
     
     var topUsers : [GroupEventModel] {
-        let topUsersSliced = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(3)
+        let topUsersSliced = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(4)
         return Array(topUsersSliced)
     }
     
@@ -67,13 +67,13 @@ class RaceHandler {
         delegate?.timerDidCompleted()
     }
     
-    func getCurrentUserModel() -> GroupEventModel? {
+    func getCurrentUserModel(groupId: Int) -> GroupEventModel? {
         if let currentUserId = Int(AppConfig.instance.currentUserId ?? "") {
             if let existingUserModel = userModels.first(where: { $0.userId == currentUserId }) {
                 return existingUserModel
             } else {
                 // Create a model with 0 itemCount if the user isn't in the list
-                return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: -1) // Modify groupId accordingly
+                return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: groupId)
             }
         }
         return nil
