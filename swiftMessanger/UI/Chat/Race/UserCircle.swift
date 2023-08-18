@@ -11,6 +11,7 @@ import UIKit
 class UserCircle: UIView {
     
     var userId: Int = 0
+    var leadingConstraing : NSLayoutConstraint?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,5 +49,7 @@ class UserCircle: UIView {
         userIdLabel.centerX(inView: self)
         userIdLabel.centerY(inView: self)
     }
+    
+    
     
 }

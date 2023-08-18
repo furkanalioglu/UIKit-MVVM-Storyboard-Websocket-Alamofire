@@ -83,10 +83,11 @@ extension ChatController : SocketIOManagerChatDelegate {
                 videoCell.isHidden = true
                 viewModel.rView = nil
                 viewModel.rView?.handler = nil
+                return
                 
             }
             
-            if userModel.groupId == group.id && userModel.userId == 0 && userModel.itemCount == 0{
+            if userModel.groupId == group.id && userModel.userId == 0{
                 guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                 print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
 

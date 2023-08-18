@@ -61,12 +61,10 @@ class RaceView: UIView {
         }
         
         if handler.userModels.count <= 3  && newUser != nil{
-            //            if handler.shouldGenerateNewUserCircle(for: newUser)  {
             generateNewUserCircle(withUserModel: newUser!)
             moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             backgroundColor = .green // CREATED
             return
-            //            }
         }
         
         if handler.topUsersNotEqualToPrevious {
@@ -91,16 +89,19 @@ class RaceView: UIView {
     func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
         guard let handler = handler else { return }
         let newCircle = UserCircle()
-        newCircle.configure(withUser: userModel)
         addSubview(newCircle)
-        newCircle.anchor(left: leftAnchor,bottom: bottomAnchor)
         userCircles.append(newCircle)
         newCircle.setWidth(30)
         newCircle.setHeight(30)
-        //        newCircle.layoutIfNeeded()
+        newCircle.layoutIfNeeded()
         newCircle.makeCircle()
-        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
         
+        let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: self.leadingAnchor)
+        leadingConstraint.isActive = true
+        newCircle.leadingConstraing = leadingConstraint
+        
+        newCircle.configure(withUser: userModel)
+        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
     }
     
     func generateUserCircleInTopList() {
@@ -117,33 +118,32 @@ class RaceView: UIView {
         
         debugPrint("current_frame", self.frame.width, UIScreen.main.bounds.size.width )
         let roadWidth = self.frame.width - 50 // This represents 100%
-        DispatchQueue.main.async {
-            
+                    
             for user in topUsers {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
-                
                 debugPrint(user.itemCount, "to position")
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
                 debugPrint(userPercentageOfTotal, "to position")
                 let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
                 debugPrint(estimatedXPosition, "to position", roadWidth, circle.frame.width)
                 let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
-                print(" \(user.userId) to position \(clampedXPosition)")
                 
+                circle.leadingConstraing?.constant = clampedXPosition
+                circle.anchor(bottom: self.bottomAnchor)
+
+                print(" \(user.userId) to position \(clampedXPosition)")
                 UIView.animate(withDuration: 0.5) {
-                    circle.frame.origin.x = clampedXPosition
-//                    circle.updateLeftAnchor(toConstant: clampedXPosition)
+                    self.layoutIfNeeded()
                 }
             }
-        }
-        
     }
+    
 }
 
 //Timer Delegate
 extension RaceView : RaceHandlerProtocol{
     func timerDidChange(value: Int) {
-        //        timerLabel.text = String(value)
+        timerLabel.text = String(value)
         
     }
     

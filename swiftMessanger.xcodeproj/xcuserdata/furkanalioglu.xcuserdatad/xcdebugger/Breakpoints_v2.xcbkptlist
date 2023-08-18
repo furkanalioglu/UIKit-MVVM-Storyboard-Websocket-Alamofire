@@ -7,33 +7,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D7DDAE56-0AD8-44EC-9EF9-C416E327B7CB"
+            uuid = "4F83333D-5C18-4B8F-AA2D-85DE263D622E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
+            filePath = "swiftMessanger/UI/Chat/Race/RaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "didReceiveNewEventUser(userModel:)"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "generateUserCircleInTopList()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AD837F39-E042-4B01-A534-864AE7097110"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "swiftMessanger/Modules/ChatController/Chat/Chat+Extensions.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "didSendNewEventRequest(groupId:seconds:statusCode:)"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "4F83333D-5C18-4B8F-AA2D-85DE263D622E - 1eb5a523e4e237a4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.RaceView.generateUserCircleInTopList() -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "420">
+               </Location>
+               <Location
+                  uuid = "4F83333D-5C18-4B8F-AA2D-85DE263D622E - 581cd7737a1cb8be"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (swiftMessanger.UserCircle) -&gt; Swift.Bool in swiftMessanger.RaceView.generateUserCircleInTopList() -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
