@@ -35,9 +35,14 @@ extension ChatController : ChatControllerDelegate {
                 if viewModel.raceDetails == [] && viewModel.timeLeft == 0{
                     videoCell.isHidden = true
                 }else{
-                    guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
+                    guard var raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                     guard let timeLeft = viewModel.timeLeft else { return }
                     viewModel.rView?.handler?.countdownValue = timeLeft
+                    guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
+
+                    if !raceDetails.contains(where: {$0.userId == myId}) && !viewModel.isGroupOwner{
+                        raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
+                    }
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     videoCell.addSubview(self.viewModel.rView!)
@@ -67,7 +72,7 @@ extension ChatController : SocketIOManagerChatDelegate {
         switch viewModel.chatType {
         case .group(let group):
             print("EVENTDEBUG: CRASH, \(userModel.userId)")
-            if userModel.groupId == group.id && userModel.userId != -1 {
+            if userModel.groupId == group.id && userModel.userId != EventResponse.evenFinished.rawValue {
                 if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
                     viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
                     viewModel.rView?.updateUserCircles(newUser: nil)
@@ -78,24 +83,25 @@ extension ChatController : SocketIOManagerChatDelegate {
                         viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
                         viewModel.rView?.updateUserCircles(newUser: userModel)
                     }
-
                 }
             }
             
-            if userModel.groupId == group.id && userModel.userId == -1 {
-                print("EVENTDEBUG: CRASH")
+            if userModel.groupId == group.id && userModel.userId == EventResponse.evenFinished.rawValue {
                 videoCell.isHidden = true
                 viewModel.raceDetails = []
                 viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.removeFromSuperview()
-                
                 return
             }
             
-            if userModel.groupId == group.id && userModel.userId == 0{
-                guard let raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
+            if userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue{
+                guard var raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
                 print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
                 videoCell.isHidden = false
+                guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
+                if !raceDetails.contains(where: {$0.userId == myId}) && !viewModel.isGroupOwner{
+                    raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
+                }
                 let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue: userModel.itemCount)
                 viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                 videoCell.addSubview(self.viewModel.rView!)

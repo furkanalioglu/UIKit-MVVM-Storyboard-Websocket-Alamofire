@@ -62,14 +62,8 @@ class RaceView: UIView {
 //        if totalPoints == 0 {
 //            totalPoints += 1
 //        }
-        if let currentUserModel = handler.getCurrentUserModel(groupId: groupId!) {
-            if !handler.topUsers.contains(where: { $0.userId == currentUserModel.userId }) {
-                handler.userModels.append(currentUserModel)
-                generateNewUserCircle(withUserModel: currentUserModel)
-            }
-        }
         
-        if handler.userModels.count <= 4  && newUser != nil{
+        if handler.userModels.count <= 4 && newUser != nil{
             generateNewUserCircle(withUserModel: newUser!)
             moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             backgroundColor = .green // CREATED
@@ -79,21 +73,20 @@ class RaceView: UIView {
         if handler.topUsersNotEqualToPrevious {
             let updatedTopUsersInfo = handler.removeAndUpdateUser()
             if let userToRemove = updatedTopUsersInfo.userToRemove,
-               userToRemove.userId != Int(AppConfig.instance.currentUserId ?? "")!,
                let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
                let userToAdd = updatedTopUsersInfo.userToAdd{
                     circleToRemove.removeFromSuperview()
                     userCircles.removeAll(where: { $0.userId == userToRemove.userId })
                     generateNewUserCircle(withUserModel: userToAdd)
                     moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-                    backgroundColor = .yellow // CHANGED
-                
+                    backgroundColor = .yellow
             }
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
         }
         handler.previousTopUsers = handler.topUsers
     }
+    
     
     func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
         guard let handler = handler else { return }

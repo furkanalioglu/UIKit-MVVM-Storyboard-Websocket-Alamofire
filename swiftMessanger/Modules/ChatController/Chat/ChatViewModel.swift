@@ -13,6 +13,11 @@ enum ChatType {
     case group(GroupCell)
 }
 
+enum EventResponse : Int {
+    case eventAvaible = 0
+    case evenFinished = -1
+}
+
 class ChatViewModel {
     
     var rView: RaceView? = nil
@@ -212,4 +217,6 @@ class ChatViewModel {
             break
         }
     }
+    
+    
 }

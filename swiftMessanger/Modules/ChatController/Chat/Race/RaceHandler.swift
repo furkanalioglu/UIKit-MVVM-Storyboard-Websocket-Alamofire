@@ -39,8 +39,19 @@ class RaceHandler {
         return Array(topUsersSliced)
     }
     
-    var totalTopUsersPoints : Int {
-        return topUsers.reduce(0, { $0 + $1.itemCount })
+    var totalTopUsersPoints: Int {
+        var total = topUsers.reduce(0, { $0 + $1.itemCount })
+        // Check if the current user is NOT in the top users list but exists in the userModels.
+        if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
+           !topUsers.contains(where: { $0.userId == currentUserId }),
+           var currentUser = userModels.first(where: { $0.userId == currentUserId }) {
+        } else if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
+                  topUsers.contains(where: { $0.userId == currentUserId }) {
+            if let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
+                total += currentUser.itemCount
+            }
+        }
+        return total
     }
     
     var topUsersNotEqualToPrevious : Bool {
@@ -48,9 +59,13 @@ class RaceHandler {
     }
     
     func removeAndUpdateUser() -> (userToRemove: GroupEventModel?, userToAdd: GroupEventModel?) {
-        let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0) })
+        let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0)})
         let userToAdd = topUsers.first(where: { !previousTopUsers.contains($0) })
-        return (userToRemove,userToAdd)
+        if topUsers.count == 4  && userToRemove?.userId == Int(AppConfig.instance.currentUserId ?? "")!{
+            return(previousTopUsers[2],userToAdd)
+        }else{
+            return (userToRemove,userToAdd)
+        }
     }
     
     
