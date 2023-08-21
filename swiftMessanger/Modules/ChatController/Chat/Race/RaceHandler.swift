@@ -62,7 +62,7 @@ class RaceHandler {
         let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0)})
         let userToAdd = topUsers.first(where: { !previousTopUsers.contains($0) })
         if topUsers.count == 4  && userToRemove?.userId == Int(AppConfig.instance.currentUserId ?? "")!{
-            return(previousTopUsers[2],userToAdd)
+            return(topUsers[2],userToAdd)
         }else{
             return (userToRemove,userToAdd)
         }

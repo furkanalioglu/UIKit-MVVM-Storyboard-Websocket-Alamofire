@@ -27,16 +27,13 @@ class ChatController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         viewModel.delegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
         setupRefreshControl()
         setupNotificationObservers()
         videoCell.isHidden = true
-
     }
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         switch viewModel.chatType {
@@ -54,8 +51,6 @@ class ChatController: UIViewController {
         default:
             print("Error")
         }
-
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -127,8 +122,6 @@ class ChatController: UIViewController {
         tableView.reloadData()
         scrollToBottom(animated: true)
     }
-    
-    
     
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))

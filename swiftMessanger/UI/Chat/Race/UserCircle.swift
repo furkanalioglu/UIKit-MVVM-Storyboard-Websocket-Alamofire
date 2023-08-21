@@ -49,7 +49,4 @@ class UserCircle: UIView {
         userIdLabel.centerX(inView: self)
         userIdLabel.centerY(inView: self)
     }
-    
-    
-    
 }

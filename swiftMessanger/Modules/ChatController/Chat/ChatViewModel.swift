@@ -15,7 +15,7 @@ enum ChatType {
 
 enum EventResponse : Int {
     case eventAvaible = 0
-    case evenFinished = -1
+    case eventFinished = -1
 }
 
 enum ActionType {
@@ -228,7 +228,7 @@ class ChatViewModel {
     func handleEventActions(userModel: GroupEventModel, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
-            if userModel.groupId == group.id && userModel.userId != EventResponse.evenFinished.rawValue {
+            if userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue {
                 if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
                     rView?.handler?.userModels[existedUserIndex].itemCount += 1
                     completion(.updateUserCircles(newUser: nil))
@@ -247,7 +247,7 @@ class ChatViewModel {
                 completion(.showVideoCell(raceDetails: raceDetails, groupId: group.id, countdownValue: userModel.itemCount))
             }
 
-            if userModel.groupId == group.id && userModel.userId == EventResponse.evenFinished.rawValue {
+            if userModel.groupId == group.id && userModel.userId == EventResponse.eventFinished.rawValue {
                 completion(.hideVideoCell)
             }
         default:

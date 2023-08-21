@@ -21,6 +21,7 @@ protocol ChatMessageSeenDelegate : AnyObject {
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
         switch viewModel.chatType{
+            //DispatcH??????
         case .group(let group):
             if error == nil {
                 tableView.refreshControl?.endRefreshing()
@@ -39,7 +40,7 @@ extension ChatController : ChatControllerDelegate {
                     viewModel.rView?.handler?.countdownValue = timeLeft
                     guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
 
-                    if !raceDetails.contains(where: {$0.userId == myId}) && !viewModel.isGroupOwner{
+                    if !raceDetails.contains(where: {$0.userId == myId}) && viewModel.isGroupOwner == false{
                         raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
                     }
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft )
@@ -148,7 +149,7 @@ extension ChatController : SocketIOManagerChatDelegate {
 extension ChatController{
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == viewModel.segueId, let chatVC = segue.destination as? ChatInformationController {
-            if let selectedUsers = sender as? [UserModel] {
+            if sender is [UserModel] {
                 chatVC.viewModel.users = viewModel.userInformations
             }else{
                 print("SEGUEDEBUG: could not send segue")
