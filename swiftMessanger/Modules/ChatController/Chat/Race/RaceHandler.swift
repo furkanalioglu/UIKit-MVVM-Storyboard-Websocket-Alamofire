@@ -42,15 +42,15 @@ class RaceHandler {
     var totalTopUsersPoints: Int {
         var total = topUsers.reduce(0, { $0 + $1.itemCount })
         // Check if the current user is NOT in the top users list but exists in the userModels.
-        if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
-           !topUsers.contains(where: { $0.userId == currentUserId }),
-           let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
-        } else if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
-                  topUsers.contains(where: { $0.userId == currentUserId }) {
-            if let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
-                total += currentUser.itemCount
-            }
-        }
+//        if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
+//           !topUsers.contains(where: { $0.userId == currentUserId }),
+//           let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
+//        } else if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
+//                  topUsers.contains(where: { $0.userId == currentUserId }) {
+//            if let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
+//                total += currentUser.itemCount
+//            }
+//        }
         return total
     }
     
@@ -87,7 +87,6 @@ class RaceHandler {
             if let existingUserModel = userModels.first(where: { $0.userId == currentUserId }) {
                 return existingUserModel
             } else {
-                // Create a model with 0 itemCount if the user isn't in the list
                 return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: groupId)
             }
         }

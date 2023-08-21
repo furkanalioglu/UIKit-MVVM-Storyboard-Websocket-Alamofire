@@ -111,7 +111,9 @@ class RaceView: UIView {
     func generateUserCircleInTopList(groupId: Int) {
         guard let handler = handler else { return }
         for user in handler.topUsers {
-            if userCircles.first(where: {$0.userId == user.userId}) == nil {
+            print("*-*-*-TOPUSERS:",handler.topUsers)
+            if userCircles.first(where: {$0.userId == user.userId}) == nil{
+                print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
                 generateNewUserCircle(withUserModel: user)
             }
         }
@@ -122,6 +124,7 @@ class RaceView: UIView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             debugPrint("current_frame", self.frame.width, UIScreen.main.bounds.size.width )
+            print("*-*-*-\(totalPoints)")
             let roadWidth = self.frame.width - 50 // This represents 100%
             
             
@@ -135,7 +138,6 @@ class RaceView: UIView {
                 let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
                 
                 circle.leadingConstraing?.constant = clampedXPosition
-                //                circle.anchor(bottom: self.bottomAnchor)
                 
                 print(" \(user.userId) to position \(clampedXPosition)")
                 UIView.animate(withDuration: 0.5) {

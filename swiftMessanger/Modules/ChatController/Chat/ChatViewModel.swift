@@ -229,24 +229,33 @@ class ChatViewModel {
     func handleEventActions(userModel: GroupEventModel, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
-            if userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue {
-                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
-                    rView?.handler?.userModels[existedUserIndex].itemCount += 1
-                    completion(.updateUserCircles(newUser: nil))
-                } else {
-                    rView?.handler?.userModels.append(userModel)
-                    completion(.updateUserCircles(newUser: userModel))
-                }
-            }
-                            
+            print("*-*-*-UMODEL\(userModel)")
             if userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue {
                 guard var raceDetails = raceDetails else { return }
                 guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
-                if !raceDetails.contains(where: {$0.userId == myId}) && !isGroupOwner {
+                if !raceDetails.contains(where: {$0.userId == myId}) && !isGroupOwner{
                     raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
                 }
                 completion(.showVideoCell(raceDetails: raceDetails, groupId: group.id, countdownValue: userModel.itemCount))
             }
+            
+            
+            if userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue {
+                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+                    print("*-*-*-UPDATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
+                    rView?.handler?.userModels[existedUserIndex] = userModel
+                    completion(.updateUserCircles(newUser: nil))
+                } else{
+                    if userModel.userId != 0 {
+                        rView?.handler?.userModels.append(userModel)
+                        guard let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) else { return }
+                        print("*-*-*-GENERATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
+                        completion(.updateUserCircles(newUser: userModel))
+                    }
+                }
+                
+            }
+                            
 
             if userModel.groupId == group.id && userModel.userId == EventResponse.eventFinished.rawValue {
                 completion(.hideVideoCell)
