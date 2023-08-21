@@ -106,6 +106,7 @@ class ChatViewModel {
                 self.messages = messages
                 self.newMessages = messages
                 self.delegate?.datasReceived(error: nil)
+                print("MESSAGES FETCHED : \(messages)")
                 print("MESSAGES FETCHED")
             }else{
                 if self.newMessages?.count ?? 0 > 0 {

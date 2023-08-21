@@ -60,8 +60,9 @@ class RaceView: UIView {
         guard let handler = handler else { return }
         let totalPoints = handler.totalTopUsersPoints
         
-        if handler.userModels.count <= 4 && newUser != nil{
-            generateNewUserCircle(withUserModel: newUser!)
+        if handler.userModels.count <= 4,
+           let user = newUser {
+            generateNewUserCircle(withUserModel: user)
             moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             backgroundColor = .green // CREATED
             return

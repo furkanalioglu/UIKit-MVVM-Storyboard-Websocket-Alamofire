@@ -52,6 +52,12 @@ extension ChatController : ChatControllerDelegate {
                     viewModel.rView?.updateUserCircles(newUser: nil)
                 }
             }
+        case .user(let user):
+            if error == nil {
+                tableView.refreshControl?.endRefreshing()
+                tableView.reloadData()
+                setupNavigationController()
+            }
         default:
             break
         }
@@ -76,10 +82,15 @@ extension ChatController : SocketIOManagerChatDelegate {
             switch eventType{
             case .updateUserCircles(newUser: let newUser):
                 viewModel.rView?.updateUserCircles(newUser: newUser)
-            case .showVideoCell(let raceDetails,let groupId,let timer):
+                
+            case .showVideoCell(let raceDetails, let groupId, let timer):
                 videoCell.isHidden = false
-                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true, countdownValue: timer)
-                viewModel.rView = RaceView(frame: view.frame, handler: handler, groupId: groupId)
+                let handler = RaceHandler(userModels: raceDetails,
+                                          isAnyRaceAvailable: true,
+                                          countdownValue: timer)
+                viewModel.rView = RaceView(frame: view.frame,
+                                           handler: handler,
+                                           groupId: groupId)
                 videoCell.addSubview(viewModel.rView!)
                 viewModel.rView?.fillSuperview()
                 viewModel.rView?.handler?.startTimer()
@@ -117,7 +128,8 @@ extension ChatController : SocketIOManagerChatDelegate {
     }
     
     func scrollToBottom(animated: Bool = true) {
-        guard let msgCount = viewModel.messages?.count, msgCount > 0 else {
+        guard let msgCount = viewModel.messages?.count,
+                msgCount > 0 else {
             return
         }
         
@@ -146,15 +158,14 @@ extension ChatController : SocketIOManagerChatDelegate {
 }
 
 
-extension ChatController{
+extension ChatController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == viewModel.segueId, let chatVC = segue.destination as? ChatInformationController {
-            if sender is [UserModel] {
-                chatVC.viewModel.users = viewModel.userInformations
-            }else{
-                print("SEGUEDEBUG: could not send segue")
-            }
-        }else if segue.identifier == viewModel.startSegueId, let chatVC = segue.destination as? StartRaceController{
+        if segue.identifier == viewModel.segueId,
+            let chatVC = segue.destination as? ChatInformationController {
+            chatVC.viewModel.users = viewModel.userInformations
+
+        } else if segue.identifier == viewModel.startSegueId,
+                  let chatVC = segue.destination as? StartRaceController{
             chatVC.delegate = self
         }
     }

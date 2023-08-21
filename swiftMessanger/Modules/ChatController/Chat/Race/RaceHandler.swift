@@ -44,7 +44,7 @@ class RaceHandler {
         // Check if the current user is NOT in the top users list but exists in the userModels.
         if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
            !topUsers.contains(where: { $0.userId == currentUserId }),
-           var currentUser = userModels.first(where: { $0.userId == currentUserId }) {
+           let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
         } else if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
                   topUsers.contains(where: { $0.userId == currentUserId }) {
             if let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
