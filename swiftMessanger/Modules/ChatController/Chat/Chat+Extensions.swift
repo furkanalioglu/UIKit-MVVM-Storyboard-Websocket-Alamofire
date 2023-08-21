@@ -23,7 +23,6 @@ extension ChatController : ChatControllerDelegate {
         switch viewModel.chatType{
         case .group(let group):
             if error == nil {
-                
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 setupNavigationController()
@@ -68,49 +67,30 @@ extension ChatController : SocketIOManagerChatDelegate {
         }
     }
     
+    
     func didReceiveNewEventUser(userModel: GroupEventModel) {
-        switch viewModel.chatType {
-        case .group(let group):
-            print("EVENTDEBUG: CRASH, \(userModel.userId)")
-            if userModel.groupId == group.id && userModel.userId != EventResponse.evenFinished.rawValue {
-                if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
-                    viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
-                    viewModel.rView?.updateUserCircles(newUser: nil)
-                    print("Test")
-                }else{
-                    viewModel.rView?.handler?.userModels.append(userModel)
-                    if let existedUserIndex = viewModel.rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}){
-                        viewModel.rView?.handler?.userModels[existedUserIndex].itemCount += 1
-                        viewModel.rView?.updateUserCircles(newUser: userModel)
-                    }
-                }
-            }
-            
-            if userModel.groupId == group.id && userModel.userId == EventResponse.evenFinished.rawValue {
+        guard let chatType = viewModel.chatType else { return }
+        //DispatcH??????
+        viewModel.handleEventActions(userModel: userModel, group: chatType) { eventType in
+            switch eventType{
+            case .updateUserCircles(newUser: let newUser):
+                viewModel.rView?.updateUserCircles(newUser: newUser)
+            case .showVideoCell(let raceDetails,let groupId,let timer):
+                videoCell.isHidden = false
+                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true, countdownValue: timer)
+                viewModel.rView = RaceView(frame: view.frame, handler: handler, groupId: groupId)
+                videoCell.addSubview(viewModel.rView!)
+                viewModel.rView?.fillSuperview()
+                viewModel.rView?.handler?.startTimer()
+                viewModel.rView?.updateUserCircles(newUser: nil)
+                
+            case .hideVideoCell:
                 videoCell.isHidden = true
                 viewModel.raceDetails = []
                 viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.removeFromSuperview()
-                return
             }
             
-            if userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue{
-                guard var raceDetails = viewModel.raceDetails else { fatalError("COULD NOT FETCH") } // CHANGE IT LATER
-                print("RACE17DEBUG: fetceh race details from viewModel : \(raceDetails)")
-                videoCell.isHidden = false
-                guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
-                if !raceDetails.contains(where: {$0.userId == myId}) && !viewModel.isGroupOwner{
-                    raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
-                }
-                let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue: userModel.itemCount)
-                viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
-                videoCell.addSubview(self.viewModel.rView!)
-                viewModel.rView?.fillSuperview()
-                viewModel.rView?.handler?.startTimer()
-                viewModel.rView?.updateUserCircles(newUser: nil)
-            }
-        default:
-            break
         }
     }
     

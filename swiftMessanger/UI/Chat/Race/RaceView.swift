@@ -59,9 +59,6 @@ class RaceView: UIView {
     func updateUserCircles(newUser: GroupEventModel?) {
         guard let handler = handler else { return }
         var totalPoints = handler.totalTopUsersPoints
-//        if totalPoints == 0 {
-//            totalPoints += 1
-//        }
         
         if handler.userModels.count <= 4 && newUser != nil{
             generateNewUserCircle(withUserModel: newUser!)
@@ -84,6 +81,9 @@ class RaceView: UIView {
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
         }
+        print("*0*0*0*0*0")
+        dump(userCircles)
+        print("*0*0*0*0*0")
         handler.previousTopUsers = handler.topUsers
     }
     

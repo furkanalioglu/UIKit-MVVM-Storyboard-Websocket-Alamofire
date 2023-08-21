@@ -18,6 +18,13 @@ enum EventResponse : Int {
     case evenFinished = -1
 }
 
+enum ActionType {
+    case updateUserCircles(newUser: GroupEventModel?)
+    case hideVideoCell
+    case showVideoCell(raceDetails: [GroupEventModel], groupId: Int, countdownValue: Int)
+
+}
+
 class ChatViewModel {
     
     var rView: RaceView? = nil
@@ -218,5 +225,34 @@ class ChatViewModel {
         }
     }
     
-    
+    func handleEventActions(userModel: GroupEventModel, group: ChatType, completion: (ActionType) -> Void) {
+        switch chatType {
+        case .group(let group):
+            if userModel.groupId == group.id && userModel.userId != EventResponse.evenFinished.rawValue {
+                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+                    rView?.handler?.userModels[existedUserIndex].itemCount += 1
+                    completion(.updateUserCircles(newUser: nil))
+                } else {
+                    rView?.handler?.userModels.append(userModel)
+                    completion(.updateUserCircles(newUser: userModel))
+                }
+            }
+                            
+            if userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue {
+                guard var raceDetails = raceDetails else { return }
+                guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
+                if !raceDetails.contains(where: {$0.userId == myId}) && !isGroupOwner {
+                    raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
+                }
+                completion(.showVideoCell(raceDetails: raceDetails, groupId: group.id, countdownValue: userModel.itemCount))
+            }
+
+            if userModel.groupId == group.id && userModel.userId == EventResponse.evenFinished.rawValue {
+                completion(.hideVideoCell)
+            }
+        default:
+            break
+        }
+    }
+
 }
