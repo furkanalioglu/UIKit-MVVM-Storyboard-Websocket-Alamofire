@@ -97,6 +97,7 @@ class RaceView: UIView {
             }else{
                 self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             }
+            self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
             handler.previousTopUsers = handler.topUsers
         }
     }
