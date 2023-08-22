@@ -35,12 +35,11 @@ final class GiftManager {
     private var playerView: AVPlayerView?
     private lazy var fileManager = FileManager.default
     private lazy var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+    
 
     public func playSuperAnimation(view: UIView, videoURLString: String, _ completion: @escaping () -> Void) {
         guard let url = URL(string: videoURLString)
         else { debugPrint("Could not find URL") ; return }
-//        guard let videoURL = UserDefaults.standard.url(forKey: "urlCAR")
-//        else { debugPrint("Could not find URL Sting") ; return }
         
         //UIScreen bounds verince animasyon küçük geldi.
         let videoSize = CGSize(width: (view.frame.width * 2), height: (view.frame.width * 2))
@@ -73,14 +72,13 @@ final class GiftManager {
                 completion()
                 return print("Something went wrong when loading our video:", error.localizedDescription, url)
             case .success(let player):
-                // Finally, we can start playing
-                player.play()
-                let duration = player.currentItem?.duration.seconds ?? 0
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: {
-                    playerView.removeFromSuperview()
-                    self.playerView = nil
-                    completion()
-                })
+                NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { (_) in
+                     player.seek(to: CMTime.zero)
+                     player.play()
+                 }
+
+                 // Start playing
+                 player.play()
             }
         }
     }

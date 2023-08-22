@@ -13,6 +13,11 @@ class UserConatiner: UIView {
     var videoResourceName: String
     var userId = 0
     var itemCount = 0
+    var carId = 1 {
+        didSet{
+            print("CAR ID CHANGED TO \(carId)")
+        }
+    }
     
     private let usernameLabel: UILabel = {
         let label = UILabel()
@@ -53,11 +58,14 @@ class UserConatiner: UIView {
         addSubview(userCircle)
         
         
-        userCircle.setWidth(100)
-        userCircle.setHeight(30)
+        userCircle.setWidth(50)
+        userCircle.setHeight(20)
+        userCircle.backgroundColor = .clear
+        
+        itemCountLabel.setHeight(30)
         
         usernameLabel.anchor(top: topAnchor, left: leftAnchor, right: rightAnchor)
-        itemCountLabel.anchor(top: usernameLabel.bottomAnchor, left: leftAnchor, right: rightAnchor)
+        itemCountLabel.anchor(top: usernameLabel.bottomAnchor, left: leftAnchor, right: rightAnchor,paddingBottom: 8)
         userCircle.anchor(top: itemCountLabel.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor,paddingBottom: 10)
         layoutIfNeeded()
     }
@@ -67,7 +75,7 @@ class UserConatiner: UIView {
         itemCount = user.itemCount
         usernameLabel.text = String(user.userId)
         itemCountLabel.text = String(user.itemCount)
-        userCircle.configure(withUser: user)
+        userCircle.configure(withUser: user,withCarId: carId)
     }
     
     func updateItemCount(user: GroupEventModel) {

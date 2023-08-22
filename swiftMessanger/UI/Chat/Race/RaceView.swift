@@ -12,6 +12,7 @@ class RaceView: UIView {
     var timerLabel = UILabel()
     var handler : RaceHandler?
     var groupId: Int?
+    var avaibleCars = [0,1,2,3]
     
     
     init(frame: CGRect, handler: RaceHandler,groupId: Int) {
@@ -23,7 +24,7 @@ class RaceView: UIView {
         setupTimer()
         handler.delegate = self
         print("refreshing view")
-        backgroundColor = .systemRed
+        backgroundColor = .clear
         generateUserCircleInTopList(groupId: groupId)
 
     }
@@ -54,6 +55,11 @@ class RaceView: UIView {
         road.backgroundColor = .black
         road.setDimensions(height: 5,width:  UIScreen.main.bounds.width)
         road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
+//        DispatchQueue.main.async {
+////            GiftManager.shared.playSuperAnimation(view: road, videoURLString: "") {}
+//            self.layoutSubviews()
+//            self.layoutIfNeeded()
+//        }
     }
     
     func updateUserCircles(newUser: GroupEventModel?) {
@@ -64,7 +70,7 @@ class RaceView: UIView {
            let user = newUser {
             generateNewUserCircle(withUserModel: user)
             moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-            backgroundColor = .green // CREATED
+            
             return
         }
         
@@ -77,7 +83,7 @@ class RaceView: UIView {
                     userCircles.removeAll(where: { $0.userId == userToRemove.userId })
                     generateNewUserCircle(withUserModel: userToAdd)
                     moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-                    backgroundColor = .yellow
+                    
             }
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
@@ -90,9 +96,9 @@ class RaceView: UIView {
         guard let handler = handler else { return }
         let newCircle = UserConatiner(frame: CGRect(x: 0, y: 0, width: 300, height: 100), videoResourceName: "framelights1")
         addSubview(newCircle)
+        newCircle.carId = userCircles.count
         userCircles.append(newCircle)
         layoutIfNeeded()
-        
         let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: self.leadingAnchor)
         leadingConstraint.isActive = true
         newCircle.leadingConstraing = leadingConstraint
@@ -141,6 +147,8 @@ class RaceView: UIView {
         }
     }
     
+    
+    
 }
 
 //Timer Delegate
@@ -152,7 +160,14 @@ extension RaceView : RaceHandlerProtocol{
     
     func timerDidCompleted() {
         timerLabel.text = "0"
-        
     }
+    
+    func selectAndReturnRandomNumber(array: [Int]) -> Int {
+        let randomIndex = Int.random(in: 0..<array.count)
+        let selectedNumber = array[randomIndex]
+        print("Cardebug: selected number\(selectedNumber), from array \(array)")
+        return selectedNumber
+    }
+    
 }
 

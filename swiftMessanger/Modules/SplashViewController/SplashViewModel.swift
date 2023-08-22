@@ -30,7 +30,7 @@ class SplashViewModel {
     }
     
     func handleSuccessfulLogin(with user: CurrentUserModel?) {
-        delegate?.couldCheckUser(error: nil)
+//        delegate?.couldCheckUser(error: nil)
         fetchAllMessages()
     }
     

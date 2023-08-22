@@ -12,6 +12,7 @@ import AVFoundation
 class UserCircle: UIView {
     
     var userId: Int = 0
+    var carId = 0
     var fileName = "framelights1"
     
     private var playerLooper: AVPlayerLooper?
@@ -24,19 +25,18 @@ class UserCircle: UIView {
         setupView()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        playerLayer?.frame = bounds
-    }
     
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(withUser user: GroupEventModel) {
+    func configure(withUser user: GroupEventModel, withCarId carId:Int ) {
+        self.carId = carId
         userId = user.userId
         playAnimation()
+        layoutIfNeeded()
+        layoutSubviews()
     }
     
     private func setupView() {
@@ -44,10 +44,14 @@ class UserCircle: UIView {
     }
     
     func playAnimation() {
-        GiftManager.shared.playSuperAnimation(view: self, videoURLString:"file://\(UserDefaults.standard.string(forKey: "urlCAR-1")!)") {
-            let string = "file://\(UserDefaults.standard.string(forKey: "urlCAR-1")!)"
-            print("metaldebug:trying to fetch user 1 from DestinationURL:  \(string)")
-            self.playAnimation()
+        let carKey = "urlCAR-\(carId)"
+        guard let pathUD = UserDefaults.standard.string(forKey: carKey) else { return }
+        let videoURLString = "file://\(pathUD)"
+        DispatchQueue.main.async {
+            GiftManager.shared.playSuperAnimation(view: self, videoURLString:videoURLString) {
+                self.layoutIfNeeded()
+                self.layoutSubviews()
+            }
         }
     }
 }
