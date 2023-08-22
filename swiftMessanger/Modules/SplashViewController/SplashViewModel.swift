@@ -51,10 +51,22 @@ class SplashViewModel {
             }
             
             self.messages = messages
-            self.delegate?.couldCheckUser(error: nil)
+            self.fetchAllAssets()
             print("MESSAGECONTROLLERDEBUG: \(String(describing: messages))")
         }
     }
     
-
+    func fetchAllAssets() {
+        for i in  0..<AppConfig.instance.carURLS.count{
+            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.carURLS[i] ,forCar: i) { didCompleted, err in
+                if err == nil && didCompleted == true {
+                    print("Downloaded car asset for \(i)")
+                }else{
+                    self.delegate?.couldCheckUser(error: .couldNotReceivedDatas)
+                    return
+                }
+            }
+        }
+        self.delegate?.couldCheckUser(error: nil)
+    }
 }

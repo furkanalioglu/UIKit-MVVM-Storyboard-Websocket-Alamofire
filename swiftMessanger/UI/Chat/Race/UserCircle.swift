@@ -44,15 +44,10 @@ class UserCircle: UIView {
     }
     
     func playAnimation() {
-        GiftManager.shared.didDownloadVideo(from: "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+36%402x+2-luma.mp4") { url, err in
-            if err == nil {
-                print("METALDEBUG: BEFORE LAUNCH: \(UserDefaults.standard.string(forKey: "urlCAR")!)")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    GiftManager.shared.playSuperAnimation(view: self, videoURLString: UserDefaults.standard.string(forKey: "urlCAR")!) {
-                        self.playAnimation()
-                    }
-                }
-            }
+        GiftManager.shared.playSuperAnimation(view: self, videoURLString:"file://\(UserDefaults.standard.string(forKey: "urlCAR-1")!)") {
+            let string = "file://\(UserDefaults.standard.string(forKey: "urlCAR-1")!)"
+            print("metaldebug:trying to fetch user 1 from DestinationURL:  \(string)")
+            self.playAnimation()
         }
     }
 }

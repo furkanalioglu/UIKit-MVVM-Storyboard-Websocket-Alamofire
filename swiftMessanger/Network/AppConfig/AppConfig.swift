@@ -34,6 +34,10 @@ class AppConfig {
         }
     }
     
+    let carURLS = ["https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+36%402x+2-luma.mp4",
+                   "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+38%402x+2-luma.mp4",
+                   "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+41%402x+2-luma.mp4",
+                   "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+42%402x+2-luma.mp4"]
     
 
 }

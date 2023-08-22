@@ -39,8 +39,8 @@ final class GiftManager {
     public func playSuperAnimation(view: UIView, videoURLString: String, _ completion: @escaping () -> Void) {
         guard let url = URL(string: videoURLString)
         else { debugPrint("Could not find URL") ; return }
-        guard let videoURL = UserDefaults.standard.url(forKey: "urlCAR")
-        else { debugPrint("Could not find URL Sting") ; return }
+//        guard let videoURL = UserDefaults.standard.url(forKey: "urlCAR")
+//        else { debugPrint("Could not find URL Sting") ; return }
         
         //UIScreen bounds verince animasyon küçük geldi.
         let videoSize = CGSize(width: (view.frame.width * 2), height: (view.frame.width * 2))
@@ -65,13 +65,13 @@ final class GiftManager {
         playerLayer.pixelBufferAttributes = [
             (kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA]
         
-        let playerItem = createTransparentItem(url: videoURL)
+        let playerItem = createTransparentItem(url: url)
         
         playerView.loadPlayerItem(playerItem) { result in
             switch result {
             case .failure(let error):
                 completion()
-                return print("Something went wrong when loading our video:", error.localizedDescription, videoURL)
+                return print("Something went wrong when loading our video:", error.localizedDescription, url)
             case .success(let player):
                 // Finally, we can start playing
                 player.play()
@@ -85,16 +85,7 @@ final class GiftManager {
         }
     }
     
-    public func downloadSuperAnimations() {
-//        guard let gifts = AppConfig.config?.config?.gifts else { return }
-//        for gift in gifts {
-//            if let superAnimation = gift.superAnimation {
-//        DownloadManager.shared.queueNewFile(priority: .low, url: "https://fun2lite-app-assets.s3.eu-central-1.amazonaws.com/config/NSFW.mlmodel.zip")
-//            } else { continue }
-//        }
-    }
-    
-    func didDownloadVideo(from urlString: String, completion: @escaping (Bool, Error?) -> Void) {
+    func didDownloadVideo(from urlString: String,forCar carNumber: Int, completion: @escaping (Bool, Error?) -> Void) {
         guard let videoUrl = URL(string: urlString) else {
             completion(false,nil)
             return }
@@ -117,10 +108,11 @@ final class GiftManager {
                      try self.fileManager.removeItem(at: destinationURL)
                  }
                  try self.fileManager.copyItem(at: localURL, to: destinationURL)
-                 UserDefaults.standard.set(destinationURL.path, forKey: "urlCAR")
-                 completion(true, nil)  // Success
+                print("metaldebug:Saved user \(carNumber) to DestinationURL:  \(destinationURL)")
+                 UserDefaults.standard.set(destinationURL.path, forKey: "urlCAR-\(carNumber)")
+                 completion(true, nil)
              } catch {
-                 completion(false, error)  // Return with file operation error
+                 completion(false, error)
              }
         }
         downloadTask.resume()
@@ -150,8 +142,6 @@ final class GiftManager {
         })
 
         composition.renderSize = asset.videoSize.applying(CGAffineTransform(scaleX: 1.0, y: 0.5))
-        //Save composition
-        //saveComposition(videoComposition: composition)
         return composition
     }
 }
