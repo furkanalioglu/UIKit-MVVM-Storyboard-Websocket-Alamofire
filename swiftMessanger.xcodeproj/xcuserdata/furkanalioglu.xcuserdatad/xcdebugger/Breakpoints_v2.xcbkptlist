@@ -3,4 +3,132 @@
    uuid = "EBB16DBA-E11B-435D-A17A-1C5A05A38FD4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B80F8FC3-14BC-40B3-B500-D490EFE24B7D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/UI/Chat/Race/RaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "moveUserCircles(topUsers:totalPoints:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B80F8FC3-14BC-40B3-B500-D490EFE24B7D - 65137f592de3418f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "130"
+                  endingLineNumber = "130"
+                  offsetFromSymbolStart = "1148">
+               </Location>
+               <Location
+                  uuid = "B80F8FC3-14BC-40B3-B500-D490EFE24B7D - 9b51cef21d14d162"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "220">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E10599FA-8081-42EA-B220-7150BE576DBF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/UI/Chat/Race/RaceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "moveUserCircles(topUsers:totalPoints:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E10599FA-8081-42EA-B220-7150BE576DBF - 65137f592de34150"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "1368">
+               </Location>
+               <Location
+                  uuid = "E10599FA-8081-42EA-B220-7150BE576DBF - d24dd4c9b617dcdc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (swiftMessanger.UserConatiner) -&gt; Swift.Bool in closure #1 @Swift.MainActor () -&gt; () in swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "E10599FA-8081-42EA-B220-7150BE576DBF - 9b51cef21d14d162"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "220">
+               </Location>
+               <Location
+                  uuid = "E10599FA-8081-42EA-B220-7150BE576DBF - 65137f592de34150"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in swiftMessanger.RaceView.moveUserCircles(topUsers: Swift.Array&lt;swiftMessanger.GroupEventModel&gt;, totalPoints: Swift.Int) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/UI/Chat/Race/RaceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "168">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

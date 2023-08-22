@@ -34,88 +34,111 @@ class RaceView: UIView {
     }
     
     private func setupFlag() {
-        let flagImage = UIImage(systemName: "flag")
-        flagView = UIImageView(image: flagImage)
-        addSubview(flagView)
-        flagView.setDimensions(height: 20, width: 20)
-        flagView.tintColor = .black
-        flagView.anchor(bottom:bottomAnchor,right: rightAnchor, paddingBottom: 5,paddingRight: 0)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let flagImage = UIImage(systemName: "flag")
+           flagView = UIImageView(image: flagImage)
+           addSubview(flagView)
+           flagView.setDimensions(height: 20, width: 20)
+           flagView.tintColor = .black
+           flagView.anchor(bottom:bottomAnchor,right: rightAnchor, paddingBottom: 5,paddingRight: 0)
+        }
     }
-    
+
     private func setupTimer() {
-        timerLabel.font = UIFont.systemFont(ofSize: 12)
-        timerLabel.textColor = .black
-        addSubview(timerLabel)
-        timerLabel.anchor(top: topAnchor, right: rightAnchor,paddingRight: 8)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            timerLabel.font = UIFont.systemFont(ofSize: 12)
+            timerLabel.textColor = .black
+            addSubview(timerLabel)
+            timerLabel.anchor(top: topAnchor, right: rightAnchor,paddingRight: 8)
+        }
     }
-    
+
     private func road() {
-        let road = UIView()
-        addSubview(road)
-        road.backgroundColor = .black
-        road.setDimensions(height: 5,width:  UIScreen.main.bounds.width)
-        road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
-//        DispatchQueue.main.async {
-////            GiftManager.shared.playSuperAnimation(view: road, videoURLString: "") {}
-//            self.layoutSubviews()
-//            self.layoutIfNeeded()
-//        }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let road = UIView()
+            addSubview(road)
+            road.backgroundColor = .black
+            road.setDimensions(height: 5,width:  UIScreen.main.bounds.width)
+            road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
+        }
     }
     
     func updateUserCircles(newUser: GroupEventModel?) {
-        guard let handler = handler else { return }
-        let totalPoints = handler.totalTopUsersPoints
-        
-        if handler.userModels.count <= 4,
-           let user = newUser {
-            generateNewUserCircle(withUserModel: user)
-            moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            guard let handler = handler else { return }
+            let totalPoints = handler.totalTopUsersPoints
             
-            return
-        }
-        
-        if handler.topUsersNotEqualToPrevious {
-            let updatedTopUsersInfo = handler.removeAndUpdateUser()
-            if let userToRemove = updatedTopUsersInfo.userToRemove,
-               let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
-               let userToAdd = updatedTopUsersInfo.userToAdd{
-                    circleToRemove.removeFromSuperview()
-                    userCircles.removeAll(where: { $0.userId == userToRemove.userId })
-                    generateNewUserCircle(withUserModel: userToAdd)
-                    moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-                    
+            if handler.userModels.count <= 4,
+               let user = newUser {
+                generateNewUserCircle(withUserModel: user,passedBy: nil)
+                moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                
+                return
             }
-        }else{
-            self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+            
+            if handler.topUsersNotEqualToPrevious {
+                let updatedTopUsersInfo = handler.removeAndUpdateUser()
+                if let userToRemove = updatedTopUsersInfo.userToRemove,
+                   let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
+                   let userToAdd = updatedTopUsersInfo.userToAdd{
+                    let removedIndex = userCircles.firstIndex(where: {$0.userId == userToRemove.userId})!
+                    let removedCarId = userCircles[removedIndex].carId
+                        circleToRemove.removeFromSuperview()
+                        userCircles.removeAll(where: { $0.userId == userToRemove.userId })
+                        generateNewUserCircle(withUserModel: userToAdd, passedBy: removedCarId)
+
+
+                        moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                }
+            }else{
+                self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+            }
+            handler.previousTopUsers = handler.topUsers
         }
-        handler.previousTopUsers = handler.topUsers
     }
     
     
-    func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
-        guard let handler = handler else { return }
-        let newCircle = UserConatiner(frame: CGRect(x: 0, y: 0, width: 300, height: 100), videoResourceName: "framelights1")
-        addSubview(newCircle)
-        newCircle.carId = userCircles.count
-        userCircles.append(newCircle)
-        layoutIfNeeded()
-        let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: self.leadingAnchor)
-        leadingConstraint.isActive = true
-        newCircle.leadingConstraing = leadingConstraint
-        newCircle.anchor(bottom: self.bottomAnchor)
-        newCircle.configure(user: userModel)
-        moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+    func generateNewUserCircle(withUserModel userModel: GroupEventModel, passedBy fourthUserCarId :Int?) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            guard let handler = handler else { return }
+            let newCircle = UserConatiner(frame: CGRect(x: 0, y: 0, width: 300, height: 100), videoResourceName: "framelights1")
+            addSubview(newCircle)
+
+            if fourthUserCarId == nil {
+                newCircle.carId = userCircles.count ?? 0
+            }else{
+                newCircle.carId = fourthUserCarId!
+            }
+            userCircles.append(newCircle)
+            layoutIfNeeded()
+            let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
+            leadingConstraint.isActive = true
+            newCircle.leadingConstraing = leadingConstraint
+            newCircle.anchor(bottom: bottomAnchor)
+            newCircle.configure(user: userModel)
+            moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+        }
+
     }
     
     func generateUserCircleInTopList(groupId: Int) {
-        guard let handler = handler else { return }
-        for user in handler.topUsers {
-            print("*-*-*-TOPUSERS:",handler.topUsers)
-            if userCircles.first(where: {$0.userId == user.userId}) == nil{
-                print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
-                generateNewUserCircle(withUserModel: user)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            guard let handler = handler else { return }
+            for user in handler.topUsers {
+                print("*-*-*-TOPUSERS:",handler.topUsers)
+                if userCircles.first(where: {$0.userId == user.userId}) == nil{
+                    print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
+                    generateNewUserCircle(withUserModel: user,passedBy: nil)
+                }
             }
         }
+
 
     }
     
@@ -154,12 +177,15 @@ class RaceView: UIView {
 //Timer Delegate
 extension RaceView : RaceHandlerProtocol{
     func timerDidChange(value: Int) {
-        timerLabel.text = String(value)
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.timerLabel.text = String(value)
+        }
     }
-    
+
     func timerDidCompleted() {
-        timerLabel.text = "0"
+        DispatchQueue.main.async { [weak self] in
+            self?.timerLabel.text = "0"
+        }
     }
     
     func selectAndReturnRandomNumber(array: [Int]) -> Int {

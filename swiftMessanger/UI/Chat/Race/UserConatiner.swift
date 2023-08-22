@@ -53,33 +53,40 @@ class UserConatiner: UIView {
     }
     
     private func setupView() {
-        addSubview(usernameLabel)
-        addSubview(itemCountLabel)
-        addSubview(userCircle)
-        
-        
-        userCircle.setWidth(50)
-        userCircle.setHeight(20)
-        userCircle.backgroundColor = .clear
-        
-        itemCountLabel.setHeight(30)
-        
-        usernameLabel.anchor(top: topAnchor, left: leftAnchor, right: rightAnchor)
-        itemCountLabel.anchor(top: usernameLabel.bottomAnchor, left: leftAnchor, right: rightAnchor,paddingBottom: 8)
-        userCircle.anchor(top: itemCountLabel.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor,paddingBottom: 10)
-        layoutIfNeeded()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            addSubview(usernameLabel)
+            addSubview(itemCountLabel)
+            addSubview(userCircle)
+            
+            userCircle.setWidth(50)
+            userCircle.setHeight(20)
+            userCircle.backgroundColor = .clear
+            
+            itemCountLabel.setHeight(30)
+            
+            usernameLabel.anchor(top: topAnchor, left: leftAnchor, right: rightAnchor)
+            itemCountLabel.anchor(top: usernameLabel.bottomAnchor, left: leftAnchor, right: rightAnchor,paddingBottom: 8)
+            userCircle.anchor(top: itemCountLabel.bottomAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor,paddingBottom: 10)
+            layoutIfNeeded()
+        }
     }
     
     func configure(user: GroupEventModel) {
-        userId = user.userId
-        itemCount = user.itemCount
-        usernameLabel.text = String(user.userId)
-        itemCountLabel.text = String(user.itemCount)
-        userCircle.configure(withUser: user,withCarId: carId)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            userId = user.userId
+            itemCount = user.itemCount
+            usernameLabel.text = String(user.userId)
+            itemCountLabel.text = String(user.itemCount)
+            userCircle.configure(withUser: user,withCarId: carId)
+        }
     }
     
     func updateItemCount(user: GroupEventModel) {
-        itemCount = user.itemCount
-        itemCountLabel.text = String(user.itemCount)
+        DispatchQueue.main.async { [weak self] in
+            self?.itemCount = user.itemCount
+            self?.itemCountLabel.text = String(user.itemCount)
+        }
     }
 }

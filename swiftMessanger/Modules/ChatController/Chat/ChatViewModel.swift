@@ -242,14 +242,19 @@ class ChatViewModel {
             
             if userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue {
                 if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+                    
                     print("*-*-*-UPDATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
                     rView?.handler?.userModels[existedUserIndex] = userModel
-                    rView?.userCircles[existedUserIndex].updateItemCount(user: userModel)
+                    if let matchingCircle = rView?.userCircles.first(where: { $0.userId == userModel.userId }) {
+                        DispatchQueue.main.async {
+                            matchingCircle.updateItemCount(user: userModel)
+                        }
+                    }
                     completion(.updateUserCircles(newUser: nil))
+                    
                 } else{
                     if userModel.userId != 0 {
                         rView?.handler?.userModels.append(userModel)
-                        guard let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) else { return }
                         print("*-*-*-GENERATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
                         completion(.updateUserCircles(newUser: userModel))
                     }

@@ -72,7 +72,9 @@ extension ChatController : ChatControllerDelegate {
 extension ChatController : SocketIOManagerChatDelegate {
     func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {
         if statusCode == 0 {
-            setupRaceView(seconds: seconds)
+            DispatchQueue.main.async { [weak self] in
+                self?.setupRaceView(seconds: seconds)
+            }
         }else{
             videoCell.isHidden = true
             print("Wait for cooldown")

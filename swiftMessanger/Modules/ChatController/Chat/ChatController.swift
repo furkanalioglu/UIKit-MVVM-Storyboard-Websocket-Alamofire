@@ -176,16 +176,21 @@ class ChatController: UIViewController {
         switch viewModel.chatType{
         case .group(let group):
             if videoCell.isHidden  {
-                //SET TIMER VALUE
-                let raceView = RaceView(frame: self.view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds),groupId: group.id)
-                self.viewModel.rView = raceView
-                self.viewModel.rView?.handler?.startTimer()
-                videoCell.addSubview(self.viewModel.rView!)
-                
-                raceView.fillSuperview()
-                videoCell.isHidden = false
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    //SET TIMER VALUE
+                    let raceView = RaceView(frame: view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds),groupId: group.id)
+                    viewModel.rView = raceView
+                    viewModel.rView?.handler?.startTimer()
+                    videoCell.addSubview((viewModel.rView)!)
+                    
+                    raceView.fillSuperview()
+                    videoCell.isHidden = false
+                }
             }else{
-                videoCell.isHidden = true
+                DispatchQueue.main.async { [weak self] in
+                    self?.videoCell.isHidden = true
+                }
             }
         default:
             break
