@@ -12,16 +12,21 @@ import AVFoundation
 class UserCircle: UIView {
     
     var userId: Int = 0
-    var leadingConstraing : NSLayoutConstraint?
+    var fileName = "framelights1"
     
     private var playerLooper: AVPlayerLooper?
-    private var playerLayer: AVPlayerLayer?
+    var playerLayer: AVPlayerLayer?
     private var queuePlayer : AVQueuePlayer?
-
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = bounds
     }
     
     
@@ -29,53 +34,25 @@ class UserCircle: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let userIdLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
-        return label
-    }()
-    
-    func makeCircle() {
-        self.layer.cornerRadius = self.frame.width / 2
-        self.layer.masksToBounds = true
-    }
-    
     func configure(withUser user: GroupEventModel) {
-        userIdLabel.text = String(user.userId)
-//        backgroundColor = .random
         userId = user.userId
-//        playAnimation()
-        makeCircle()
+        playAnimation()
     }
     
     private func setupView() {
         self.backgroundColor = .random
-        addSubview(userIdLabel)
-        userIdLabel.centerX(inView: self)
-        userIdLabel.centerY(inView: self)
     }
     
     func playAnimation() {
-        guard let url = Bundle.main.url(forResource: "framelights2",withExtension: "mp4") else {
-            print("Unable to find URL Video")
-            return }
-        
-        let asset = AVAsset(url: url)
-        let playerItem = AVPlayerItem(asset: asset)
-                
-        queuePlayer?.pause()
-        playerLayer?.removeFromSuperlayer()
-
-        queuePlayer = AVQueuePlayer(playerItem: playerItem)
-        playerLooper = AVPlayerLooper(player: queuePlayer!, templateItem: playerItem)
-
-        playerLayer = AVPlayerLayer(player: queuePlayer!)
-        guard let playerLayer = self.playerLayer else { return }
-        playerLayer.frame = bounds
-        layer.addSublayer(playerLayer)
-
-        queuePlayer?.play()
+        GiftManager.shared.didDownloadVideo(from: "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Asset+36%402x+2-luma.mp4") { url, err in
+            if err == nil {
+                print("METALDEBUG: BEFORE LAUNCH: \(UserDefaults.standard.string(forKey: "urlCAR")!)")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    GiftManager.shared.playSuperAnimation(view: self, videoURLString: UserDefaults.standard.string(forKey: "urlCAR")!) {
+                        self.playAnimation()
+                    }
+                }
+            }
+        }
     }
 }

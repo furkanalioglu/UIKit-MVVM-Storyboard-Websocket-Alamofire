@@ -104,6 +104,15 @@
 		91BE7F1B2A937DB7009B55DF /* framelights2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 91BE7F1A2A937DB7009B55DF /* framelights2.mp4 */; };
 		91BE7F1D2A93840A009B55DF /* framelights1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 91BE7F1C2A93840A009B55DF /* framelights1.mp4 */; };
 		91BE7F1F2A938411009B55DF /* framelights3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 91BE7F1E2A938411009B55DF /* framelights3.mp4 */; };
+		91BE7F252A948325009B55DF /* UserConatiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F242A948325009B55DF /* UserConatiner.swift */; };
+		91BE7F272A948FAB009B55DF /* GiftManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F262A948FAB009B55DF /* GiftManager.swift */; };
+		91BE7F3C2A949D23009B55DF /* AVAsset+VideoSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F372A949D1F009B55DF /* AVAsset+VideoSize.swift */; };
+		91BE7F3D2A949D23009B55DF /* AVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F382A949D21009B55DF /* AVPlayerView.swift */; };
+		91BE7F3E2A949D23009B55DF /* CIKernel+DefaultMetalLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F392A949D22009B55DF /* CIKernel+DefaultMetalLibrary.swift */; };
+		91BE7F3F2A949D23009B55DF /* AlphaFrameFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F3A2A949D22009B55DF /* AlphaFrameFilter.swift */; };
+		91BE7F402A949D23009B55DF /* CIImage+VerticalSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F3B2A949D22009B55DF /* CIImage+VerticalSplit.swift */; };
+		91BE7F422A949E8D009B55DF /* AlphaFrameFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F412A949E8D009B55DF /* AlphaFrameFilter.metal */; };
+		91BE7F462A94B9BB009B55DF /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F452A94B9BB009B55DF /* DownloadManager.swift */; };
 		91C9A7DC2A8F8623009EBD56 /* RaceTimer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */; };
 		91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */; };
 		91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 91DEF2922A7BED790072C6FF /* SocketIO */; };
@@ -238,6 +247,15 @@
 		91BE7F1A2A937DB7009B55DF /* framelights2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = framelights2.mp4; sourceTree = "<group>"; };
 		91BE7F1C2A93840A009B55DF /* framelights1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = framelights1.mp4; sourceTree = "<group>"; };
 		91BE7F1E2A938411009B55DF /* framelights3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = framelights3.mp4; sourceTree = "<group>"; };
+		91BE7F242A948325009B55DF /* UserConatiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConatiner.swift; sourceTree = "<group>"; };
+		91BE7F262A948FAB009B55DF /* GiftManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftManager.swift; sourceTree = "<group>"; };
+		91BE7F372A949D1F009B55DF /* AVAsset+VideoSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoSize.swift"; sourceTree = "<group>"; };
+		91BE7F382A949D21009B55DF /* AVPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVPlayerView.swift; sourceTree = "<group>"; };
+		91BE7F392A949D22009B55DF /* CIKernel+DefaultMetalLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIKernel+DefaultMetalLibrary.swift"; sourceTree = "<group>"; };
+		91BE7F3A2A949D22009B55DF /* AlphaFrameFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlphaFrameFilter.swift; sourceTree = "<group>"; };
+		91BE7F3B2A949D22009B55DF /* CIImage+VerticalSplit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIImage+VerticalSplit.swift"; sourceTree = "<group>"; };
+		91BE7F412A949E8D009B55DF /* AlphaFrameFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AlphaFrameFilter.metal; sourceTree = "<group>"; };
+		91BE7F452A94B9BB009B55DF /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RaceTimer.storyboard; sourceTree = "<group>"; };
 		91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRaceController.swift; sourceTree = "<group>"; };
 		91DEF2952A7BF6F00072C6FF /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
@@ -550,6 +568,7 @@
 			children = (
 				9171B3542A8B832600C698EC /* RaceView.swift */,
 				9171B3612A8E1DE200C698EC /* UserCircle.swift */,
+				91BE7F242A948325009B55DF /* UserConatiner.swift */,
 			);
 			path = Race;
 			sourceTree = "<group>";
@@ -605,9 +624,12 @@
 		918B33902A77E12C00AB0EB8 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				91BE7F282A949A81009B55DF /* Video */,
 				91934F352A80F8F600D827B3 /* Constants-Extensions */,
 				913B6E392A7B886D00B9D5C4 /* Rootmanager.swift */,
+				91BE7F452A94B9BB009B55DF /* DownloadManager.swift */,
 				913B6E3D2A7B8BDC00B9D5C4 /* RootExtension.swift */,
+				91BE7F262A948FAB009B55DF /* GiftManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -829,6 +851,19 @@
 			path = NewGroupCell;
 			sourceTree = "<group>";
 		};
+		91BE7F282A949A81009B55DF /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				91BE7F3A2A949D22009B55DF /* AlphaFrameFilter.swift */,
+				91BE7F372A949D1F009B55DF /* AVAsset+VideoSize.swift */,
+				91BE7F382A949D21009B55DF /* AVPlayerView.swift */,
+				91BE7F3B2A949D22009B55DF /* CIImage+VerticalSplit.swift */,
+				91BE7F392A949D22009B55DF /* CIKernel+DefaultMetalLibrary.swift */,
+				91BE7F412A949E8D009B55DF /* AlphaFrameFilter.metal */,
+			);
+			path = Video;
+			sourceTree = "<group>";
+		};
 		91DEF2942A7BF6D50072C6FF /* Splash */ = {
 			isa = PBXGroup;
 			children = (
@@ -997,6 +1032,7 @@
 			files = (
 				91B62E6C2A8616EC00B3C56E /* NewGroupController.swift in Sources */,
 				9171B3572A8B9C7500C698EC /* ColorExtensions.swift in Sources */,
+				91BE7F3C2A949D23009B55DF /* AVAsset+VideoSize.swift in Sources */,
 				9100AC402A864B6200AE6FEC /* NewGroupEditController.swift in Sources */,
 				913B6E112A7A338200B9D5C4 /* EditProfileViewModel.swift in Sources */,
 				9171B35D2A8BB05A00C698EC /* GroupEventModel.swift in Sources */,
@@ -1004,6 +1040,7 @@
 				919CDE942A794D6F00EB5DDE /* CurrentUserModel.swift in Sources */,
 				9171B35B2A8BABF400C698EC /* RaceHandler.swift in Sources */,
 				9171B3432A8B58F700C698EC /* ChatInformationController.swift in Sources */,
+				91BE7F272A948FAB009B55DF /* GiftManager.swift in Sources */,
 				910C24AE2A78E0D200E70900 /* UsersViewModel.swift in Sources */,
 				913B6E382A7B76E000B9D5C4 /* RegisterViewModel.swift in Sources */,
 				918B33972A77EA6400AB0EB8 /* RegisterController.swift in Sources */,
@@ -1015,7 +1052,10 @@
 				9100AC422A864BF600AE6FEC /* NewGroupEditViewModel.swift in Sources */,
 				9171B33F2A8A286200C698EC /* MessagesHeaderViewModel.swift in Sources */,
 				9100AC462A865A0C00AE6FEC /* CreateGroupModel.swift in Sources */,
+				91BE7F3F2A949D23009B55DF /* AlphaFrameFilter.swift in Sources */,
 				919CDE832A7900EA00EB5DDE /* AuthAPI.swift in Sources */,
+				91BE7F3D2A949D23009B55DF /* AVPlayerView.swift in Sources */,
+				91BE7F402A949D23009B55DF /* CIImage+VerticalSplit.swift in Sources */,
 				91934F372A80F90200D827B3 /* UDConstants.swift in Sources */,
 				91DEF2992A7BF74B0072C6FF /* SplashController.swift in Sources */,
 				916713AE2A78DC2C00C8AD50 /* UsersCell.swift in Sources */,
@@ -1038,6 +1078,7 @@
 				919CDE8E2A793D2800EB5DDE /* UserService.swift in Sources */,
 				913B6E012A7A2D3D00B9D5C4 /* SettingsCell.swift in Sources */,
 				913B6E072A7A32CA00B9D5C4 /* EditProfileController.swift in Sources */,
+				91BE7F422A949E8D009B55DF /* AlphaFrameFilter.metal in Sources */,
 				914A7F482A78D7AC00499D49 /* UsersController.swift in Sources */,
 				9100AC382A864A6000AE6FEC /* NewGroupEditCell.swift in Sources */,
 				910C24A82A78DF2300E70900 /* RegisterModel.swift in Sources */,
@@ -1045,6 +1086,7 @@
 				91934F392A81044B00D827B3 /* DateExtension.swift in Sources */,
 				91B62E602A860C9100B3C56E /* MessagesHeader.swift in Sources */,
 				91DEF2A02A7CDCA30072C6FF /* MessagesCell.swift in Sources */,
+				91BE7F3E2A949D23009B55DF /* CIKernel+DefaultMetalLibrary.swift in Sources */,
 				9171B3622A8E1DE200C698EC /* UserCircle.swift in Sources */,
 				913B6E0E2A7A337400B9D5C4 /* EditProfileCell.swift in Sources */,
 				919CDE7C2A78F8A800EB5DDE /* AuthService.swift in Sources */,
@@ -1058,7 +1100,9 @@
 				918B337C2A77E0EE00AB0EB8 /* SceneDelegate.swift in Sources */,
 				91B62E702A86178D00B3C56E /* NewGroupCell.swift in Sources */,
 				913B6E272A7A4FD700B9D5C4 /* ChatViewModel.swift in Sources */,
+				91BE7F462A94B9BB009B55DF /* DownloadManager.swift in Sources */,
 				913B6E442A7BA28E00B9D5C4 /* MessagesService.swift in Sources */,
+				91BE7F252A948325009B55DF /* UserConatiner.swift in Sources */,
 				913B6E042A7A31A600B9D5C4 /* SettingsViewModel.swift in Sources */,
 				91934F262A7CE05700D827B3 /* MessagesCellItem.swift in Sources */,
 				9171B34E2A8B5C4400C698EC /* ChatInformationViewModel.swift in Sources */,
@@ -1237,12 +1281,14 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MTLLINKER_FLAGS = "-fcikernel";
+				MTL_COMPILER_FLAGS = "-fcikernel";
 				PRODUCT_BUNDLE_IDENTIFIER = com.furkanalioglu.swiftMessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1268,12 +1314,14 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				MTLLINKER_FLAGS = "-fcikernel";
+				MTL_COMPILER_FLAGS = "-fcikernel";
 				PRODUCT_BUNDLE_IDENTIFIER = com.furkanalioglu.swiftMessanger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

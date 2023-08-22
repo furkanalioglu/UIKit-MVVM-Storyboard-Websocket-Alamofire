@@ -23,7 +23,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
 }
 struct SocketURL {
     static let baseURL: URL = {
-        guard let url = URL(string: "ws://10.82.0.85:3000/token=") else {
+        guard let url = URL(string: "http://ec2-18-196-242-245.eu-central-1.compute.amazonaws.com:3000/token=") else {
             fatalError("Invalid base URL.")
         }
         return url

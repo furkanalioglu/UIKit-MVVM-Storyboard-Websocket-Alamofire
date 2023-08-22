@@ -244,6 +244,7 @@ class ChatViewModel {
                 if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
                     print("*-*-*-UPDATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
                     rView?.handler?.userModels[existedUserIndex] = userModel
+                    rView?.userCircles[existedUserIndex].updateItemCount(user: userModel)
                     completion(.updateUserCircles(newUser: nil))
                 } else{
                     if userModel.userId != 0 {

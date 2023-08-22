@@ -7,7 +7,7 @@
 import UIKit
 
 class RaceView: UIView {
-    var userCircles: [UserCircle] = []
+    var userCircles: [UserConatiner] = []
     var flagView: UIImageView!
     var timerLabel = UILabel()
     var handler : RaceHandler?
@@ -52,7 +52,7 @@ class RaceView: UIView {
         let road = UIView()
         addSubview(road)
         road.backgroundColor = .black
-        road.setDimensions(height: 5,width:  400)
+        road.setDimensions(height: 5,width:  UIScreen.main.bounds.width)
         road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
     }
     
@@ -82,29 +82,22 @@ class RaceView: UIView {
         }else{
             self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
         }
-        print("*0*0*0*0*0")
-        dump(userCircles)
-        print("*0*0*0*0*0")
         handler.previousTopUsers = handler.topUsers
     }
     
     
     func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
         guard let handler = handler else { return }
-        let newCircle = UserCircle()
+        let newCircle = UserConatiner(frame: CGRect(x: 0, y: 0, width: 300, height: 100), videoResourceName: "framelights1")
         addSubview(newCircle)
         userCircles.append(newCircle)
-        newCircle.setWidth(30)
-        newCircle.setHeight(30)
-        newCircle.layoutIfNeeded()
-        newCircle.makeCircle()
+        layoutIfNeeded()
         
         let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: self.leadingAnchor)
         leadingConstraint.isActive = true
         newCircle.leadingConstraing = leadingConstraint
         newCircle.anchor(bottom: self.bottomAnchor)
-        
-        newCircle.configure(withUser: userModel)
+        newCircle.configure(user: userModel)
         moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
     }
     
@@ -143,6 +136,7 @@ class RaceView: UIView {
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
                 }
+            
             }
         }
     }

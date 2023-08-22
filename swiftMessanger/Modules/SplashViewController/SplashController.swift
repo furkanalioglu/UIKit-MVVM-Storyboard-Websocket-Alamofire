@@ -26,6 +26,8 @@ class SplashController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        
+        DownloadManager.shared.queueNewFile(priority: .high, url: "https://cikcik.app/carAssete.mp4")
     }
 }
 
