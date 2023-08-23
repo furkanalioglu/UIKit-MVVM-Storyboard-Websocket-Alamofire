@@ -83,15 +83,28 @@ final class GiftManager {
         }
     }
     
-    func didDownloadVideo(from urlString: String,forCar carNumber: Int, completion: @escaping (Bool, Error?) -> Void) {
+    func didDownloadVideo(from urlString: String, forCar carNumber: Int, completion: @escaping (Bool, Error?) -> Void) {
         guard let videoUrl = URL(string: urlString) else {
-            completion(false,nil)
-            return }
+            completion(false, nil)
+            return
+        }
+        
+        let fileExtension = videoUrl.pathExtension
+        let destinationPath = getAudioPath(forCarId: "\(carNumber)", extension: fileExtension)
+        let destinationURL = URL(fileURLWithPath: destinationPath)
+        
+        // Check if file already exists
+        if FileManager.default.fileExists(atPath: destinationPath) {
+            print("metaldebug:File for user \(carNumber) already exists at DestinationURL:  \(destinationURL)")
+            UserDefaults.standard.set(destinationURL, forKey: "urlCAR-\(carNumber)")
+            completion(true, nil)
+            return
+        }
         
         let session = URLSession.shared
         let downloadTask = session.downloadTask(with: videoUrl) { localURL, response, error in
             if let error = error {
-                completion(false,error)
+                completion(false, error)
                 return
             }
             
@@ -101,19 +114,22 @@ final class GiftManager {
             }
             
             do {
-                 let destinationURL = self.documentsDirectory.appendingPathComponent(videoUrl.lastPathComponent)
-                 if self.fileManager.fileExists(atPath: destinationURL.path) {
-                     try self.fileManager.removeItem(at: destinationURL)
-                 }
-                 try self.fileManager.copyItem(at: localURL, to: destinationURL)
+                try FileManager.default.copyItem(at: localURL, to: destinationURL)
                 print("metaldebug:Saved user \(carNumber) to DestinationURL:  \(destinationURL)")
-                 UserDefaults.standard.set(destinationURL.path, forKey: "urlCAR-\(carNumber)")
-                 completion(true, nil)
-             } catch {
-                 completion(false, error)
-             }
+                UserDefaults.standard.set(destinationPath, forKey: "urlCAR-\(carNumber)")
+                completion(true, nil)
+            } catch {
+                completion(false, error)
+            }
         }
         downloadTask.resume()
+    }
+
+    
+    func getAudioPath(forCarId id: String, extension fileExtension: String) -> String {
+        let fileManager = FileManager.default
+        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return documentDirectory.appendingPathComponent(id).appendingPathExtension(fileExtension).path
     }
     
     private func createTransparentItem(url: URL?) -> AVPlayerItem {

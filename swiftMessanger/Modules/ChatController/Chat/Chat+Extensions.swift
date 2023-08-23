@@ -27,6 +27,8 @@ extension ChatController : ChatControllerDelegate {
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 setupNavigationController()
+                print("GROUP OWNER ID : ", viewModel.groupOwnerId)
+
                 
                 if let count = viewModel.messages?.count, count > 0 {
                     tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
@@ -47,7 +49,7 @@ extension ChatController : ChatControllerDelegate {
                                                            itemCount: 0,
                                                            groupId: group.id))
                     }
-                    let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft)
+                    let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwner: viewModel.groupOwnerId)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     print("*-*-*- hanlder: \(handler)")
                     videoCell.addSubview(self.viewModel.rView!)
@@ -85,30 +87,30 @@ extension ChatController : SocketIOManagerChatDelegate {
     func didReceiveNewEventUser(userModel: GroupEventModel) {
         guard let chatType = viewModel.chatType else { return }
         DispatchQueue.main.async { [weak self] in
-            self?.viewModel.handleEventActions(userModel: userModel, group: chatType) { eventType in
+            guard let self = self else { return }
+            self.viewModel.handleEventActions(userModel: userModel, group: chatType) { eventType in
                 switch eventType{
                 case .updateUserCircles(newUser: let newUser):
-                    self?.viewModel.rView?.updateUserCircles(newUser: newUser)
+                    self.viewModel.rView?.updateUserCircles(newUser: newUser)
                     
                 case .showVideoCell(let raceDetails, let groupId, let timer):
-                    self?.videoCell.isHidden = false
+                    self.videoCell.isHidden = false
                     let handler = RaceHandler(userModels: raceDetails,
                                               isAnyRaceAvailable: true,
-                                              countdownValue: timer)
-                    self?.viewModel.rView = RaceView(frame: (self?.view.frame)!,
+                                              countdownValue: timer,raceOwner: self.viewModel.groupOwnerId)
+                    self.viewModel.rView = RaceView(frame: (self.view.frame),
                                                handler: handler,
                                                groupId: groupId)
-                    self?.videoCell.addSubview((self?.viewModel.rView)!)
-                    self?.viewModel.rView?.fillSuperview()
-                    self?.viewModel.rView?.handler?.startTimer()
-                    self?.viewModel.rView?.updateUserCircles(newUser: nil)
-                    
+                    self.videoCell.addSubview((self.viewModel.rView)!)
+                    self.viewModel.rView?.fillSuperview()
+                    self.viewModel.rView?.handler?.startTimer()
+                    self.viewModel.rView?.updateUserCircles(newUser: nil)
                 case .hideVideoCell:
-                    self?.videoCell.isHidden = true
-                    self?.viewModel.raceDetails = []
-                    self?.viewModel.rView?.userCircles = []
-                    self?.viewModel.rView?.handler?.stopTimer()
-                    self?.viewModel.rView?.removeFromSuperview()
+                    self.videoCell.isHidden = true
+                    self.viewModel.raceDetails = []
+                    self.viewModel.rView?.userCircles = []
+                    self.viewModel.rView?.handler?.stopTimer()
+                    self.viewModel.rView?.removeFromSuperview()
                 }
                 
             }

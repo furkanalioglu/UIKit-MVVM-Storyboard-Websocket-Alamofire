@@ -178,8 +178,7 @@ class ChatController: UIViewController {
             if videoCell.isHidden  {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    //SET TIMER VALUE
-                    let raceView = RaceView(frame: view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds),groupId: group.id)
+                    let raceView = RaceView(frame: view.frame,handler: RaceHandler(userModels: [GroupEventModel](), isAnyRaceAvailable: true, countdownValue: seconds, raceOwner: viewModel.groupOwnerId),groupId: group.id)
                     viewModel.rView = raceView
                     viewModel.rView?.handler?.startTimer()
                     videoCell.addSubview((viewModel.rView)!)

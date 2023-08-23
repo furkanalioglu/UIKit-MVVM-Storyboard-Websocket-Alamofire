@@ -10,7 +10,6 @@ import UIKit
 class UserConatiner: UIView {
     
     var leadingConstraing : NSLayoutConstraint?
-    var videoResourceName: String
     var userId = 0
     var itemCount = 0
     var carId = 1 {
@@ -38,12 +37,10 @@ class UserConatiner: UIView {
     private lazy var userCircle: UserCircle = {
         let circle = UserCircle()
         circle.backgroundColor = .red
-        circle.fileName = self.videoResourceName
         return circle
     }()
     
-    init(frame: CGRect, videoResourceName: String) {
-        self.videoResourceName = videoResourceName
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }

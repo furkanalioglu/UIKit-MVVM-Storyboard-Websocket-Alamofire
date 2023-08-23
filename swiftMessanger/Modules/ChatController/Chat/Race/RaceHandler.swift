@@ -27,10 +27,13 @@ class RaceHandler {
     var startTime: CFTimeInterval = 0.0
     var countdownValue: Int = 100
     
-    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int) {
+    var raceOwnerId: Int?
+    
+    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int,raceOwner : Int?) {
         self.userModels = userModels
         self.isAnyRaceAvailable = isAnyRaceAvailable
         self.countdownValue = countdownValue
+        self.raceOwnerId = raceOwner
         print("RACE17,: CREATING RACEHANDLER")
     }
     
@@ -41,22 +44,14 @@ class RaceHandler {
     
     var totalTopUsersPoints: Int {
         var total = topUsers.reduce(0, { $0 + $1.itemCount })
-        // Check if the current user is NOT in the top users list but exists in the userModels.
-//        if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
-//           !topUsers.contains(where: { $0.userId == currentUserId }),
-//           let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
-//        } else if let currentUserId = Int(AppConfig.instance.currentUserId ?? ""),
-//                  topUsers.contains(where: { $0.userId == currentUserId }) {
-//            if let currentUser = userModels.first(where: { $0.userId == currentUserId }) {
-//                total += currentUser.itemCount
-//            }
-//        }
         return total
     }
     
     var topUsersNotEqualToPrevious : Bool {
         return Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId })
     }
+    
+    
     
     func removeAndUpdateUser() -> (userToRemove: GroupEventModel?, userToAdd: GroupEventModel?) {
         let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0)})

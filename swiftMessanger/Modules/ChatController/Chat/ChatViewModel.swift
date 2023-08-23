@@ -65,7 +65,25 @@ class ChatViewModel {
         return false
     }
     
+    var groupOwnerId: Int? {
+        if let ownerIndex = userInformations?.firstIndex(where: {$0.groupRole != "User"}) {
+            return userInformations?[ownerIndex].id
+        }
+        return nil
+    }
     
+    private func isEventStartedForNonStreamer(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
+        return userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue
+    }
+    
+    private func isEventAvaible(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
+        return userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue
+    }
+    
+    private func isEventFinished(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
+        return userModel.groupId == group.id && userModel.userId == EventResponse.eventFinished.rawValue
+    }
+
     var currentPage = 1 {
         didSet {
             switch chatType {
@@ -197,7 +215,6 @@ class ChatViewModel {
     
     
     func playVideoForDuration(_ duration: Double) {
-        
         guard let player = self.player else { return }
         
         let currentTime = player.currentTime()
@@ -208,7 +225,7 @@ class ChatViewModel {
         
         player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
             guard let strongSelf = self else { return }
-            
+
             if CMTimeCompare(time, strongSelf.endPlaybackTime!) != -1 { // if time is not less than endPlaybackTime
                 strongSelf.player?.pause()
             }else{
@@ -229,8 +246,9 @@ class ChatViewModel {
     func handleEventActions(userModel: GroupEventModel, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
+            
             print("*-*-*-UMODEL\(userModel)")
-            if userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue {
+            if isEventStartedForNonStreamer(forGroup: group, forUser: userModel){
                 guard var raceDetails = raceDetails else { return }
                 guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
                 if !raceDetails.contains(where: {$0.userId == myId}) && !isGroupOwner{
@@ -240,7 +258,7 @@ class ChatViewModel {
             }
             
             
-            if userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue {
+            if isEventAvaible(forGroup: group, forUser: userModel){
                 if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
                     
                     print("*-*-*-UPDATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
@@ -262,8 +280,7 @@ class ChatViewModel {
                 
             }
                             
-
-            if userModel.groupId == group.id && userModel.userId == EventResponse.eventFinished.rawValue {
+            if isEventFinished(forGroup: group, forUser: userModel){
                 completion(.hideVideoCell)
             }
         default:
