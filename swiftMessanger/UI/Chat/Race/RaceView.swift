@@ -6,6 +6,7 @@
 //
 import UIKit
 import AVFoundation
+import Lottie
 
 class RaceView: UIView {
     var userCircles: [UserConatiner] = []
@@ -24,20 +25,21 @@ class RaceView: UIView {
         self.handler = handler
         self.groupId = groupId
         configureRoadUI()
-        playAnimation()
+//        playAnimation(environmentId: 2)
+        playLottieAnimation()
         setupTimer()
         handler.delegate = self
         print("refreshing view")
         backgroundColor = .clear
         generateUserCircleInTopList(groupId: groupId)
-
+     
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    
     private func setupTimer() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -47,10 +49,18 @@ class RaceView: UIView {
             timerLabel.anchor(top: topAnchor, right: rightAnchor,paddingRight: 8)
         }
     }
-
+    
+    private var lottieAnimationView: LottieAnimationView = {
+        let animationView = LottieAnimationView(name: "data")
+        animationView.contentMode = .scaleAspectFill
+        animationView.loopMode = .autoReverse
+        return animationView
+    }()
+    
+    
     private var road : UIView = {
-            let road = UIView()
-            return road
+        let road = UIView()
+        return road
     }()
     
     func updateUserCircles(newUser: GroupEventModel?) {
@@ -73,10 +83,10 @@ class RaceView: UIView {
                    let userToAdd = updatedTopUsersInfo.userToAdd{
                     let removedIndex = userCircles.firstIndex(where: {$0.userId == userToRemove.userId})!
                     let removedCarId = userCircles[removedIndex].carId
-                        circleToRemove.removeFromSuperview()
-                        userCircles.removeAll(where: { $0.userId == userToRemove.userId })
-                        generateNewUserCircle(withUserModel: userToAdd, passedBy: removedCarId)
-                        moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                    circleToRemove.removeFromSuperview()
+                    userCircles.removeAll(where: { $0.userId == userToRemove.userId })
+                    generateNewUserCircle(withUserModel: userToAdd, passedBy: removedCarId)
+                    moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
                 }
                 
             }else{
@@ -124,10 +134,10 @@ class RaceView: UIView {
     }
     
     func configureRoadUI() {
-        addSubview(road)
-//        road.setDimensions(height: 300,width:  UIScreen.main.bounds.width)
-        road.anchor(left: leftAnchor,bottom: bottomAnchor,right: rightAnchor,paddingBottom: 1)
-        road.setHeight(60)
+        addSubview(lottieAnimationView)
+        lottieAnimationView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingBottom: 1)
+        lottieAnimationView.setHeight(60)
+        playLottieAnimation()
     }
     
     func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
@@ -151,38 +161,56 @@ class RaceView: UIView {
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
                 }
-            
+                
             }
         }
     }
     
-    private func playAnimation() {
-        let urlString = "https://chat-appbucket.s3.eu-central-1.amazonaws.com/Group+5222.mp4"
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL string.")
-            return
+    private func fetchVideoPath(forEnvironmentId id: Int) -> String? {
+        let environmentKey = "urlEnvironment-\(id)"
+        guard let pathUD = UserDefaults.standard.string(forKey: environmentKey) else {
+            return nil
         }
-
-        let asset = AVAsset(url: url)
-        let playerItem = AVPlayerItem(asset: asset)
-
-        queuePlayer?.pause()
-        playerLayer?.removeFromSuperlayer()
-
-        queuePlayer = AVQueuePlayer(playerItem: playerItem)
-        playerLooper = AVPlayerLooper(player: queuePlayer!, templateItem: playerItem)
-        playerLayer = AVPlayerLayer(player: queuePlayer!)
-        guard let playerLayer = self.playerLayer else { return }
-
-        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            playerLayer.frame = self.road.frame
-            self.layer.addSublayer(playerLayer)
-            self.layoutIfNeeded()
-            self.queuePlayer?.play()
-            debugPrint("It should work..")
-        }
+        return "\(pathUD)"
+    }
+    
+//    private func playAnimation(environmentId: Int) {
+//        DispatchQueue.main.async { [weak self] in
+//            guard let self = self else { return }
+//            guard let pathUD = fetchVideoPath(forEnvironmentId: environmentId) else { return }
+//            let videoURLString = "\(pathUD)"
+//
+//            guard let url = URL(string: videoURLString) else {
+//                print("Invalid URL string.")
+//                return
+//            }
+//            print("Trying to use \(videoURLString)")
+//
+//
+//            let asset = AVAsset(url: url)
+//            let playerItem = AVPlayerItem(asset: asset)
+//
+//            queuePlayer?.pause()
+//            playerLayer?.removeFromSuperlayer()
+//
+//            queuePlayer = AVQueuePlayer(playerItem: playerItem)
+//            playerLooper = AVPlayerLooper(player: queuePlayer!, templateItem: playerItem)
+//            playerLayer = AVPlayerLayer(player: queuePlayer!)
+//            guard let playerLayer = self.playerLayer else { return }
+//
+//            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+//
+//
+//            playerLayer.frame = self.road.frame
+//            self.layer.addSublayer(playerLayer)
+//            self.layoutIfNeeded()
+//            self.queuePlayer?.play()
+//            debugPrint("It should work..")
+//        }
+//
+//    }
+    private func playLottieAnimation() {
+        lottieAnimationView.play()
     }
     
     
@@ -195,7 +223,7 @@ extension RaceView : RaceHandlerProtocol{
             self?.timerLabel.text = String(value)
         }
     }
-
+    
     func timerDidCompleted() {
         DispatchQueue.main.async { [weak self] in
             self?.timerLabel.text = "0"

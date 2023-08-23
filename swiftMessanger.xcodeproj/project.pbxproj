@@ -82,6 +82,11 @@
 		91934F3C2A82348A00D827B3 /* OneSignal in Frameworks */ = {isa = PBXBuildFile; productRef = 91934F3B2A82348A00D827B3 /* OneSignal */; };
 		91934F442A8234BC00D827B3 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91934F432A8234BC00D827B3 /* NotificationService.swift */; };
 		91934F482A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91934F412A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		919C40822A964C2400E813EB /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919C40812A964C2400E813EB /* AssetManager.swift */; };
+		919C40852A964E8400E813EB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 919C40842A964E8400E813EB /* Lottie */; };
+		919C408B2A964FE200E813EB /* img_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 919C40882A964FE200E813EB /* img_1.png */; };
+		919C408C2A964FE200E813EB /* img_0.png in Resources */ = {isa = PBXBuildFile; fileRef = 919C40892A964FE200E813EB /* img_0.png */; };
+		919C408D2A964FE200E813EB /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = 919C408A2A964FE200E813EB /* data.json */; };
 		919CDE762A78F18C00EB5DDE /* UsersHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 919CDE752A78F18C00EB5DDE /* UsersHeader.xib */; };
 		919CDE7C2A78F8A800EB5DDE /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919CDE7B2A78F8A800EB5DDE /* AuthService.swift */; };
 		919CDE7F2A78FF3500EB5DDE /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 919CDE7E2A78FF3500EB5DDE /* Moya */; };
@@ -226,6 +231,10 @@
 		91934F432A8234BC00D827B3 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		91934F452A8234BC00D827B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91934F4D2A82354F00D827B3 /* swiftMessanger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = swiftMessanger.entitlements; sourceTree = "<group>"; };
+		919C40812A964C2400E813EB /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
+		919C40882A964FE200E813EB /* img_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_1.png; sourceTree = "<group>"; };
+		919C40892A964FE200E813EB /* img_0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_0.png; sourceTree = "<group>"; };
+		919C408A2A964FE200E813EB /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		919CDE752A78F18C00EB5DDE /* UsersHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UsersHeader.xib; sourceTree = "<group>"; };
 		919CDE7B2A78F8A800EB5DDE /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		919CDE802A78FF6500EB5DDE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
@@ -271,6 +280,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				919C40852A964E8400E813EB /* Lottie in Frameworks */,
 				919CDE7F2A78FF3500EB5DDE /* Moya in Frameworks */,
 				91934F3C2A82348A00D827B3 /* OneSignal in Frameworks */,
 				910C24AB2A78E05800E70900 /* SDWebImage in Frameworks */,
@@ -580,6 +590,7 @@
 				91BE7F1C2A93840A009B55DF /* framelights1.mp4 */,
 				91BE7F1A2A937DB7009B55DF /* framelights2.mp4 */,
 				91B62E392A85123900B3C56E /* superanimation1_3.mp4 */,
+				919C40862A964FE200E813EB /* yol1 */,
 				918B33782A77E0EE00AB0EB8 /* swiftMessanger */,
 				91934F422A8234BC00D827B3 /* OneSignalNotificationServiceExtension */,
 				918B33772A77E0EE00AB0EB8 /* Products */,
@@ -753,6 +764,7 @@
 				91934F382A81044B00D827B3 /* DateExtension.swift */,
 				9171B3512A8B827800C698EC /* NSLayoutExtensions.swift */,
 				9171B3562A8B9C7500C698EC /* ColorExtensions.swift */,
+				919C40812A964C2400E813EB /* AssetManager.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -764,6 +776,24 @@
 				91934F452A8234BC00D827B3 /* Info.plist */,
 			);
 			path = OneSignalNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
+		919C40862A964FE200E813EB /* yol1 */ = {
+			isa = PBXGroup;
+			children = (
+				919C40872A964FE200E813EB /* images */,
+				919C408A2A964FE200E813EB /* data.json */,
+			);
+			path = yol1;
+			sourceTree = "<group>";
+		};
+		919C40872A964FE200E813EB /* images */ = {
+			isa = PBXGroup;
+			children = (
+				919C40882A964FE200E813EB /* img_1.png */,
+				919C40892A964FE200E813EB /* img_0.png */,
+			);
+			path = images;
 			sourceTree = "<group>";
 		};
 		919CDE8C2A79355100EB5DDE /* Auth */ = {
@@ -913,6 +943,7 @@
 				919CDE7E2A78FF3500EB5DDE /* Moya */,
 				91DEF2922A7BED790072C6FF /* SocketIO */,
 				91934F3B2A82348A00D827B3 /* OneSignal */,
+				919C40842A964E8400E813EB /* Lottie */,
 			);
 			productName = swiftMessanger;
 			productReference = 918B33762A77E0EE00AB0EB8 /* swiftMessanger.app */;
@@ -967,6 +998,7 @@
 				919CDE7D2A78FF3500EB5DDE /* XCRemoteSwiftPackageReference "Moya" */,
 				91DEF2912A7BED790072C6FF /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 				91934F3A2A82348A00D827B3 /* XCRemoteSwiftPackageReference "OneSignal-iOS-SDK" */,
+				919C40832A964E8400E813EB /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			productRefGroup = 918B33772A77E0EE00AB0EB8 /* Products */;
 			projectDirPath = "";
@@ -987,9 +1019,11 @@
 				91B62E3A2A85123900B3C56E /* superanimation1_3.mp4 in Resources */,
 				9171B34C2A8B5A0600C698EC /* ChatInformationCell.xib in Resources */,
 				913B6E0B2A7A32FF00B9D5C4 /* EditProfile.storyboard in Resources */,
+				919C408B2A964FE200E813EB /* img_1.png in Resources */,
 				91B62E712A86178D00B3C56E /* NewGroupCell.xib in Resources */,
 				916713AF2A78DC2C00C8AD50 /* UsersCell.xib in Resources */,
 				914A7F4B2A78D7D300499D49 /* Users.storyboard in Resources */,
+				919C408C2A964FE200E813EB /* img_0.png in Resources */,
 				91B62E6A2A8616C700B3C56E /* NewGroup.storyboard in Resources */,
 				913B6E202A7A4F1000B9D5C4 /* Chat.storyboard in Resources */,
 				9108FBB22A77FE6C00875CFD /* Messages.storyboard in Resources */,
@@ -1003,6 +1037,7 @@
 				9108FBA92A77F4B500875CFD /* MainTab.storyboard in Resources */,
 				918B33832A77E0EF00AB0EB8 /* Assets.xcassets in Resources */,
 				913B6E0F2A7A337400B9D5C4 /* EditProfileCell.xib in Resources */,
+				919C408D2A964FE200E813EB /* data.json in Resources */,
 				919CDE762A78F18C00EB5DDE /* UsersHeader.xib in Resources */,
 				918B33812A77E0EE00AB0EB8 /* Main.storyboard in Resources */,
 				918B339B2A77EA7D00AB0EB8 /* Register.storyboard in Resources */,
@@ -1038,6 +1073,7 @@
 				9171B35D2A8BB05A00C698EC /* GroupEventModel.swift in Sources */,
 				913B6E142A7A377500B9D5C4 /* AppConfig.swift in Sources */,
 				919CDE942A794D6F00EB5DDE /* CurrentUserModel.swift in Sources */,
+				919C40822A964C2400E813EB /* AssetManager.swift in Sources */,
 				9171B35B2A8BABF400C698EC /* RaceHandler.swift in Sources */,
 				9171B3432A8B58F700C698EC /* ChatInformationController.swift in Sources */,
 				91BE7F272A948FAB009B55DF /* GiftManager.swift in Sources */,
@@ -1431,6 +1467,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		919C40832A964E8400E813EB /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
 		919CDE7D2A78FF3500EB5DDE /* XCRemoteSwiftPackageReference "Moya" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Moya/Moya.git";
@@ -1459,6 +1503,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 91934F3A2A82348A00D827B3 /* XCRemoteSwiftPackageReference "OneSignal-iOS-SDK" */;
 			productName = OneSignal;
+		};
+		919C40842A964E8400E813EB /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 919C40832A964E8400E813EB /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 		919CDE7E2A78FF3500EB5DDE /* Moya */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -15,7 +15,10 @@ class SplashViewModel {
     
     init() {
         attemptAutoLogin()
+        fetchCarAssets()
+        fetchEnvironmentAssets()
     }
+
 
     
     func attemptAutoLogin() {
@@ -51,14 +54,19 @@ class SplashViewModel {
             }
             
             self.messages = messages
-            self.fetchAllAssets()
+            self.fetchCarAssets()
             print("MESSAGECONTROLLERDEBUG: \(String(describing: messages))")
         }
     }
     
-    func fetchAllAssets() {
+    func fetchCarAssets() {
+//        for i in 0..<assetsArray.count {
+//            GiftManager.shared.didDownloadVideo(from: assetsArray[i], assetString: assetType.rawValue, forAsset: i) { didCompleted, err in
+//
+//            }
+//        }
         for i in  0..<AppConfig.instance.carURLS.count{
-            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.carURLS[i] ,forCar: i) { didCompleted, err in
+            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.carURLS[i],assetString: "urlCAR" ,forAsset: i) { didCompleted, err in
                 if err == nil && didCompleted == true {
                     print("Downloaded car asset for \(i)")
                 }else{
@@ -69,4 +77,21 @@ class SplashViewModel {
         }
         self.delegate?.couldCheckUser(error: nil)
     }
+    
+    func fetchEnvironmentAssets() {
+        for i in 0..<AppConfig.instance.otherAssets.count {
+            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.otherAssets[i],assetString: "urlEnvironment", forAsset: i) { didCompleted, err in
+                if err == nil && didCompleted == true {
+                    print("Downloaded environment asset for \(i)")
+                }else{
+                    return
+                }
+            }
+        }
+    }
+    
+}
+
+enum AssetTypes: String {
+    case urlCAR, urlEnvironment
 }

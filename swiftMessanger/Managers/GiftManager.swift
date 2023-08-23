@@ -83,20 +83,22 @@ final class GiftManager {
         }
     }
     
-    func didDownloadVideo(from urlString: String, forCar carNumber: Int, completion: @escaping (Bool, Error?) -> Void) {
+    func didDownloadVideo(from urlString: String, assetString: String, forAsset assetId: Int, completion: @escaping (Bool, Error?) -> Void) {
         guard let videoUrl = URL(string: urlString) else {
             completion(false, nil)
             return
         }
         
         let fileExtension = videoUrl.pathExtension
-        let destinationPath = getAudioPath(forCarId: "\(carNumber)", extension: fileExtension)
+        let destinationPath = getAssetPath(forAssetId: "\(assetId)", type: assetString, extension: fileExtension)
         let destinationURL = URL(fileURLWithPath: destinationPath)
         
         // Check if file already exists
         if FileManager.default.fileExists(atPath: destinationPath) {
-            print("metaldebug:File for user \(carNumber) already exists at DestinationURL:  \(destinationPath)")
-            UserDefaults.standard.set(destinationPath, forKey: "urlCAR-\(carNumber)")
+//            print("metaldebug:File for \(assetString) \(assetId) already exists at DestinationURL: \(destinationPath)")
+            let fixedPath = "file://\(destinationPath)"
+            print("File for \(fixedPath)")
+            UserDefaults.standard.set(fixedPath, forKey: "\(assetString)-\(assetId)")
             completion(true, nil)
             return
         }
@@ -114,9 +116,13 @@ final class GiftManager {
             }
             
             do {
+                // Ensure the directory exists
+                let directoryPath = self.getDirectoryPath(forType: assetString)
+                try FileManager.default.createDirectory(atPath: directoryPath, withIntermediateDirectories: true, attributes: nil)
+                
                 try FileManager.default.copyItem(at: localURL, to: destinationURL)
-                print("metaldebug:Saved user \(carNumber) to DestinationURL:  \(destinationURL)")
-                UserDefaults.standard.set(destinationPath, forKey: "urlCAR-\(carNumber)")
+                print("metaldebug:Saved \(assetString) \(assetId) to DestinationURL:  \(destinationURL)")
+                UserDefaults.standard.set(destinationPath, forKey: "\(assetString)-\(assetId)")
                 completion(true, nil)
             } catch {
                 completion(false, error)
@@ -125,12 +131,22 @@ final class GiftManager {
         downloadTask.resume()
     }
 
-    
-    func getAudioPath(forCarId id: String, extension fileExtension: String) -> String {
-        let fileManager = FileManager.default
-        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documentDirectory.appendingPathComponent(id).appendingPathExtension(fileExtension).path
+    // Get the directory path for a specific asset type
+    func getDirectoryPath(forType type: String) -> String {
+        return documentsDirectory.appendingPathComponent(type).path
     }
+
+    // Get the full path for an asset
+    func getAssetPath(forAssetId assetId: String, type: String, extension ext: String) -> String {
+        return getDirectoryPath(forType: type).appending("/\(assetId).\(ext)")
+    }
+
+    
+//    func getAudioPath(forCarId id: String, extension fileExtension: String) -> String {
+//        let fileManager = FileManager.default
+//        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+//        return documentDirectory.appendingPathComponent(id).appendingPathExtension(fileExtension).path
+//    }
     
     private func createTransparentItem(url: URL?) -> AVPlayerItem {
         guard let url = url else {fatalError("Could not get url")}
