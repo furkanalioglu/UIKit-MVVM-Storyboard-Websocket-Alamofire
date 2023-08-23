@@ -95,8 +95,8 @@ final class GiftManager {
         
         // Check if file already exists
         if FileManager.default.fileExists(atPath: destinationPath) {
-            print("metaldebug:File for user \(carNumber) already exists at DestinationURL:  \(destinationURL)")
-            UserDefaults.standard.set(destinationURL, forKey: "urlCAR-\(carNumber)")
+            print("metaldebug:File for user \(carNumber) already exists at DestinationURL:  \(destinationPath)")
+            UserDefaults.standard.set(destinationPath, forKey: "urlCAR-\(carNumber)")
             completion(true, nil)
             return
         }
