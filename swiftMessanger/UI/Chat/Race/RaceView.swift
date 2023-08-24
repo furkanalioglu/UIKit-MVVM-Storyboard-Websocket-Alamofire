@@ -25,7 +25,6 @@ class RaceView: UIView {
         self.handler = handler
         self.groupId = groupId
         configureRoadUI()
-//        playAnimation(environmentId: 2)
         playLottieAnimation()
         setupTimer()
         handler.delegate = self
@@ -55,12 +54,6 @@ class RaceView: UIView {
         animationView.contentMode = .scaleAspectFill
         animationView.loopMode = .autoReverse
         return animationView
-    }()
-    
-    
-    private var road : UIView = {
-        let road = UIView()
-        return road
     }()
     
     func updateUserCircles(newUser: GroupEventModel?) {
@@ -143,21 +136,15 @@ class RaceView: UIView {
     func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            debugPrint("current_frame", self.frame.width, UIScreen.main.bounds.size.width )
             print("*-*-*-\(totalPoints)")
             let roadWidth = self.frame.width - 50 // This represents 100%
             for user in topUsers {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
-                circle.anchor(bottom: road.centerYAnchor)
-                debugPrint(user.itemCount, "to position")
+                circle.anchor(bottom: lottieAnimationView.centerYAnchor)
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
-                debugPrint(userPercentageOfTotal, "to position")
                 let estimatedXPosition = (userPercentageOfTotal * roadWidth) - (circle.frame.width / 2)
-                debugPrint(estimatedXPosition, "to position", roadWidth, circle.frame.width)
                 let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
                 circle.leadingConstraing?.constant = clampedXPosition
-                
-                print(" \(user.userId) to position \(clampedXPosition)")
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
                 }
@@ -166,13 +153,10 @@ class RaceView: UIView {
         }
     }
     
-    private func fetchVideoPath(forEnvironmentId id: Int) -> String? {
-        let environmentKey = "urlEnvironment-\(id)"
-        guard let pathUD = UserDefaults.standard.string(forKey: environmentKey) else {
-            return nil
-        }
-        return "\(pathUD)"
+    private func playLottieAnimation() {
+        lottieAnimationView.play()
     }
+    
     
 //    private func playAnimation(environmentId: Int) {
 //        DispatchQueue.main.async { [weak self] in
@@ -209,10 +193,6 @@ class RaceView: UIView {
 //        }
 //
 //    }
-    private func playLottieAnimation() {
-        lottieAnimationView.play()
-    }
-    
     
 }
 

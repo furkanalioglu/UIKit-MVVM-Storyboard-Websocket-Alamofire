@@ -46,15 +46,13 @@ class UserCircle: UIView {
     }
     
     func playAnimation() {
-        let carKey = "urlCAR-\(carId)"
-        guard let pathUD = UserDefaults.standard.string(forKey: carKey) else { return }
-        let videoURLString = "file://\(pathUD)"
-        print("Trying to use \(videoURLString)")
+        guard let localURL = AssetManager.shared.getUDAssetPath(for: .urlCAR, assetId: carId) else { return }
         DispatchQueue.main.async {
-            GiftManager.shared.playSuperAnimation(view: self, videoURLString:videoURLString) {
+            GiftManager.shared.playSuperAnimation(view: self, videoURLString:localURL) {
                 self.layoutIfNeeded()
                 self.layoutSubviews()
             }
         }
     }
 }
+

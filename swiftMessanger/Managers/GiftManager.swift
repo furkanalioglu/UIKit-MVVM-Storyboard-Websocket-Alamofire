@@ -77,28 +77,22 @@ final class GiftManager {
                      player.play()
                  }
 
-                 // Start playing
                  player.play()
             }
         }
     }
     
-    func didDownloadVideo(from urlString: String, assetString: String, forAsset assetId: Int, completion: @escaping (Bool, Error?) -> Void) {
+    func didDownloadVideo(from urlString: String, assetString: AssetTypes, forAsset assetId: Int, completion: @escaping (Bool, Error?) -> Void) {
         guard let videoUrl = URL(string: urlString) else {
             completion(false, nil)
             return
         }
         
-        let fileExtension = videoUrl.pathExtension
-        let destinationPath = getAssetPath(forAssetId: "\(assetId)", type: assetString, extension: fileExtension)
+        let destinationPath = AssetManager.shared.getAssetPath(forAssetId: assetId, type: assetString.rawValue, extension: videoUrl.pathExtension)
         let destinationURL = URL(fileURLWithPath: destinationPath)
         
-        // Check if file already exists
         if FileManager.default.fileExists(atPath: destinationPath) {
-//            print("metaldebug:File for \(assetString) \(assetId) already exists at DestinationURL: \(destinationPath)")
-            let fixedPath = "file://\(destinationPath)"
-            print("File for \(fixedPath)")
-            UserDefaults.standard.set(fixedPath, forKey: "\(assetString)-\(assetId)")
+            UserDefaults.standard.set(destinationPath, forKey: "\(assetString)-\(assetId)")
             completion(true, nil)
             return
         }
@@ -116,13 +110,12 @@ final class GiftManager {
             }
             
             do {
-                // Ensure the directory exists
-                let directoryPath = self.getDirectoryPath(forType: assetString)
+                let directoryPath = AssetManager.shared.getDirectoryPath(forType: assetString.rawValue)
                 try FileManager.default.createDirectory(atPath: directoryPath, withIntermediateDirectories: true, attributes: nil)
-                
                 try FileManager.default.copyItem(at: localURL, to: destinationURL)
-                print("metaldebug:Saved \(assetString) \(assetId) to DestinationURL:  \(destinationURL)")
-                UserDefaults.standard.set(destinationPath, forKey: "\(assetString)-\(assetId)")
+                
+                let createdPath = AssetManager.shared.saveAssetUDAndGetPath(from: destinationURL, for: assetString, assetId: assetId)
+                UserDefaults.standard.set(createdPath, forKey: "\(assetString)-\(assetId)")
                 completion(true, nil)
             } catch {
                 completion(false, error)
@@ -131,22 +124,6 @@ final class GiftManager {
         downloadTask.resume()
     }
 
-    // Get the directory path for a specific asset type
-    func getDirectoryPath(forType type: String) -> String {
-        return documentsDirectory.appendingPathComponent(type).path
-    }
-
-    // Get the full path for an asset
-    func getAssetPath(forAssetId assetId: String, type: String, extension ext: String) -> String {
-        return getDirectoryPath(forType: type).appending("/\(assetId).\(ext)")
-    }
-
-    
-//    func getAudioPath(forCarId id: String, extension fileExtension: String) -> String {
-//        let fileManager = FileManager.default
-//        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        return documentDirectory.appendingPathComponent(id).appendingPathExtension(fileExtension).path
-//    }
     
     private func createTransparentItem(url: URL?) -> AVPlayerItem {
         guard let url = url else {fatalError("Could not get url")}
@@ -154,7 +131,6 @@ final class GiftManager {
         let playerItem = AVPlayerItem(asset: asset)
         playerItem.seekingWaitsForVideoCompositionRendering = true
         playerItem.videoComposition = createVideoComposition(for: asset)
-
         return playerItem
     }
     
@@ -164,7 +140,6 @@ final class GiftManager {
             do {
                 let (inputImage, maskImage) = request.sourceImage.verticalSplit()
                 let outputImage = try filter.process(inputImage, mask: maskImage) //CIImage
-                //self.saveVideoToLibrary(image: outputImage)
                 return request.finish(with: outputImage, context: nil)
             } catch {
                 return request.finish(with: error)
