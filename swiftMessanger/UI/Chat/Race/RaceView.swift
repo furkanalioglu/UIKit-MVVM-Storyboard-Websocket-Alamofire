@@ -59,10 +59,8 @@ class RaceView: UIView {
         guard let handler = handler else { return }
         guard let newUsers = newUsers else { return }
         handler.userModels = newUsers.Array
-        print("*-*-*-HANDLER \(handler.userModels)")
-
+        
             for user in newUsers.Array {
-                
                 if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
                     let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
                     if let circleToRemove = updatedTopUsersInfo.userToRemove,
@@ -70,8 +68,8 @@ class RaceView: UIView {
                        {
                             circleToRemove.removeFromSuperview()
                             userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
-                            print("*-*-*- Removing user FROM FIRST FUNC  \(circleToRemove)")
                             generateNewUserCircle(withUserModel: userToAdd)
+                            moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
                         return
                     }
                 }else{
@@ -84,10 +82,8 @@ class RaceView: UIView {
                         
                     }else{
                         generateNewUserCircle(withUserModel: user)
-//                        moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
                     }
                 }
-                
                 guard let index = userCircles.firstIndex(where: {$0.userId == user.userId}) else { return }
                 userCircles[index].itemCount = user.itemCount
                 userCircles[index].updateItemCount(user: user)
