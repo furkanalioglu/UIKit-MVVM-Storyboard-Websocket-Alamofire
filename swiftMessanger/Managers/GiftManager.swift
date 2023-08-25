@@ -88,11 +88,12 @@ final class GiftManager {
             return
         }
         
-        let destinationPath = AssetManager.shared.getAssetPath(forAssetId: assetId, type: assetString.rawValue, extension: videoUrl.pathExtension)
+        var destinationPath = AssetManager.shared.getAssetPath(forAssetId: assetId, type: assetString.rawValue, extension: videoUrl.pathExtension)
         let destinationURL = URL(fileURLWithPath: destinationPath)
         
         if FileManager.default.fileExists(atPath: destinationPath) {
-            UserDefaults.standard.set(destinationPath, forKey: "\(assetString)-\(assetId)")
+            UserDefaults.standard.set(destinationPath, forKey: assetString.getPathKey(for: assetId))
+            print("AssetDEBUG: Existed path: \(destinationPath)")
             completion(true, nil)
             return
         }
@@ -114,8 +115,9 @@ final class GiftManager {
                 try FileManager.default.createDirectory(atPath: directoryPath, withIntermediateDirectories: true, attributes: nil)
                 try FileManager.default.copyItem(at: localURL, to: destinationURL)
                 
-                let createdPath = AssetManager.shared.saveAssetUDAndGetPath(from: destinationURL, for: assetString, assetId: assetId)
-                UserDefaults.standard.set(createdPath, forKey: "\(assetString)-\(assetId)")
+                let createdPath = AssetManager.shared.saveAssetToUDAndGetPath(from: destinationURL, for: assetString, assetId: assetId)
+                UserDefaults.standard.set(createdPath, forKey: assetString.getPathKey(for: assetId))
+                print("AssetDEBUG: Downloaded path: \(createdPath)")
                 completion(true, nil)
             } catch {
                 completion(false, error)
@@ -126,7 +128,7 @@ final class GiftManager {
 
     
     private func createTransparentItem(url: URL?) -> AVPlayerItem {
-        guard let url = url else {fatalError("Could not get url")}
+        guard let url = url else { fatalError("Could not get url") }
         let asset = AVAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
         playerItem.seekingWaitsForVideoCompositionRendering = true

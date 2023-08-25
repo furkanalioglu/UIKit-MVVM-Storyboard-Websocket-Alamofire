@@ -19,10 +19,10 @@ enum EventResponse : Int {
 }
 
 enum ActionType {
-    case updateUserCircles(newUser: GroupEventModel?)
+    case updateUserCircles(newUser: GroupEventModelArray?)
     case hideVideoCell
     case showVideoCell(raceDetails: [GroupEventModel], groupId: Int, countdownValue: Int)
-
+    
 }
 
 class ChatViewModel {
@@ -72,18 +72,24 @@ class ChatViewModel {
         return nil
     }
     
-    private func isEventStartedForNonStreamer(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
-        return userModel.groupId == group.id && userModel.userId == EventResponse.eventAvaible.rawValue
+    private func isEventStartedForNonStreamer(forGroup group: GroupCell, forUser userModel: GroupEventModelArray) -> Bool {
+        return userModel.Array[0].groupId == group.id && userModel.Array[0].userId == EventResponse.eventAvaible.rawValue
     }
     
-    private func isEventAvaible(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
-        return userModel.groupId == group.id && userModel.userId != EventResponse.eventFinished.rawValue
+    private func isEventAvaible(forGroup group: GroupCell, forUser userModel: GroupEventModelArray) -> Bool {
+        return userModel.Array[0].groupId == group.id
     }
     
-    private func isEventFinished(forGroup group: GroupCell, forUser userModel: GroupEventModel) -> Bool {
-        return userModel.groupId == group.id && userModel.userId == EventResponse.eventFinished.rawValue
+    private func isEventFinished(forGroup group: GroupCell, forUser userModel: GroupEventModelArray) -> Bool {
+        return userModel.Array[0].groupId == group.id && userModel.Array[0].userId == EventResponse.eventFinished.rawValue
     }
-
+    
+    var shouldCreateGhostCar:  Bool {
+        guard let raceDetails = raceDetails else { return false }
+        guard let myId = AppConfig.instance.currentUserId else { return false}
+        return !raceDetails.contains(where: {$0.userId == Int(myId)}) && !isGroupOwner
+    }
+    
     var currentPage = 1 {
         didSet {
             switch chatType {
@@ -116,7 +122,6 @@ class ChatViewModel {
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page) { error, messages in
             if let error = error {
-                print("MESSAGELOG: \(error.localizedDescription)")
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
             }
@@ -124,14 +129,11 @@ class ChatViewModel {
                 self.messages = messages
                 self.newMessages = messages
                 self.delegate?.datasReceived(error: nil)
-                print("MESSAGES FETCHED : \(messages)")
-                print("MESSAGES FETCHED")
             }else{
                 if self.newMessages?.count ?? 0 > 0 {
                     self.newMessages = messages
                     self.messages?.insert(contentsOf: self.newMessages!, at: 0)
                     self.delegate?.datasReceived(error: nil)
-                    print("COULD NOT FETCG MSSAGES")
                 }
             }
         }
@@ -150,14 +152,11 @@ class ChatViewModel {
                 self.raceDetails = messages?.race
                 self.timeLeft = messages?.timeLeft
                 self.delegate?.datasReceived(error: nil)
-                print("MESSAGES FETCHED")
             }else{
                 if self.newMessages?.count ?? 0 > 0 {
                     self.newMessages = messages?.messages
                     self.messages?.insert(contentsOf: self.newMessages!, at: 0)
                     self.delegate?.datasReceived(error: nil)
-                    print("COULD NOT FETCG MSSAGES")
-                    
                 }
             }
         }
@@ -165,7 +164,6 @@ class ChatViewModel {
     
     func fetchNewMessages() {
         currentPage += 1
-        print("PAGEBUG: \(currentPage)")
     }
     
     func handleMessageSeen(forUserId userId: Int) {
@@ -204,6 +202,7 @@ class ChatViewModel {
     }
     
     
+    //MARK: - deprecated
     func configureVideo(ofType type: String = "mp4") -> AVPlayerLayer? {
         guard let path = Bundle.main.path(forResource:  "superanimation1_3" , ofType: type) else {
             debugPrint("superanimation1_3.\(type) not found")
@@ -216,22 +215,19 @@ class ChatViewModel {
     
     func playVideoForDuration(_ duration: Double) {
         guard let player = self.player else { return }
-        
         let currentTime = player.currentTime()
         let endTime = CMTimeAdd(currentTime, CMTimeMakeWithSeconds(duration, preferredTimescale: 600))
         endPlaybackTime = endTime
-        
         player.play()
-        
         player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
             guard let strongSelf = self else { return }
-
-            if CMTimeCompare(time, strongSelf.endPlaybackTime!) != -1 { // if time is not less than endPlaybackTime
+            if CMTimeCompare(time, strongSelf.endPlaybackTime!) != -1 {
                 strongSelf.player?.pause()
             }else{
             }
         }
     }
+    //MARK: - deprecated
     
     func finishEventForCurrentUser() {
         switch chatType {
@@ -243,49 +239,81 @@ class ChatViewModel {
         }
     }
     
-    func handleEventActions(userModel: GroupEventModel, group: ChatType, completion: (ActionType) -> Void) {
+    
+    func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
-            
-            print("*-*-*-UMODEL\(userModel)")
-            if isEventStartedForNonStreamer(forGroup: group, forUser: userModel){
+            if isEventStartedForNonStreamer(forGroup: group, forUser: userModelArray) {
                 guard var raceDetails = raceDetails else { return }
-                guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
-                if !raceDetails.contains(where: {$0.userId == myId}) && !isGroupOwner{
-                    raceDetails.append(GroupEventModel(userId: myId, itemCount: 0, groupId: group.id))
+                guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+                
+                if shouldCreateGhostCar{
+                    raceDetails.append(GroupEventModel(userId: currentUid,
+                                                       itemCount: 0,
+                                                       groupId: group.id,
+                                                       carId: 4))
                 }
-                completion(.showVideoCell(raceDetails: raceDetails, groupId: group.id, countdownValue: userModel.itemCount))
+                completion(.showVideoCell(raceDetails: raceDetails,
+                                          groupId: group.id,
+                                          countdownValue: userModelArray.Array[0].itemCount))
             }
-            
-            
-            if isEventAvaible(forGroup: group, forUser: userModel){
-                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
-                    
-                    print("*-*-*-UPDATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
-                    rView?.handler?.userModels[existedUserIndex] = userModel
-                    if let matchingCircle = rView?.userCircles.first(where: { $0.userId == userModel.userId }) {
-                        DispatchQueue.main.async {
-                            matchingCircle.updateItemCount(user: userModel)
-                        }
-                    }
-                    completion(.updateUserCircles(newUser: nil))
-                    
-                } else{
-                    if userModel.userId != 0 {
-                        rView?.handler?.userModels.append(userModel)
-                        print("*-*-*-GENERATE\(userModel.userId) : Item Count: \(userModel.itemCount)")
-                        completion(.updateUserCircles(newUser: userModel))
-                    }
-                }
+            if isEventAvaible(forGroup: group, forUser: userModelArray) {
+                completion(.updateUserCircles(newUser: userModelArray))
                 
             }
-                            
-            if isEventFinished(forGroup: group, forUser: userModel){
+            if isEventFinished(forGroup: group,forUser: userModelArray) {
                 completion(.hideVideoCell)
             }
         default:
             break
         }
     }
-
+    
+    //    func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
+    //        switch chatType {
+    //        case .group(let group):
+    //            for userModel in userModelArray.Array {
+    //                if isEventStartedForNonStreamer(forGroup: group, forUser: userModel){
+    //                    guard var raceDetails = raceDetails,
+    //                          let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
+    //                    if shouldCreateGhostCar{
+    //                        raceDetails.append(GroupEventModel(userId: myId,
+    //                                                           itemCount: 0,
+    //                                                           groupId: group.id,
+    //                                                           carId: 4))
+    //                    }
+    //                    completion(.showVideoCell(raceDetails: raceDetails,
+    //                                              groupId: group.id,
+    //                                              countdownValue: userModel.itemCount))
+    //                }
+    //
+    //
+    //                if isEventAvaible(forGroup: group, forUser: userModel){
+    //                    //                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
+    //                    //                    rView?.handler?.userModels[existedUserIndex] = userModel
+    //                    //                    if let matchingCircle = rView?.userCircles.first(where: { $0.userId == userModel.userId }) {
+    //                    //                        DispatchQueue.main.async {
+    //                    //                            matchingCircle.updateItemCount(user: userModel)
+    //                    //                        }
+    //                    //                    }
+    //                    //                    completion(.updateUserCircles(newUser: nil))
+    //                    //                } else{
+    //                    //                    if userModel.userId != EventResponse.eventAvaible.rawValue {
+    //                    //                        //checking is it a user or not?
+    //                    //                        rView?.handler?.userModels.append(userModel)
+    //                    //                        completion(.updateUserCircles(newUser: userModel))
+    //                    //                    }
+    //                    //                }
+    //                    rView?.handler?.userModels = userModelArray[i]
+    //                }
+    //                if isEventFinished(forGroup: group, forUser: userModel){
+    //                    completion(.hideVideoCell)
+    //                }
+    //            }
+    //        default:
+    //            break
+    //        }
+    //
+    //    }
+    
 }

@@ -11,8 +11,14 @@ struct GroupEventModel : Codable, Equatable {
     let userId : Int
     var itemCount : Int
     let groupId: Int
+    var carId : Int
 }
 
+struct GroupEventModelArray : Codable {
+    let Array: [GroupEventModel]
+}
+
+//MARK: - DELETE - DELETEDELETEDEELTE
 extension GroupEventModel{
     static func == (lhs: GroupEventModel, rhs: GroupEventModel) -> Bool {
         return lhs.userId == rhs.userId

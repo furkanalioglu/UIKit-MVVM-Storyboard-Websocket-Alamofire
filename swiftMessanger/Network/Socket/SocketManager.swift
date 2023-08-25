@@ -12,13 +12,13 @@ import Starscream
 protocol SocketIOManagerDelegate: AnyObject {
     func didReceiveMessage(message: MessageItem)
     func didReceiveGroupMessage(groupMessage: MessageItem)
-    func didReceiveNewEnventNotification(groupMessage: GroupEventModel)
+    func didReceiveNewEnventNotification(groupMessage: GroupEventModelArray)
 }
 
 protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
     func didReceiveGroupChatMessage(groupMessage : MessageItem)
-    func didReceiveNewEventUser(userModel: GroupEventModel)
+    func didReceiveNewEventUser(userModel: GroupEventModelArray)
     func didSendNewEventRequest(groupId: Int, seconds: Int,statusCode: Int)
 }
 struct SocketURL {
@@ -161,21 +161,24 @@ class SocketIOManager {
             self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)
             
             
+        
         }
         
         socket?.on(SocketListeners.event.listenerString) {(data, _) in
             guard let respose = data[0] as? String,
-                  let modeledData : GroupEventModel = GroupEventModel.parse(data: respose)
+                  let modeledData : GroupEventModelArray = GroupEventModelArray.parse(data: respose)
             else{
-                debugPrint("SOCKETDEBUG: Raw event data: \(data)" )
+                debugPrint("SOCKETDEBUG:123 Raw event data: \(data[0])" )
                 return
             }
-            let newGroupEventModel = GroupEventModel(userId: modeledData.userId,
-                                                     itemCount: modeledData.itemCount,
-                                                     groupId: modeledData.groupId)
+//            let newGroupEventModel = GroupEventModelArray(userId: modeledData.userId,
+//                                                     itemCount: modeledData.itemCount,
+//                                                     groupId: modeledData.groupId,
+//                                                     carId: modeledData.carId)
+            let newGroupEventArray = GroupEventModelArray(Array: modeledData.Array)
             print("EVENTDEBUG receibed model")
-            self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventModel)
-            self.delegate?.didReceiveNewEnventNotification(groupMessage: newGroupEventModel)
+            self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventArray)
+            self.delegate?.didReceiveNewEnventNotification(groupMessage: newGroupEventArray)
         }
         
                 

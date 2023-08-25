@@ -33,7 +33,7 @@ class UserCircle: UIView {
     
     func configure(withUser user: GroupEventModel, withCarId carId:Int ) {
          DispatchQueue.main.async { [weak self] in
-             self?.carId = carId
+             self?.carId = user.carId
              self?.userId = user.userId
              self?.playAnimation()
              self?.layoutIfNeeded()
@@ -47,6 +47,7 @@ class UserCircle: UIView {
     
     func playAnimation() {
         guard let localURL = AssetManager.shared.getUDAssetPath(for: .urlCAR, assetId: carId) else { return }
+        print("AssetDEBUG: trying to play \(localURL)")
         DispatchQueue.main.async {
             GiftManager.shared.playSuperAnimation(view: self, videoURLString:localURL) {
                 self.layoutIfNeeded()

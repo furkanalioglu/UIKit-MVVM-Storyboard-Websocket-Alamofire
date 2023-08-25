@@ -88,5 +88,15 @@ class SplashViewModel {
 }
 
 enum AssetTypes: String {
-    case urlCAR, urlEnvironment
+    case urlCAR,urlEnvironment
+    
+    
+    func getPathKey(for assetId: Int) -> String {
+        switch self {
+        case .urlCAR:
+            return "\(assetId)-\(self.rawValue)"
+        case .urlEnvironment:
+            return "\(assetId)-\(self.rawValue)"
+        }
+    }
 }

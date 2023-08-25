@@ -14,11 +14,11 @@ class RaceView: UIView {
     var timerLabel = UILabel()
     var handler : RaceHandler?
     var groupId: Int?
-    var avaibleCars = [0,1,2,3]
     
     private var playerLooper:  AVPlayerLooper?
     private var playerLayer : AVPlayerLayer?
     private var queuePlayer : AVQueuePlayer?
+    
     
     init(frame: CGRect, handler: RaceHandler,groupId: Int) {
         super.init(frame: frame)
@@ -31,7 +31,6 @@ class RaceView: UIView {
         print("refreshing view")
         backgroundColor = .clear
         generateUserCircleInTopList(groupId: groupId)
-     
     }
     
     required init?(coder: NSCoder) {
@@ -51,94 +50,114 @@ class RaceView: UIView {
     
     private var lottieAnimationView: LottieAnimationView = {
         let animationView = LottieAnimationView(name: "data")
+        animationView.loopMode = .loop
         animationView.contentMode = .scaleAspectFill
-        animationView.loopMode = .autoReverse
         return animationView
     }()
     
-    func updateUserCircles(newUser: GroupEventModel?) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            guard let handler = handler else { return }
-            let totalPoints = handler.totalTopUsersPoints
-            
-            if handler.userModels.count <= 4,
-               let user = newUser {
-                generateNewUserCircle(withUserModel: user,passedBy: nil)
-                moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-                return
-            }
-            
-            if handler.topUsersNotEqualToPrevious {
-                let updatedTopUsersInfo = handler.removeAndUpdateUser()
-                if let userToRemove = updatedTopUsersInfo.userToRemove,
-                   let circleToRemove = userCircles.first(where: { $0.userId == userToRemove.userId }),
-                   let userToAdd = updatedTopUsersInfo.userToAdd{
-                    let removedIndex = userCircles.firstIndex(where: {$0.userId == userToRemove.userId})!
-                    let removedCarId = userCircles[removedIndex].carId
-                    circleToRemove.removeFromSuperview()
-                    userCircles.removeAll(where: { $0.userId == userToRemove.userId })
-                    generateNewUserCircle(withUserModel: userToAdd, passedBy: removedCarId)
-                    moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+    func updateUserCircles(newUsers: GroupEventModelArray?) {
+        guard let handler = handler else { return }
+        guard let newUsers = newUsers else { return }
+        handler.userModels = newUsers.Array
+        print("*-*-*-HANDLER \(handler.userModels)")
+
+            for user in newUsers.Array {
+                if userCircles.count <= handler.maximumCirclesCount,
+                   user.userId != 0,
+                    user.userId != -1
+                    {
+                    if userCircles.contains(where: {$0.userId == user.userId}) {
+                        guard let index = userCircles.firstIndex(where: {$0.userId == user.userId}) else { return }
+                        userCircles[index].itemCount = user.itemCount
+                        userCircles[index].updateItemCount(user: user)
+                        moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+                    }else{
+                        generateNewUserCircle(withUserModel: user)
+//                        moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+                    }
                 }
                 
-            }else{
-                self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
+                if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && userCircles.count == 3{
+                    let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
+                    if let circleToRemove = updatedTopUsersInfo.userToRemove,
+                       let userToAdd = updatedTopUsersInfo.userToAdd{
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
+                            circleToRemove.removeFromSuperview()
+                            userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
+                        }
+                        generateNewUserCircle(withUserModel: userToAdd)
+                    }
+                }else{
+//                    moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+                }
             }
-            
-            self.moveUserCircles(topUsers: handler.topUsers, totalPoints: totalPoints)
-            handler.previousTopUsers = handler.topUsers
-        }
+//            moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+//        }
     }
     
     
-    func generateNewUserCircle(withUserModel userModel: GroupEventModel, passedBy fourthUserCarId :Int?) {
+    func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             guard let handler = handler else { return }
-            let newCircle = UserConatiner(frame: CGRect(x: 0, y:100, width: 100, height: 50))
+            let newCircle = UserConatiner(frame: CGRect(x: 0, y:125, width: 100, height: 50))
             addSubview(newCircle)
-            if fourthUserCarId == nil {
-                newCircle.carId = userCircles.count
-            }else{
-                newCircle.carId = fourthUserCarId!
-            }
-            userCircles.append(newCircle)
             let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
             leadingConstraint.isActive = true
             newCircle.leadingConstraing = leadingConstraint
             newCircle.configure(user: userModel)
-            moveUserCircles(topUsers: handler.topUsers, totalPoints: handler.totalTopUsersPoints)
+            userCircles.append(newCircle)
+            print("*-*-*-Created circle with \(newCircle)")
+            moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
         }
+    }
+    
+    func generateGhostUser(withUserModel userModel: GroupEventModel){
+        guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+        let ghostUser = GroupEventModel(userId: currentUid, itemCount: userModel.itemCount, groupId: userModel.groupId,carId: 0)
+        handler?.userModels.append(ghostUser)
+    }
+    
+    func removeGhostUser() {
+        guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+        guard let removeIndex = handler?.userModels.firstIndex(where: {$0.userId == currentUid}) else { return }
+        handler?.userModels.remove(at: removeIndex)
+        userCircles.removeAll(where: {$0.userId == currentUid})
     }
     
     func generateUserCircleInTopList(groupId: Int) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             guard let handler = handler else { return }
-            for user in handler.topUsers {
-                print("*-*-*-TOPUSERS:",handler.topUsers)
+            for user in handler.userModels{
+                print("*-*-*-TOPUSERS:",handler.userModels)
                 if userCircles.first(where: {$0.userId == user.userId}) == nil{
                     print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
-                    generateNewUserCircle(withUserModel: user,passedBy: nil)
+                    generateNewUserCircle(withUserModel: user)
                 }
             }
         }
     }
     
     func configureRoadUI() {
-        addSubview(lottieAnimationView)
-        lottieAnimationView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingBottom: 1)
-        lottieAnimationView.setHeight(60)
-        playLottieAnimation()
+        DispatchQueue.main.async {
+            [weak self ] in
+            guard let self = self else { return }
+            addSubview(lottieAnimationView)
+            lottieAnimationView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor)
+            lottieAnimationView.setHeight(60)
+            playLottieAnimation()
+        }
     }
     
     func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             print("*-*-*-\(totalPoints)")
-            let roadWidth = self.frame.width - 50 // This represents 100%
+            let roadWidth = self.frame.width - 50
             for user in topUsers {
+                print("*-*-*- \(user)")
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
                 circle.anchor(bottom: lottieAnimationView.centerYAnchor)
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
@@ -148,7 +167,6 @@ class RaceView: UIView {
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
                 }
-                
             }
         }
     }
@@ -156,44 +174,6 @@ class RaceView: UIView {
     private func playLottieAnimation() {
         lottieAnimationView.play()
     }
-    
-    
-//    private func playAnimation(environmentId: Int) {
-//        DispatchQueue.main.async { [weak self] in
-//            guard let self = self else { return }
-//            guard let pathUD = fetchVideoPath(forEnvironmentId: environmentId) else { return }
-//            let videoURLString = "\(pathUD)"
-//
-//            guard let url = URL(string: videoURLString) else {
-//                print("Invalid URL string.")
-//                return
-//            }
-//            print("Trying to use \(videoURLString)")
-//
-//
-//            let asset = AVAsset(url: url)
-//            let playerItem = AVPlayerItem(asset: asset)
-//
-//            queuePlayer?.pause()
-//            playerLayer?.removeFromSuperlayer()
-//
-//            queuePlayer = AVQueuePlayer(playerItem: playerItem)
-//            playerLooper = AVPlayerLooper(player: queuePlayer!, templateItem: playerItem)
-//            playerLayer = AVPlayerLayer(player: queuePlayer!)
-//            guard let playerLayer = self.playerLayer else { return }
-//
-//            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-//
-//
-//            playerLayer.frame = self.road.frame
-//            self.layer.addSublayer(playerLayer)
-//            self.layoutIfNeeded()
-//            self.queuePlayer?.play()
-//            debugPrint("It should work..")
-//        }
-//
-//    }
-    
 }
 
 //Timer Delegate

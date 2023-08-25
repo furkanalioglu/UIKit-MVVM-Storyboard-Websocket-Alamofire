@@ -12,6 +12,7 @@ class UserConatiner: UIView {
     var leadingConstraing : NSLayoutConstraint?
     var userId = 0
     var itemCount = 0
+    
     var carId = 1 {
         didSet{
             print("CAR ID CHANGED TO \(carId)")
@@ -34,9 +35,8 @@ class UserConatiner: UIView {
         return label
     }()
     
-    private lazy var userCircle: UserCircle = {
+    private let userCircle: UserCircle = {
         let circle = UserCircle()
-        circle.backgroundColor = .red
         return circle
     }()
     
@@ -73,6 +73,7 @@ class UserConatiner: UIView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             userId = user.userId
+            carId = user.carId
             itemCount = user.itemCount
             usernameLabel.text = String(user.userId)
             itemCountLabel.text = String(user.itemCount)

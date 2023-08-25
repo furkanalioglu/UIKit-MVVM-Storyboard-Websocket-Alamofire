@@ -15,23 +15,23 @@ class AssetManager {
     
     static let shared = AssetManager()
     
-    private lazy var fileManager = FileManager.default
-    private lazy var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+    private var fileManager = FileManager.default
+    private var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     
     func getUDAssetPath(for assetType: AssetTypes, assetId: Int) -> String? {
         let assetKey = "\(assetType.rawValue)-\(assetId)"
-        guard let pathUD = UserDefaults.standard.string(forKey: assetKey) else { return nil}
+        print("AssetDEBUG: trying to GET \(assetKey)")
+        guard let pathUD = UserDefaults.standard.string(forKey: assetType.getPathKey(for: assetId)) else { return nil}
         let assetURLString = "file://\(pathUD)"
-        debugPrint("ASSETBDEBUG FROM UD: \(assetURLString)")
+        print("AssetDEBUG: trying to GET \(assetURLString)")
         return assetURLString
     }
     
     
-    func saveAssetUDAndGetPath(from assetURL: URL, for assetType: AssetTypes, assetId: Int) -> String{
+    func saveAssetToUDAndGetPath(from assetURL: URL, for assetType: AssetTypes, assetId: Int) -> String{
         let fileExtension = assetURL.pathExtension
         let destinationPath = getAssetPath(forAssetId: assetId, type: assetType.rawValue, extension: fileExtension)
-        UserDefaults.standard.set(destinationPath, forKey: "\(assetType.rawValue)-\(assetId)")
-        debugPrint("ASSETBDEBUG FROM FILEMANAGER: \(destinationPath)")
+        UserDefaults.standard.set(destinationPath, forKey: assetType.getPathKey(for: assetId))
         return destinationPath
     }
     
@@ -40,7 +40,6 @@ class AssetManager {
         return documentsDirectory.appendingPathComponent(type).path
     }
 
-    // Get the full path for an asset
     func getAssetPath(forAssetId assetId: Int, type: String, extension ext: String) -> String {
         return getDirectoryPath(forType: type).appending("/\(assetId).\(ext)")
     }

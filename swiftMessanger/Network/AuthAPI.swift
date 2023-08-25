@@ -37,13 +37,13 @@ extension AuthAPI: TargetType {
         case .getCurrentUser:
             return "auth/profile"
         case .getAllUsers:
-            return "auth/mainPage"
+            return "chats/mainPage"
         case .updateCurrentUser:
             return "auth/profile/update"
         case .getMessagesForId(let userId, _):
             return "chats/\(userId)"
         case .getAllMessages:
-            return "auth/friends"
+            return "chats/friends"
         case .getSpecificUser(let userId):
             return "auth/profile/\(userId)"
         case .requestRefreshToken:
@@ -53,11 +53,11 @@ extension AuthAPI: TargetType {
         case .logout:
             return "auth/logout"
         case .getAllGroupUsers:
-            return "auth/allUsers"
+            return "chats/allUsers"
         case .createGroup:
-            return "auth/createGroup"
+            return "chats/createGroup"
         case .getAllGroups:
-            return "auth/groups"
+            return "chats/groups"
         case .getMessagesForGroup(let groupId, _):
             return "chats/group/\(groupId)"
         }

@@ -64,8 +64,8 @@ extension MessagesController : MessagesControllerDelegate {
 
 //MARK: - Delegates
 extension MessagesController : SocketIOManagerDelegate {
-    func didReceiveNewEnventNotification(groupMessage: GroupEventModel) {
-        viewModel.handleIncomingGroupEvent(groupId: groupMessage.groupId,eventStatus: groupMessage.userId)
+    func didReceiveNewEnventNotification(groupMessage: GroupEventModelArray) {
+        viewModel.handleIncomingGroupEvent(groupId: groupMessage.Array[0].groupId,eventStatus: groupMessage.Array[0].userId)
         tableView.reloadData()
         print("NEWEVENTDEBUG: HANDLED DEBUG \(groupMessage)")
     }

@@ -18,7 +18,6 @@ class RaceHandler {
     weak var delegate: RaceHandlerProtocol?
     
     var userModels : [GroupEventModel] = []
-    var previousTopUsers : [GroupEventModel] = []
     
     var isAnyRaceAvailable = false
     
@@ -29,37 +28,51 @@ class RaceHandler {
     
     var raceOwnerId: Int?
     
-    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int,raceOwner : Int?) {
+    init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int,raceOwnerId : Int?) {
         self.userModels = userModels
         self.isAnyRaceAvailable = isAnyRaceAvailable
         self.countdownValue = countdownValue
-        self.raceOwnerId = raceOwner
+        self.raceOwnerId = raceOwnerId
         print("RACE17,: CREATING RACEHANDLER")
     }
     
-    var topUsers : [GroupEventModel] {
-        let topUsersSliced = userModels.sorted(by: { $0.itemCount > $1.itemCount }).prefix(4)
-        return Array(topUsersSliced)
+    var totalTopUsersPoints : Int {
+        return userModels.reduce(0, { $0 + $1.itemCount })
+    }
+
+    func topUsersNotEqualToPrevious(userContainers: [UserConatiner]) -> Bool {
+        return Set(userContainers.map { $0.userId }) != Set(userModels.map { $0.userId })
+    }
+
+    
+    
+    
+    var isGroupOwner : Bool {
+        return Int(AppConfig.instance.currentUserId ?? "") == raceOwnerId
     }
     
-    var totalTopUsersPoints: Int {
-        var total = topUsers.reduce(0, { $0 + $1.itemCount })
-        return total
+    var maximumCirclesCount: Int {
+        return 3
     }
     
-    var topUsersNotEqualToPrevious : Bool {
-        return Set(previousTopUsers.map { $0.userId }) != Set(topUsers.map { $0.userId })
+    var isCurrentUserInTopUsersList : Bool {
+        guard let currentUserId = Int(AppConfig.instance.currentUserId ?? "") else { return false }
+        return userModels.contains(where: { $0.userId == currentUserId })
     }
     
-    
-    
-    func removeAndUpdateUser() -> (userToRemove: GroupEventModel?, userToAdd: GroupEventModel?) {
-        let userToRemove = previousTopUsers.first(where: { !topUsers.contains($0)})
-        let userToAdd = topUsers.first(where: { !previousTopUsers.contains($0) })
-        if topUsers.count == 4  && userToRemove?.userId == Int(AppConfig.instance.currentUserId ?? "")!{
-            return(topUsers[2],userToAdd)
-        }else{
-            return (userToRemove,userToAdd)
+    func removeAndUpdateUser(userContainers: [UserConatiner]) -> (userToRemove: UserConatiner?, userToAdd: GroupEventModel?) {
+        let userToRemove = userContainers.first(where: { container in
+            !userModels.contains(where: { $0.userId == container.userId })
+        })
+
+        let userToAdd = userModels.first(where: { userModel in
+            !userContainers.contains(where: { $0.userId == userModel.userId })
+        })
+
+        if userModels.count == maximumCirclesCount, let userToRemoveId = userToRemove?.userId, userToRemoveId == Int(AppConfig.instance.currentUserId ?? "")! {
+            return (userToRemove, userToAdd)
+        } else {
+            return (userToRemove, userToAdd)
         }
     }
     
@@ -68,7 +81,6 @@ class RaceHandler {
         displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
         displayLink?.add(to: .current, forMode: .default)
         startTime = CACurrentMediaTime()
-        
     }
     
     func stopTimer() {
@@ -77,16 +89,16 @@ class RaceHandler {
         delegate?.timerDidCompleted()
     }
     
-    func getCurrentUserModel(groupId: Int) -> GroupEventModel? {
-        if let currentUserId = Int(AppConfig.instance.currentUserId ?? "") {
-            if let existingUserModel = userModels.first(where: { $0.userId == currentUserId }) {
-                return existingUserModel
-            } else {
-                return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: groupId)
-            }
-        }
-        return nil
-    }
+//    func getCurrentUserModel(groupId: Int) -> GroupEventModel? {
+//        if let currentUserId = Int(AppConfig.instance.currentUserId ?? "") {
+//            if let existingUserModel = userModels.first(where: { $0.userId == currentUserId }) {
+//                return existingUserModel
+//            } else {
+//                return GroupEventModel(userId: currentUserId, itemCount: 0, groupId: groupId,carId: 4)
+//            }
+//        }
+//        return nil
+//    }
     
     @objc private func handleDisplayLink() {
         let elapsed = CACurrentMediaTime() - startTime
