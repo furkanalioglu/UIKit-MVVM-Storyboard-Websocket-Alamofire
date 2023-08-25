@@ -37,16 +37,6 @@ extension ChatController : ChatControllerDelegate {
                     guard var raceDetails = viewModel.raceDetails else { return }
                     guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
                     viewModel.rView?.handler?.countdownValue = timeLeft
-                    
-                    if !raceDetails.contains(where: {$0.userId == myId}),
-                       viewModel.isGroupOwner == false
-                    {
-                        raceDetails.append(GroupEventModel(userId: myId,
-                                                           itemCount: 0,
-                                                           groupId: group.id,
-                                                          carId: 4))
-                        
-                    }
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     videoCell.addSubview(self.viewModel.rView!)
