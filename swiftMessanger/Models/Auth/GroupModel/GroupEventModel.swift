@@ -16,6 +16,7 @@ struct GroupEventModel : Codable, Equatable {
 
 struct GroupEventModelArray : Codable {
     let Array: [GroupEventModel]
+//    let client: GroupEventModel
 }
 
 //MARK: - DELETE - DELETEDELETEDEELTE

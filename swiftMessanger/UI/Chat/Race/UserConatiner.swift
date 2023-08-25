@@ -56,11 +56,12 @@ class UserConatiner: UIView {
             addSubview(itemCountLabel)
             addSubview(userCircle)
             
-            userCircle.setWidth(50)
+            userCircle.setWidth(30)
             userCircle.setHeight(20)
             userCircle.backgroundColor = .clear
             
             itemCountLabel.setHeight(30)
+            itemCountLabel.setWidth(30)
             
             usernameLabel.anchor(top: topAnchor, left: leftAnchor, right: rightAnchor)
             itemCountLabel.anchor(top: usernameLabel.bottomAnchor, left: leftAnchor, right: rightAnchor,paddingBottom: 8)

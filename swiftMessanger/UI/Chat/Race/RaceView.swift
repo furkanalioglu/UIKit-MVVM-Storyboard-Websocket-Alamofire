@@ -57,7 +57,7 @@ class RaceView: UIView {
     }()
     
     private lazy var  ghostCarView : UserConatiner =  {
-        let view = UserConatiner(frame: CGRect(x: 100, y:lottieAnimationView.center.y - 50, width: 100, height: 50))
+        let view = UserConatiner(frame: CGRect(x: 0, y:lottieAnimationView.center.y - 50, width: 100, height: 50))
         return view
     }()
     
@@ -66,8 +66,6 @@ class RaceView: UIView {
         guard let newUsers = newUsers else { return }
 
         handler.userModels = newUsers.Array
-
-        
             for user in newUsers.Array {
                 if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
                     let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
@@ -77,18 +75,19 @@ class RaceView: UIView {
                         if circleToRemove.userId == ghostCarView.userId {
                             ghostCarView.isHidden = false
                         }
-                        if userToAdd.userId == ghostCarView.userId {
-                            ghostCarView.isHidden = true
-                        }
-                        DispatchQueue.main.async {
+//                        if userToAdd.userId == ghostCarView.userId {
+//                            ghostCarView.isHidden = true
+//                        }
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else { return }
                             circleToRemove.removeFromSuperview()
+                            self.layoutIfNeeded()
                         }
                             userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
                             generateNewUserCircle(withUserModel: userToAdd)
                             moveUserCircles(topUsers: handler.userModels)
                         return
                     }
-                }else{
                 }
                 if userCircles.count <= 2,
                    user.userId != 0,
@@ -117,7 +116,10 @@ class RaceView: UIView {
             let newCircle = UserConatiner(frame: CGRect(x: 0, y:lottieAnimationView.center.y - 50, width: 100, height: 50))
             addSubview(newCircle)
             if userModel.userId == ghostCarView.userId{
-                ghostCarView.isHidden = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self else {return}
+                    ghostCarView.isHidden = true
+                }
             }
             let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
             leadingConstraint.isActive = true
@@ -151,7 +153,7 @@ class RaceView: UIView {
             guard let self = self else { return }
             addSubview(lottieAnimationView)
             lottieAnimationView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor)
-            lottieAnimationView.setHeight(60)
+            lottieAnimationView.setHeight(40)
             playLottieAnimation()
         }
     }
@@ -159,8 +161,9 @@ class RaceView: UIView {
     func configureGhostCarUI() {
             guard let currenUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
             guard let groupId = groupId else { return }
+            guard let handler = handler else { return }
             let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: groupId, carId: 4)
-            let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor)
+            let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 12)
         DispatchQueue.main.async {
             [weak self] in
             guard let self = self else { return }
@@ -168,8 +171,9 @@ class RaceView: UIView {
             ghostCarView.leadingConstraing = leadingConstraint
             leadingConstraint.isActive = true
             ghostCarView.configure(user: myUser)
-            ghostCarView.anchor(left: leftAnchor,bottom: lottieAnimationView.centerYAnchor)
-            ghostCarView.isHidden = !((handler?.isGroupOwner) != nil)
+            ghostCarView.anchor(bottom: lottieAnimationView.centerYAnchor)
+            ghostCarView.isHidden = handler.isGroupOwner
+            layoutIfNeeded()
         }
     }
     
@@ -178,24 +182,25 @@ class RaceView: UIView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            let roadWidth: CGFloat = self.frame.width - 50  // Assuming this is the total width of the "road"
+            let roadWidth: CGFloat = self.frame.width - 40
+            let invisibleWall = roadWidth * 0.20
+            let usableRoadWidth = roadWidth * 0.80
             
-            // Calculate total points
             guard let totalPoints = handler?.totalTopUsersPoints else { return }
-            print("*.*.\(totalPoints)")
             
-            // Ensure the total points is not zero to prevent division by zero
             guard totalPoints != 0 else { return }
             
             for user in topUsers {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
                 circle.anchor(bottom: self.lottieAnimationView.centerYAnchor)
-                
-                // Calculate position based on user's percentage of total points
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
-                let estimatedXPosition = roadWidth * userPercentageOfTotal
-                
+                let estimatedXPosition = invisibleWall + (usableRoadWidth * userPercentageOfTotal)
+        
                 circle.leadingConstraing?.constant = estimatedXPosition - (circle.frame.width / 2)  // This accounts for the width of the car to center it
+                
+//                if user.userId == ghostCarView.userId && estimatedXPosition >= ghostCarView.frame.minX {
+//                    ghostCarView.isHidden = true
+//                }
                 
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()
@@ -204,45 +209,6 @@ class RaceView: UIView {
         }
     }
 
-
-
-
-
-
-
-    
-//    func moveUserCircles(topUsers: [GroupEventModel], totalPoints: Int) {
-//        DispatchQueue.main.async { [weak self] in
-//            guard let self = self else { return }
-//
-//            // Ensure the total points is not zero to prevent division by zero
-//            guard totalPoints != 0 else { return }
-//
-//            print("*-*-*-\(totalPoints)")
-//
-//            let roadWidth = self.frame.width - 50
-//            let sortedUsers = topUsers.sorted(by: { $0.itemCount < $1.itemCount })
-//
-//            var previousUserXEndPosition: CGFloat = 0
-//            for user in sortedUsers {
-//                print("*-*-*- \(user)")
-//                guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
-//                circle.anchor(bottom: self.lottieAnimationView.centerYAnchor)
-//
-//                let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
-//                let estimatedXPosition = previousUserXEndPosition + (userPercentageOfTotal * roadWidth)
-//
-//                let clampedXPosition = max(circle.frame.width / 2, min(estimatedXPosition, roadWidth - circle.frame.width / 2))
-//                circle.leadingConstraing?.constant = clampedXPosition
-//
-//                previousUserXEndPosition = clampedXPosition + circle.frame.width
-//
-//                UIView.animate(withDuration: 0.5) {
-//                    self.layoutIfNeeded()
-//                }
-//            }
-//        }
-//    }
 
         
     private func playLottieAnimation() {
