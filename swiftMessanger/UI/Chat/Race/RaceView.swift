@@ -62,38 +62,39 @@ class RaceView: UIView {
         print("*-*-*-HANDLER \(handler.userModels)")
 
             for user in newUsers.Array {
-                if userCircles.count <= handler.maximumCirclesCount,
+                
+                if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
+                    let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
+                    if let circleToRemove = updatedTopUsersInfo.userToRemove,
+                       let userToAdd = updatedTopUsersInfo.userToAdd
+                       {
+                            circleToRemove.removeFromSuperview()
+                            userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
+                            print("*-*-*- Removing user FROM FIRST FUNC  \(circleToRemove)")
+                            generateNewUserCircle(withUserModel: userToAdd)
+                        return
+                    }
+                }else{
+                }
+                if userCircles.count <= 2,
                    user.userId != 0,
                     user.userId != -1
                     {
                     if userCircles.contains(where: {$0.userId == user.userId}) {
-                        guard let index = userCircles.firstIndex(where: {$0.userId == user.userId}) else { return }
-                        userCircles[index].itemCount = user.itemCount
-                        userCircles[index].updateItemCount(user: user)
-                        moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+                        
                     }else{
                         generateNewUserCircle(withUserModel: user)
 //                        moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
                     }
                 }
                 
-                if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && userCircles.count == 3{
-                    let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
-                    if let circleToRemove = updatedTopUsersInfo.userToRemove,
-                       let userToAdd = updatedTopUsersInfo.userToAdd{
-                        DispatchQueue.main.async { [weak self] in
-                            guard let self = self else { return }
-                            circleToRemove.removeFromSuperview()
-                            userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
-                        }
-                        generateNewUserCircle(withUserModel: userToAdd)
-                    }
-                }else{
-//                    moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
-                }
+                guard let index = userCircles.firstIndex(where: {$0.userId == user.userId}) else { return }
+                userCircles[index].itemCount = user.itemCount
+                userCircles[index].updateItemCount(user: user)
+                moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
             }
-//            moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
-//        }
+            moveUserCircles(topUsers: handler.userModels, totalPoints: handler.totalTopUsersPoints)
+
     }
     
     
