@@ -50,7 +50,7 @@ class RaceView: UIView {
     }
     
     private var lottieAnimationView: LottieAnimationView = {
-        let animationView = LottieAnimationView(name: "data")
+        let animationView = LottieAnimationView(name: "data2")
         animationView.loopMode = .loop
         animationView.contentMode = .scaleAspectFill
         return animationView
@@ -67,6 +67,19 @@ class RaceView: UIView {
 
         handler.userModels = newUsers.Array
             for user in newUsers.Array {
+                
+                if userCircles.count <= 2,
+                   user.userId != 0,
+                    user.userId != -1
+                    {
+                    if userCircles.contains(where: {$0.userId == user.userId}) {
+                        
+                    }else{
+                        generateNewUserCircle(withUserModel: user)
+                    }
+                }
+                
+                
                 if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
                     let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
                     if let circleToRemove = updatedTopUsersInfo.userToRemove,
@@ -84,19 +97,9 @@ class RaceView: UIView {
                             self.layoutIfNeeded()
                         }
                             userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
-                            generateNewUserCircle(withUserModel: userToAdd)
+//                            generateNewUserCircle(withUserModel: userToAdd)
                             moveUserCircles(topUsers: handler.userModels)
-                        return
-                    }
-                }
-                if userCircles.count <= 2,
-                   user.userId != 0,
-                    user.userId != -1
-                    {
-                    if userCircles.contains(where: {$0.userId == user.userId}) {
-                        
-                    }else{
-                        generateNewUserCircle(withUserModel: user)
+//                        continue
                     }
                 }
                 guard let index = userCircles.firstIndex(where: {$0.userId == user.userId}) else { return }
@@ -189,18 +192,21 @@ class RaceView: UIView {
             guard let totalPoints = handler?.totalTopUsersPoints else { return }
             
             guard totalPoints != 0 else { return }
-            
-            for user in topUsers {
+            for (index,user) in topUsers.enumerated() {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
                 circle.anchor(bottom: self.lottieAnimationView.centerYAnchor)
+                
+//                if index % 2 == 0 { // For even index (0-based, so this will be 1st and 3rd users)
+//                            circle.anchor(bottom: self.lottieAnimationView.centerYAnchor, paddingBottom: 10) // Center + 10
+//                        } else { // For odd index, which is the 2nd user in this context
+//                            circle.anchor(bottom: self.lottieAnimationView.centerYAnchor, paddingBottom: -10) // Center - 10
+//                        }
+                
+
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
                 let estimatedXPosition = invisibleWall + (usableRoadWidth * userPercentageOfTotal)
         
                 circle.leadingConstraing?.constant = estimatedXPosition - (circle.frame.width / 2)  // This accounts for the width of the car to center it
-                
-//                if user.userId == ghostCarView.userId && estimatedXPosition >= ghostCarView.frame.minX {
-//                    ghostCarView.isHidden = true
-//                }
                 
                 UIView.animate(withDuration: 0.5) {
                     self.layoutIfNeeded()

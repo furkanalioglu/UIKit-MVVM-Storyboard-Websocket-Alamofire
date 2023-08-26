@@ -19,8 +19,10 @@ protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
     func didReceiveGroupChatMessage(groupMessage : MessageItem)
     func didReceiveNewEventUser(userModel: GroupEventModelArray)
+    func didReceiveCurrentuserCountFromAck(itemCount: Int)
     func didSendNewEventRequest(groupId: Int, seconds: Int,statusCode: Int)
 }
+
 struct SocketURL {
     static let baseURL: URL = {
         guard let url = URL(string: "http://ec2-18-196-242-245.eu-central-1.compute.amazonaws.com:3000/token=") else {
@@ -99,12 +101,22 @@ class SocketIOManager {
         guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
         let myMessage = SentMessage(receiverId: userId, message: message)
         socket?.emit(SocketEmits.message.rawValue, myMessage.toData())
+        
+        
     }
     
     func sendGroupMessage(message: String, toGroup: String) {
         guard let gid = Int(toGroup) else { fatalError("group does not exist") }
         let myMessage = SentMessage(receiverId: gid, message: message)
-        socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
+//        socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
+        socket?.emitWithAck(SocketEmits.groupMessage.emitString, myMessage.toData()).timingOut(after: 10, callback: { data in
+            guard let response = data[0] as? [String: Any],
+                  let status = response["itemCount"] as? Int else {
+                print("1*1*: \(data[0])")
+                return
+            }
+            self.chatDelegate?.didReceiveCurrentuserCountFromAck(itemCount: status)
+        })
     }
     
     func sendRaceEventRequest(groupId: String, seconds: String,status: Int) {

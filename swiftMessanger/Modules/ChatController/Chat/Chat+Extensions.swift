@@ -59,6 +59,10 @@ extension ChatController : ChatControllerDelegate {
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
+    func didReceiveCurrentuserCountFromAck(itemCount: Int) {
+//        viewModel.rView?.handler.
+    }
+    
     func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {
         if statusCode == 0 {
             DispatchQueue.main.async { [weak self] in
