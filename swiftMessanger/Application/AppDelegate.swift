@@ -43,40 +43,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func notificationEventHandler() {
-        //        let notificationWillShowInForegroundBlock: OSNotificationWillShowInForegroundBlock = { notification, completion in
-        //            guard let payload = userInfo["custom"] as? [String: Any],
-        //                  let additionalData = payload["a"] as? [String: Any],
-        //                  let pushToken = additionalData["senderId"] as? Int
-        //            else { return }
-        //            debugPrint("notificationWillShowInForegroundBlock")
-        ////            dump(a)
-        ////            if let type = a["type"] as? Int?,
-        ////               let sender = a["senderId"] as? Int {
-        ////                debugPrint("aaa", type, sender)
-        ////            }
-        //
-        //            AppConfig.instance.dynamicLinkId = pushToken
-        //            print("DYNAMICLOG LOG push token \(pushToken)")
-        //
-        //            NotificationCenter.default.post(name: .notificationArrived, object: nil)
-        //
-        //            completion(nil)
-        //        }
-        //
-        //
-        //        OneSignal.setNotificationWillShowInForegroundHandler(notificationWillShowInForegroundBlock)
+
         let notificationWillShowInForegroundBlock: OSNotificationWillShowInForegroundBlock = { notification, completion in
-            //            guard let payload = notification.rawPayload as? [String: Any],
-            //                  let custom = payload["custom"] as? [String: Any],
-            //                  let a = custom["a"] as? [String: Any]
-            //            else { return }
-            debugPrint("notificationWillShowInForegroundBlock")
-            //            dump(a)
-            //            if let type = a["type"] as? Int?,
-            //               let sender = a["senderId"] as? Int {
-            //                debugPrint("aaa", type, sender)
-            //            }
-            
             completion(nil)
         }
         

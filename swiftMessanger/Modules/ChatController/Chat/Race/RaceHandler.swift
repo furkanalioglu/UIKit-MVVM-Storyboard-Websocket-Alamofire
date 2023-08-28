@@ -43,8 +43,21 @@ class RaceHandler {
     func topUsersNotEqualToPrevious(userContainers: [UserConatiner]) -> Bool {
         return Set(userContainers.map { $0.userId }) != Set(userModels.map { $0.userId })
     }
-
     
+    func shouldCreateNewCircle(_ userCircles: [UserConatiner], userId: Int) -> Bool {
+        return userCircles.count <= 2 &&
+                userId != 0 &&
+                userId != -1 &&
+                !userCircles.contains(where: {$0.userId == userId})
+    }
+    
+    
+    func shouldUpdateUserCircleWith(userCircles: [UserConatiner] ,user: GroupEventModel) -> Bool{
+        guard let existedUserIndex = userCircles.firstIndex(where: {$0.userId == user.userId}) else {return false}
+        userCircles[existedUserIndex].itemCount = user.itemCount
+        userCircles[existedUserIndex].updateItemCount(user: user)
+        return true
+    }
     
     
     var isGroupOwner : Bool {

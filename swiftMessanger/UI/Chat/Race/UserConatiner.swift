@@ -10,6 +10,8 @@ import UIKit
 class UserConatiner: UIView {
     
     var leadingConstraing : NSLayoutConstraint?
+    var bottomConstraing : NSLayoutConstraint?
+    
     var userId = 0
     var itemCount = 0
     
@@ -40,8 +42,8 @@ class UserConatiner: UIView {
         return circle
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init() {
+        super.init(frame: .zero)
         setupView()
     }
     
