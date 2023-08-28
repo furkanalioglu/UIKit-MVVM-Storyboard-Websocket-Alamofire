@@ -20,6 +20,7 @@
 		910C24A82A78DF2300E70900 /* RegisterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910C24A72A78DF2300E70900 /* RegisterModel.swift */; };
 		910C24AB2A78E05800E70900 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 910C24AA2A78E05800E70900 /* SDWebImage */; };
 		910C24AE2A78E0D200E70900 /* UsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910C24AD2A78E0D200E70900 /* UsersViewModel.swift */; };
+		911914DF2A9CBD2F00DE55C7 /* ItemCountAck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911914DE2A9CBD2F00DE55C7 /* ItemCountAck.swift */; };
 		913B6E012A7A2D3D00B9D5C4 /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913B6DFF2A7A2D3D00B9D5C4 /* SettingsCell.swift */; };
 		913B6E022A7A2D3D00B9D5C4 /* SettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 913B6E002A7A2D3D00B9D5C4 /* SettingsCell.xib */; };
 		913B6E042A7A31A600B9D5C4 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913B6E032A7A31A600B9D5C4 /* SettingsViewModel.swift */; };
@@ -166,6 +167,7 @@
 		9108FBB12A77FE6C00875CFD /* Messages.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Messages.storyboard; sourceTree = "<group>"; };
 		910C24A72A78DF2300E70900 /* RegisterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterModel.swift; sourceTree = "<group>"; };
 		910C24AD2A78E0D200E70900 /* UsersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersViewModel.swift; sourceTree = "<group>"; };
+		911914DE2A9CBD2F00DE55C7 /* ItemCountAck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCountAck.swift; sourceTree = "<group>"; };
 		913B6DFF2A7A2D3D00B9D5C4 /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
 		913B6E002A7A2D3D00B9D5C4 /* SettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsCell.xib; sourceTree = "<group>"; };
 		913B6E032A7A31A600B9D5C4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -563,6 +565,7 @@
 			children = (
 				910C24A72A78DF2300E70900 /* RegisterModel.swift */,
 				919CDE842A790EFC00EB5DDE /* LoginModel.swift */,
+				911914DE2A9CBD2F00DE55C7 /* ItemCountAck.swift */,
 			);
 			path = AuthModel;
 			sourceTree = "<group>";
@@ -1102,6 +1105,7 @@
 				919CDE852A790EFC00EB5DDE /* LoginModel.swift in Sources */,
 				918B337A2A77E0EE00AB0EB8 /* AppDelegate.swift in Sources */,
 				9171B34B2A8B5A0600C698EC /* ChatInformationCell.swift in Sources */,
+				911914DF2A9CBD2F00DE55C7 /* ItemCountAck.swift in Sources */,
 				913B6E3A2A7B886D00B9D5C4 /* Rootmanager.swift in Sources */,
 				918B33A12A77EB4500AB0EB8 /* LoginViewModel.swift in Sources */,
 				9171B3592A8BA29700C698EC /* RaceEvent.swift in Sources */,

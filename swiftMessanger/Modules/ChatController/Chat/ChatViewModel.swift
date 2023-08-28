@@ -27,7 +27,7 @@ enum ActionType {
 
 class ChatViewModel {
     
-    var rView: RaceView? = nil
+    var rView:RaceView? = nil
     
     let cellNib = "ChatCell2"
     lazy var segueId = "toShowInformation"
@@ -244,15 +244,8 @@ class ChatViewModel {
         switch chatType {
         case .group(let group):
             if isEventStartedForNonStreamer(forGroup: group, forUser: userModelArray) {
-                guard var raceDetails = raceDetails else { return }
-                guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
-                
-                if shouldCreateGhostCar{
-                    raceDetails.append(GroupEventModel(userId: currentUid,
-                                                       itemCount: 0,
-                                                       groupId: group.id,
-                                                       carId: 4))
-                }
+                guard let raceDetails = raceDetails else { return }
+
                 completion(.showVideoCell(raceDetails: raceDetails,
                                           groupId: group.id,
                                           countdownValue: userModelArray.Array[0].itemCount))

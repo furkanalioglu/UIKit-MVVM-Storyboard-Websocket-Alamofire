@@ -34,9 +34,14 @@ extension ChatController : ChatControllerDelegate {
                     videoCell.isHidden = true
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
-                    guard var raceDetails = viewModel.raceDetails else { return }
-                    guard let myId = Int(AppConfig.instance.currentUserId ?? "") else { fatalError( "NO CUID ")}
+                    guard let raceDetails = viewModel.raceDetails else { return }
                     viewModel.rView?.handler?.countdownValue = timeLeft
+                    var isHidden = false
+                    if ((viewModel.rView?.userCircles.contains(where: {$0.userId == Int(AppConfig.instance.currentUserId ?? "")!})) != nil) {
+                        isHidden = true
+                    }else{
+                        isHidden = false
+                    }
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     videoCell.addSubview(self.viewModel.rView!)
@@ -59,8 +64,10 @@ extension ChatController : ChatControllerDelegate {
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
-    func didReceiveCurrentuserCountFromAck(itemCount: Int) {
-//        viewModel.rView?.handler.
+    func didReceiveCurrentuserCountFromAck(itemCount: ItemCountAck) {
+        guard let itemCount = itemCount.itemCount else { return }
+        viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: itemCount)
+        print("received Group CurrentMessage  \(itemCount)")
     }
     
     func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {

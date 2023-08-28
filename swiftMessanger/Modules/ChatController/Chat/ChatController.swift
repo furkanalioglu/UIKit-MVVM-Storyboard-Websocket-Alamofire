@@ -41,13 +41,16 @@ class ChatController: UIViewController {
             AppConfig.instance.currentChat = nil
             viewModel.handleMessageSeen(forUserId: user.id)
         case .group(let group):
-            AppConfig.instance.currentChat = nil
-            viewModel.handleMessageSeen(forUserId: group.id)
-            viewModel.player?.pause()
-            viewModel.rView?.handler?.stopTimer()
-            viewModel.rView = nil
-            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
-
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                AppConfig.instance.currentChat = nil
+                viewModel.handleMessageSeen(forUserId: group.id)
+                viewModel.player?.pause()
+                viewModel.rView?.handler?.stopTimer()
+                viewModel.rView?.lottieAnimationView.isHidden = true
+                viewModel.rView = nil
+                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
+            }
         default:
             print("Error")
         }

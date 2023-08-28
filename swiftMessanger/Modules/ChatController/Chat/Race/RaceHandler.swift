@@ -19,13 +19,11 @@ class RaceHandler {
     
     var userModels : [GroupEventModel] = []
     
-    var isAnyRaceAvailable = false
-    
+    var isAnyRaceAvailable = false    
     var displayLink: CADisplayLink?
     var elapsedSeconds: Int = 0
     var startTime: CFTimeInterval = 0.0
     var countdownValue: Int = 100
-    
     var raceOwnerId: Int?
     
     init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int,raceOwnerId : Int?) {
@@ -62,6 +60,10 @@ class RaceHandler {
     
     var isGroupOwner : Bool {
         return Int(AppConfig.instance.currentUserId ?? "") == raceOwnerId
+    }
+    
+    var shouldCreateGhostCar : Bool {
+        return !isGroupOwner && !userModels.contains(where: {$0.userId == Int(AppConfig.instance.currentUserId ?? "")!})
     }
     
     var maximumCirclesCount: Int {

@@ -32,13 +32,18 @@ class UserCircle: UIView {
     }
     
     func configure(withUser user: GroupEventModel, withCarId carId:Int ) {
-         DispatchQueue.main.async { [weak self] in
-             self?.carId = user.carId
-             self?.userId = user.userId
-             self?.playAnimation()
-             self?.layoutIfNeeded()
-             self?.layoutSubviews()
-         }
+//         DispatchQueue.main.async { [weak self] in
+//             self?.carId = user.carId
+//             self?.userId = user.userId
+//             self?.playAnimation()
+//             self?.layoutIfNeeded()
+//             self?.layoutSubviews()
+//         }
+        self.carId = user.carId
+        self.userId = user.userId
+        self.playAnimation()
+        self.layoutIfNeeded()
+        self.layoutSubviews()
      }
     
     private func setupView() {

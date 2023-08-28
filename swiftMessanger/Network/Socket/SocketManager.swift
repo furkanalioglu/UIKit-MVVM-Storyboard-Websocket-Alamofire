@@ -19,7 +19,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveChatMessage(message: MessageItem)
     func didReceiveGroupChatMessage(groupMessage : MessageItem)
     func didReceiveNewEventUser(userModel: GroupEventModelArray)
-    func didReceiveCurrentuserCountFromAck(itemCount: Int)
+    func didReceiveCurrentuserCountFromAck(itemCount: ItemCountAck)
     func didSendNewEventRequest(groupId: Int, seconds: Int,statusCode: Int)
 }
 
@@ -105,17 +105,25 @@ class SocketIOManager {
         
     }
     
+    //FIX LATERRR
     func sendGroupMessage(message: String, toGroup: String) {
         guard let gid = Int(toGroup) else { fatalError("group does not exist") }
         let myMessage = SentMessage(receiverId: gid, message: message)
-//        socket?.emit(SocketEmits.groupMessage.emitString, myMessage.toData())
+        
         socket?.emitWithAck(SocketEmits.groupMessage.emitString, myMessage.toData()).timingOut(after: 10, callback: { data in
-            guard let response = data[0] as? [String: Any],
-                  let status = response["itemCount"] as? Int else {
-                print("1*1*: \(data[0])")
+            guard let responseData = data[0] as? [String: Any] else {
+                dump("Failed to cast to dictionary: \(data[0])")
                 return
             }
-            self.chatDelegate?.didReceiveCurrentuserCountFromAck(itemCount: status)
+
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: responseData, options: [])
+                let decoder = JSONDecoder()
+                let ackResponse = try decoder.decode(ItemCountAck.self, from: jsonData)
+                self.chatDelegate?.didReceiveCurrentuserCountFromAck(itemCount: ackResponse)
+            } catch let error {
+                dump("Failed to decode JSON: \(error.localizedDescription)")
+            }
         })
     }
     

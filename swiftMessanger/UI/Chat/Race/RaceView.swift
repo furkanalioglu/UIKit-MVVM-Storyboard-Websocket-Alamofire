@@ -25,12 +25,14 @@ class RaceView: UIView {
         self.groupId = groupId
         configureRoadUI()
         configureGhostCarUI()
+        configureFlagUI()
         playLottieAnimation()
         setupTimer()
         handler.delegate = self
         print("refreshing view")
         backgroundColor = .clear
         generateUserCircleInTopList(groupId: groupId)
+        
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -47,14 +49,14 @@ class RaceView: UIView {
         }
     }
     
-    private lazy var lottieAnimationView: LottieAnimationView = {
+    var lottieAnimationView: LottieAnimationView = {
         let animationView = LottieAnimationView(name: "data2")
         animationView.loopMode = .loop
         animationView.contentMode = .scaleAspectFill
         return animationView
     }()
     
-    private lazy var ghostCarView : UserConatiner =  {
+    var ghostCarView : UserConatiner =  {
         let view = UserConatiner()
         view.setWidth(100)
         view.setHeight(100)
@@ -89,6 +91,7 @@ class RaceView: UIView {
                             guard let self = self else { return }
                             circleToRemove.removeFromSuperview()
                             self.layoutIfNeeded()
+
                         }
                             userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
                             moveUserCircles(topUsers: handler.userModels)
@@ -108,7 +111,7 @@ class RaceView: UIView {
             guard let self = self else { return }
             guard let handler = handler else { return }
             let newCircle = UserConatiner()
-            newCircle.setWidth(25)
+            newCircle.setWidth(35)
             newCircle.setHeight(75)
             addSubview(newCircle)
 
@@ -134,8 +137,6 @@ class RaceView: UIView {
     }
     
     func generateUserCircleInTopList(groupId: Int) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
             guard let handler = handler else { return }
             for user in handler.userModels{
                 print("*-*-*-TOPUSERS:",handler.userModels)
@@ -146,7 +147,6 @@ class RaceView: UIView {
                     generateNewUserCircle(withUserModel: user)
                 }
             }
-        }
     }
     
     func configureRoadUI() {
@@ -154,14 +154,9 @@ class RaceView: UIView {
             [weak self ] in
             guard let self = self else { return }
             addSubview(lottieAnimationView)
-            lottieAnimationView.setWidth(500)
             lottieAnimationView.setHeight(40)
             lottieAnimationView.anchor(bottom: bottomAnchor)
-//            flagView.anchor(top: lottieAnimationView.topAnchor,bottom: lottieAnimationView.bottomAnchor,paddingTop: 5)
             playLottieAnimation()
-//            lottieAnimationView.anchor(left: leftAnchor, bottom: bottomAnchor, right: flagView.leftAnchor)
-//            flagView.anchor(right: rightAnchor)
-//            flagView.setWidth(50)
         }
     }
     
@@ -171,7 +166,9 @@ class RaceView: UIView {
             addSubview(flagView)
             flagView.anchor(bottom:bottomAnchor,right: rightAnchor)
             flagView.setWidth(20)
-            flagView.setHeight(30)
+            flagView.setHeight(40)
+            lottieAnimationView.anchor(bottom: bottomAnchor,right: flagView.leftAnchor)
+            layoutIfNeeded()
         }
     }
     
@@ -189,9 +186,16 @@ class RaceView: UIView {
             leadingConstraint.isActive = true
             ghostCarView.configure(user: myUser)
             ghostCarView.anchor(bottom: lottieAnimationView.centerYAnchor)
-            ghostCarView.isHidden = handler.isGroupOwner
             ghostCarView.setWidth(35)
             ghostCarView.setHeight(75)
+            ghostCarView.isHidden = !handler.shouldCreateGhostCar
+
+//            if handler.isGroupOwner {
+//                ghostCarView.isHidden = true
+//            }else{
+//                ghostCarView.isHidden = !handler.shouldCreateGhostCar
+//
+//            }
             layoutIfNeeded()
         }
     }
@@ -201,19 +205,21 @@ class RaceView: UIView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
                         
-            let roadWidth: CGFloat = self.frame.width - 40
+            let roadWidth: CGFloat = self.frame.width - 70
             let invisibleWall = roadWidth * 0.20
             let usableRoadWidth = roadWidth * 0.80
+            let verticalOffsetForIndex0And2 = roadWidth * 0.05
+            let verticalOffsetForIndex1 = roadWidth * 0.025
             
             guard let totalPoints = handler?.totalTopUsersPoints, totalPoints != 0 else { return }
             
             for (index, user) in topUsers.enumerated() {
                 guard let circle = self.userCircles.first(where: { $0.userId == user.userId }) else { continue }
                 if index == 0 || index == 2 {
-                    circle.bottomConstraing?.constant = -10
+                    circle.bottomConstraing?.constant = -verticalOffsetForIndex0And2
                     print("Fireddd")
                 }else{
-                    circle.bottomConstraing?.constant = 10
+                    circle.bottomConstraing?.constant = verticalOffsetForIndex1
                     print("Fireddd2")
                 }
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)
@@ -221,7 +227,6 @@ class RaceView: UIView {
                 circle.leadingConstraing?.constant = estimatedXPosition - (circle.frame.width / 2)
             }
 
-            // Animate the changes
             UIView.animate(withDuration: 0.5) {
                 self.layoutIfNeeded()
             }
@@ -254,5 +259,7 @@ extension RaceView : RaceHandlerProtocol{
         print("Cardebug: selected number\(selectedNumber), from array \(array)")
         return selectedNumber
     }
+    
+    
 }
 

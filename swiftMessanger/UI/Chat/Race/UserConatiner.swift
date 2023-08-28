@@ -75,12 +75,12 @@ class UserConatiner: UIView {
     func configure(user: GroupEventModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            userCircle.configure(withUser: user,withCarId: carId)
             userId = user.userId
             carId = user.carId
             itemCount = user.itemCount
             usernameLabel.text = String(user.userId)
             itemCountLabel.text = String(user.itemCount)
-            userCircle.configure(withUser: user,withCarId: carId)
         }
     }
     
@@ -88,6 +88,13 @@ class UserConatiner: UIView {
         DispatchQueue.main.async { [weak self] in
             self?.itemCount = user.itemCount
             self?.itemCountLabel.text = String(user.itemCount)
+        }
+    }
+    
+    func updateItemCountForGhostCar(itemCount : Int) {
+        DispatchQueue.main.async { [weak self] in
+            self?.itemCount = itemCount
+            self?.itemCountLabel.text = String(itemCount)
         }
     }
 }
