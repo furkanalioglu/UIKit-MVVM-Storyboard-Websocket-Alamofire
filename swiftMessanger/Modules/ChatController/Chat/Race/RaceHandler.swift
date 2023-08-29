@@ -19,7 +19,7 @@ class RaceHandler {
     
     var userModels : [GroupEventModel] = []
     
-    var isAnyRaceAvailable = false    
+    var isAnyRaceAvailable = false
     var displayLink: CADisplayLink?
     var elapsedSeconds: Int = 0
     var startTime: CFTimeInterval = 0.0

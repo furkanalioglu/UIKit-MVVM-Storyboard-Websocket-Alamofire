@@ -48,6 +48,7 @@ class ChatController: UIViewController {
                 viewModel.player?.pause()
                 viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.lottieAnimationView.isHidden = true
+                viewModel.rView?.flagView.isHidden = true
                 viewModel.rView = nil
                 SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
             }

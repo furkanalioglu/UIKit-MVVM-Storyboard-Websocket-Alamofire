@@ -7,14 +7,14 @@
 
 import UIKit
 
-class UserConatiner: UIView {
+class UserConatiner: UIView{
     
     var leadingConstraing : NSLayoutConstraint?
     var bottomConstraing : NSLayoutConstraint?
     
     var userId = 0
     var itemCount = 0
-    
+        
     var carId = 1 {
         didSet{
             print("CAR ID CHANGED TO \(carId)")
@@ -73,12 +73,12 @@ class UserConatiner: UIView {
     }
     
     func configure(user: GroupEventModel) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
             userCircle.configure(withUser: user,withCarId: carId)
             userId = user.userId
             carId = user.carId
             itemCount = user.itemCount
+            DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             usernameLabel.text = String(user.userId)
             itemCountLabel.text = String(user.itemCount)
         }
@@ -97,4 +97,6 @@ class UserConatiner: UIView {
             self?.itemCountLabel.text = String(itemCount)
         }
     }
+    
 }
+

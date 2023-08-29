@@ -63,7 +63,7 @@ class RaceView: UIView {
         return view
     }()
     
-    private lazy var flagView : UIImageView =  {
+    var flagView : UIImageView =  {
         let flagView = UIImageView()
         flagView.image = UIImage(named: "flag")
         flagView.contentMode = .scaleAspectFill
@@ -73,90 +73,93 @@ class RaceView: UIView {
     func updateUserCircles(newUsers: GroupEventModelArray?) {
         guard let handler = handler else { return }
         guard let newUsers = newUsers else { return }
-
+        
         handler.userModels = newUsers.Array
         print("**********")
-            for user in newUsers.Array {
-                if handler.shouldCreateNewCircle(userCircles, userId: user.userId) {
-                    generateNewUserCircle(withUserModel: user)
-                }
-                
-                
-                if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
-                    let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
-                    if let circleToRemove = updatedTopUsersInfo.userToRemove{
-                        if circleToRemove.userId == ghostCarView.userId {
-//                            DispatchQueue.main.async { [weak self] in
-//                                guard let self = self else { return }
-                                ghostCarView.isHidden = false
-//                            }
-                        }
+        for user in newUsers.Array {
+            if handler.shouldCreateNewCircle(userCircles, userId: user.userId) {
+                let newCircle = UserConatiner()
+                userCircles.append(newCircle)
+                generateNewUserCircle(withUserModel: user,newCircle: newCircle)
+            }
+            
+            if handler.topUsersNotEqualToPrevious(userContainers: userCircles) && handler.userModels.count == 3{
+                let updatedTopUsersInfo = handler.removeAndUpdateUser(userContainers: userCircles)
+                if let circleToRemove = updatedTopUsersInfo.userToRemove{
+                    if circleToRemove.userId == ghostCarView.userId {
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
-                            circleToRemove.removeFromSuperview()
-                            self.layoutIfNeeded()
-
+                            ghostCarView.isHidden = false
                         }
-                            userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
-                            moveUserCircles(topUsers: handler.userModels)
                     }
-                }
-                if handler.shouldUpdateUserCircleWith(userCircles: userCircles, user: user) {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        circleToRemove.removeFromSuperview()
+                        self.layoutIfNeeded()
+                    }
+                    userCircles.removeAll(where: { $0.userId == circleToRemove.userId })
                     moveUserCircles(topUsers: handler.userModels)
                 }
             }
-            print("USERCIRCLECOUNT \(userCircles.count)")
+            if handler.shouldUpdateUserCircleWith(userCircles: userCircles, user: user) {
+                moveUserCircles(topUsers: handler.userModels)
+            }
+        }
+        print("USERCIRCLECOUNT \(userCircles.count)")
         for user in userCircles {
             print("USERCIRCLEINFO \(user.userId)")
             print("USERCIRCLEINFO \(user.itemCount)")
         }
-            moveUserCircles(topUsers: handler.userModels)
+        moveUserCircles(topUsers: handler.userModels)
     }
     
     
-    func generateNewUserCircle(withUserModel userModel: GroupEventModel) {
+    func generateNewUserCircle(withUserModel userModel: GroupEventModel, newCircle: UserConatiner) {
+        newCircle.configure(user: userModel)
+
+        let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)
+        newCircle.bottomConstraing = bottomConstraint
+
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             guard let handler = handler else { return }
-            if handler.shouldCreateNewCircle(userCircles, userId: userModel.userId) {
-                let newCircle = UserConatiner()
-                newCircle.setWidth(35)
-                newCircle.setHeight(75)
-                addSubview(newCircle)
-
-                if userModel.userId == ghostCarView.userId{
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                        guard let self = self else {return}
-                        ghostCarView.isHidden = true
-                    }
+            newCircle.setWidth(35)
+            newCircle.setHeight(75)
+            addSubview(newCircle)
+            
+            if userModel.userId == ghostCarView.userId{
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self else {return}
+                    ghostCarView.isHidden = true
                 }
-                let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)
-                let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
-                leadingConstraint.isActive = true
-                bottomConstraint.isActive = true
-                newCircle.leadingConstraing = leadingConstraint
-                newCircle.bottomConstraing = bottomConstraint
-                newCircle.configure(user: userModel)
-                if !userCircles.contains(where: {$0.userId == userModel.userId}) {
-                    userCircles.append(newCircle)
-                }
-                print("*-*-*-Created circle with \(newCircle)")
-                moveUserCircles(topUsers: handler.userModels)
             }
+            let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)
+            let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
+            leadingConstraint.isActive = true
+            bottomConstraint.isActive = true
+            newCircle.leadingConstraing = leadingConstraint
+            newCircle.bottomConstraing = bottomConstraint
+//            newCircle.configure(user: userModel)
+            print("ADDED NEW CIRCLE WITH ID \(newCircle.userId)")
+
+            print("*-*-*-Created circle with \(newCircle)")
+            moveUserCircles(topUsers: handler.userModels)
+            
         }
     }
     
     func generateUserCircleInTopList(groupId: Int) {
-            guard let handler = handler else { return }
-            for user in handler.userModels{
-                print("*-*-*-TOPUSERS:",handler.userModels)
-                if userCircles.first(where: {$0.userId == user.userId}) == nil,
-                   user.userId != 0,
-                   user.userId != -1{
-                    print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
-                    generateNewUserCircle(withUserModel: user)
-                }
+        guard let handler = handler else { return }
+        for user in handler.userModels{
+            print("*-*-*-TOPUSERS:",handler.userModels)
+            if userCircles.first(where: {$0.userId == user.userId}) == nil,
+               user.userId != 0,
+               user.userId != -1{
+                print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
+                generateNewUserCircle(withUserModel: user,newCircle: UserConatiner())
+                //FİX LATER
             }
+        }
     }
     
     func configureRoadUI() {
@@ -183,11 +186,11 @@ class RaceView: UIView {
     }
     
     func configureGhostCarUI() {
-            guard let currenUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
-            guard let groupId = groupId else { return }
-            guard let handler = handler else { return }
-            let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: groupId, carId: 4)
-            let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 12)
+        guard let currenUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+        guard let groupId = groupId else { return }
+        guard let handler = handler else { return }
+        let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: groupId, carId: 4)
+        let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 12)
         DispatchQueue.main.async {
             [weak self] in
             guard let self = self else { return }
@@ -207,7 +210,7 @@ class RaceView: UIView {
     func moveUserCircles(topUsers: [GroupEventModel]) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-                        
+            
             let roadWidth: CGFloat = self.frame.width - 70
             let invisibleWall = roadWidth * 0.20
             let usableRoadWidth = roadWidth * 0.80
@@ -229,14 +232,14 @@ class RaceView: UIView {
                 let estimatedXPosition = invisibleWall + (usableRoadWidth * userPercentageOfTotal)
                 circle.leadingConstraing?.constant = estimatedXPosition - (circle.frame.width / 2)
             }
-
+            
             UIView.animate(withDuration: 0.5) {
                 self.layoutIfNeeded()
             }
         }
     }
-
-        
+    
+    
     private func playLottieAnimation() {
         lottieAnimationView.play()
     }

@@ -196,7 +196,7 @@ class SocketIOManager {
 //                                                     groupId: modeledData.groupId,
 //                                                     carId: modeledData.carId)
             let newGroupEventArray = GroupEventModelArray(Array: modeledData.Array)
-            print("EVENTDEBUG receibed model")
+            print("EVENTDEBUG receibed model \(modeledData.Array)")
             self.chatDelegate?.didReceiveNewEventUser(userModel: newGroupEventArray)
             self.delegate?.didReceiveNewEnventNotification(groupMessage: newGroupEventArray)
         }

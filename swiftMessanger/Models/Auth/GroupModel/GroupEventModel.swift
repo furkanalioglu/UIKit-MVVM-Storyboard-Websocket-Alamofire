@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GroupEventModel : Codable, Equatable {
+struct GroupEventModel : Codable, Hashable {
     let userId : Int
     var itemCount : Int
     let groupId: Int

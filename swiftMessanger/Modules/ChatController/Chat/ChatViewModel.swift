@@ -211,7 +211,7 @@ class ChatViewModel {
         player = AVPlayer(url: URL(fileURLWithPath: path))
         return AVPlayerLayer(player: player)
     }
-    
+
     
     func playVideoForDuration(_ duration: Double) {
         guard let player = self.player else { return }
