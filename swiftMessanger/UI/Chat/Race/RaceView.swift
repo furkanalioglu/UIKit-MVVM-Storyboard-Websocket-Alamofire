@@ -26,13 +26,12 @@ class RaceView: UIView {
         configureRoadUI()
         configureGhostCarUI()
         configureFlagUI()
+        generateUserCircleInTopList(groupId: groupId)
         playLottieAnimation()
         setupTimer()
         handler.delegate = self
         print("refreshing view")
         backgroundColor = .clear
-        generateUserCircleInTopList(groupId: groupId)
-        
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -149,9 +148,8 @@ class RaceView: UIView {
                user.userId != -1{
                 let newCircle = UserConatiner()
                 userCircles.append(newCircle)
-                print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
                 generateNewUserCircle(withUserModel: user,newCircle: newCircle)
-                //FİX LATER
+                print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
             }
         }
     }
@@ -185,14 +183,17 @@ class RaceView: UIView {
         guard let handler = handler else { return }
         let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: groupId, carId: 4)
         let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 12)
+        ghostCarView.configure(user: myUser)
+        layoutIfNeeded()
+
         DispatchQueue.main.async {
             [weak self] in
             guard let self = self else { return }
             addSubview(ghostCarView)
+            ghostCarView.anchor(bottom: bottomAnchor)
+
             ghostCarView.leadingConstraing = leadingConstraint
             leadingConstraint.isActive = true
-            ghostCarView.configure(user: myUser)
-            ghostCarView.anchor(bottom: bottomAnchor)
             ghostCarView.setWidth(35)
             ghostCarView.setHeight(75)
             ghostCarView.isHidden = !handler.shouldCreateGhostCar
@@ -220,6 +221,8 @@ class RaceView: UIView {
                     print("Fireddd")
                 }else{
                     circle.bottomConstraing?.constant = verticalOffsetForIndex1
+                    circle.layer.zPosition = 1
+
                     print("Fireddd2")
                 }
                 let userPercentageOfTotal = CGFloat(user.itemCount) / CGFloat(totalPoints)

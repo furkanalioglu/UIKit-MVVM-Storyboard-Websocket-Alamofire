@@ -35,19 +35,25 @@ extension ChatController : ChatControllerDelegate {
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }
+                    guard let userItemCount = viewModel.userItemCount else { return }
                     viewModel.rView?.handler?.countdownValue = timeLeft
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     viewModel.rView?.handler?.startTimer()
-
+                    viewModel.rView?.updateUserCircles(newUsers: nil)
+                    viewModel.rView?.ghostCarView.itemCount = userItemCount
+                    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+                    print("1")
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         videoCell.addSubview(self.viewModel.rView!)
                         viewModel.rView?.fillSuperview()
                         videoCell.isHidden = false
+                        viewModel.rView?.layoutIfNeeded()
+                        print("2")
                     }
-                    
-                    viewModel.rView?.updateUserCircles(newUsers: nil)
+                    print("3")
+
                 }
             }
         case .user:
@@ -89,7 +95,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                     self.viewModel.rView?.updateUserCircles(newUsers: userModel)
 
                 case .showVideoCell(let raceDetails, let groupId, let timer):
-
                     let handler = RaceHandler(userModels: raceDetails,
                                               isAnyRaceAvailable: true,
                                               countdownValue: timer,raceOwnerId: self.viewModel.groupOwnerId)
@@ -107,14 +112,12 @@ extension ChatController : SocketIOManagerChatDelegate {
                         viewModel.rView?.layoutIfNeeded()
                     }
                     
-
-
-
-
                 case .hideVideoCell:
                     self.viewModel.rView?.userCircles = []
                     self.viewModel.raceDetails = []
                     self.viewModel.rView?.handler?.stopTimer()
+                    viewModel.rView?.ghostCarView.itemCount = 0
+                    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: 0)
 
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }

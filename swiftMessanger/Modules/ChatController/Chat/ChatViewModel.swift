@@ -112,6 +112,7 @@ class ChatViewModel {
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
     var raceDetails : [GroupEventModel]? = []
+    var userItemCount : Int?
     var timeLeft : Int?
     
     var userInformations: [UserModel]?
@@ -150,6 +151,7 @@ class ChatViewModel {
                 self.newMessages = messages?.messages
                 self.userInformations = messages?.users
                 self.raceDetails = messages?.race
+                self.userItemCount = messages?.userItemCount
                 self.timeLeft = messages?.timeLeft
                 self.delegate?.datasReceived(error: nil)
             }else{
@@ -240,12 +242,12 @@ class ChatViewModel {
     }
     
     
+
     func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
             if isEventStartedForNonStreamer(forGroup: group, forUser: userModelArray) {
                 guard let raceDetails = raceDetails else { return }
-
                 completion(.showVideoCell(raceDetails: raceDetails,
                                           groupId: group.id,
                                           countdownValue: userModelArray.Array[0].itemCount))

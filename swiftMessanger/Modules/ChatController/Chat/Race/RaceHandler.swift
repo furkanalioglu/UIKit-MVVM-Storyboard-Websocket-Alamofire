@@ -25,6 +25,7 @@ class RaceHandler {
     var startTime: CFTimeInterval = 0.0
     var countdownValue: Int = 100
     var raceOwnerId: Int?
+    var userItemCount = 0
     
     init(userModels: [GroupEventModel], isAnyRaceAvailable: Bool,countdownValue : Int,raceOwnerId : Int?) {
         self.userModels = userModels
