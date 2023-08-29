@@ -126,6 +126,9 @@ class RaceView: UIView {
 
             if userModel.userId == ghostCarView.userId{
                 ghostCarView.isHidden = true
+//                ghostCarView.userCircle.playerLayer?.player?.pause()
+                ghostCarView.userCircle.stop()
+
             }
 
             let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)

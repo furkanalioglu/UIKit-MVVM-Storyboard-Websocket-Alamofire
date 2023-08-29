@@ -32,6 +32,8 @@ extension ChatController : ChatControllerDelegate {
                 guard let timeleft = viewModel.timeLeft else { return }
                 if timeleft <= 0{
                     videoCell.isHidden = true
+                    
+
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }

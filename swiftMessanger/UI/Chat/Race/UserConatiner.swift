@@ -37,7 +37,7 @@ class UserConatiner: UIView{
         return label
     }()
     
-    private let userCircle: UserCircle = {
+    let userCircle: UserCircle = {
         let circle = UserCircle()
         return circle
     }()
@@ -73,10 +73,12 @@ class UserConatiner: UIView{
     }
     
     func configure(user: GroupEventModel) {
+        userId = user.userId
+        carId = user.carId
+        itemCount = user.itemCount
+
             userCircle.configure(withUser: user,withCarId: carId)
-            userId = user.userId
-            carId = user.carId
-            itemCount = user.itemCount
+  
             DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             usernameLabel.text = String(user.userId)

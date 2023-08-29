@@ -12,29 +12,16 @@ import CoreImage
 
 
 final class GiftManager {
-    
-    struct Static {
-        fileprivate static var instance: GiftManager?
-    }
-    
-    class var shared: GiftManager {
-        if let currentInstance = Static.instance {
-            return currentInstance
-        } else {
-            Static.instance = GiftManager()
-            return Static.instance!
-        }
-    }
 
-    public func dispose() {
-        GiftManager.Static.instance = nil
-        self.playerView?.removeFromSuperview()
-        self.playerView = nil
-    }
         
     private var playerView: AVPlayerView?
     private lazy var fileManager = FileManager.default
     private lazy var documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+    
+    public func dispose() {
+        self.playerView?.removeFromSuperview()
+        self.playerView = nil
+    }
     
 
     public func playSuperAnimation(view: UIView, videoURLString: String, _ completion: @escaping () -> Void) {
@@ -74,10 +61,14 @@ final class GiftManager {
                     completion()
                     return print("Something went wrong when loading our video:", error.localizedDescription, url)
                 case .success(let player):
-                    NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { (_) in
-                         player.seek(to: CMTime.zero)
-                         player.play()
-                     }
+                    NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { [weak self] (_) in
+                        guard let self = self else { return }
+                        if self.playerView != nil {
+                            player.seek(to: CMTime.zero)
+                            player.play()
+                            print("PLAYING VIEW")
+                        }
+                    }
 
                      player.play()
                 }
