@@ -22,6 +22,7 @@ class UserCircle: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+//        carId = 0
         setupView()
     }
     
@@ -42,8 +43,6 @@ class UserCircle: UIView {
         self.carId = user.carId
         self.userId = user.userId
         self.playAnimation()
-        self.layoutIfNeeded()
-        self.layoutSubviews()
      }
     
     private func setupView() {

@@ -42,42 +42,45 @@ final class GiftManager {
         else { debugPrint("Could not find URL") ; return }
         
         //UIScreen bounds verince animasyon küçük geldi.
-        let videoSize = CGSize(width: (view.frame.width * 2), height: (view.frame.width * 2))
-        
-        self.playerView = AVPlayerView(frame: CGRect(origin: .zero, size: videoSize))
-        guard let playerView = self.playerView else { return }
-        
-        if !view.contains(playerView) {
-            view.addSubview(playerView)
-            view.bringSubviewToFront(playerView)
-        }
-        
-        // Use Auto Layout anchors to center our playerView
-        playerView.translatesAutoresizingMaskIntoConstraints = false
-        playerView.widthAnchor.constraint(equalToConstant: videoSize.width).isActive = true
-        playerView.heightAnchor.constraint(equalToConstant: videoSize.height).isActive = true
-        playerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        playerView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        // Setup our playerLayer to hold a pixel buffer format with "alpha"
-        let playerLayer: AVPlayerLayer = playerView.playerLayer
-        playerLayer.pixelBufferAttributes = [
-            (kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA]
-        
-        let playerItem = createTransparentItem(url: url)
-        
-        playerView.loadPlayerItem(playerItem) { result in
-            switch result {
-            case .failure(let error):
-                completion()
-                return print("Something went wrong when loading our video:", error.localizedDescription, url)
-            case .success(let player):
-                NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { (_) in
-                     player.seek(to: CMTime.zero)
-                     player.play()
-                 }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let videoSize = CGSize(width: (view.frame.width * 2), height: (view.frame.width * 2))
+            
+            self.playerView = AVPlayerView(frame: CGRect(origin: .zero, size: videoSize))
+            guard let playerView = self.playerView else { return }
+            
+            if !view.contains(playerView) {
+                view.addSubview(playerView)
+                view.bringSubviewToFront(playerView)
+            }
+            
+            // Use Auto Layout anchors to center our playerView
+            playerView.translatesAutoresizingMaskIntoConstraints = false
+            playerView.widthAnchor.constraint(equalToConstant: videoSize.width).isActive = true
+            playerView.heightAnchor.constraint(equalToConstant: videoSize.height).isActive = true
+            playerView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            playerView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            
+            // Setup our playerLayer to hold a pixel buffer format with "alpha"
+            let playerLayer: AVPlayerLayer = playerView.playerLayer
+            playerLayer.pixelBufferAttributes = [
+                (kCVPixelBufferPixelFormatTypeKey as String): kCVPixelFormatType_32BGRA]
+            
+            let playerItem = createTransparentItem(url: url)
+            
+            playerView.loadPlayerItem(playerItem) { result in
+                switch result {
+                case .failure(let error):
+                    completion()
+                    return print("Something went wrong when loading our video:", error.localizedDescription, url)
+                case .success(let player):
+                    NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { (_) in
+                         player.seek(to: CMTime.zero)
+                         player.play()
+                     }
 
-                 player.play()
+                     player.play()
+                }
             }
         }
     }
