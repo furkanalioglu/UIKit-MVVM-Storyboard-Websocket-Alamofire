@@ -35,23 +35,19 @@ extension ChatController : ChatControllerDelegate {
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }
+                    viewModel.rView?.handler?.countdownValue = timeLeft
+                    let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
+                    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
+                    viewModel.rView?.handler?.startTimer()
+
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
-                        viewModel.rView?.handler?.countdownValue = timeLeft
-                        var isHidden = false
-                        if ((viewModel.rView?.userCircles.contains(where: {$0.userId == Int(AppConfig.instance.currentUserId ?? "")!})) != nil) {
-                            isHidden = true
-                        }else{
-                            isHidden = false
-                        }
-                        let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
-                        viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                         videoCell.addSubview(self.viewModel.rView!)
                         viewModel.rView?.fillSuperview()
-                        viewModel.rView?.handler?.startTimer()
                         videoCell.isHidden = false
-                        viewModel.rView?.updateUserCircles(newUsers: nil)
                     }
+                    
+                    viewModel.rView?.updateUserCircles(newUsers: nil)
                 }
             }
         case .user:
@@ -70,9 +66,6 @@ extension ChatController : SocketIOManagerChatDelegate {
     func didReceiveCurrentuserCountFromAck(itemCount: ItemCountAck) {
         guard let itemCount = itemCount.itemCount else { return }
         self.viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: itemCount)
-
-//        viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: itemCount)
-//        print("received Group CurrentMessage  \(itemCount)")
     }
     
     func didSendNewEventRequest(groupId: Int, seconds: Int, statusCode: Int) {
@@ -90,9 +83,7 @@ extension ChatController : SocketIOManagerChatDelegate {
     
     func didReceiveNewEventUser(userModel: GroupEventModelArray) {
         guard let chatType = viewModel.chatType else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.viewModel.handleEventActions(userModelArray: userModel, group: chatType) { eventType in
+            viewModel.handleEventActions(userModelArray: userModel, group: chatType) { eventType in
                 switch eventType{
                 case .updateUserCircles:
                     self.viewModel.rView?.updateUserCircles(newUsers: userModel)
@@ -110,10 +101,13 @@ extension ChatController : SocketIOManagerChatDelegate {
 
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
-                        self.videoCell.isHidden = false
-                        self.videoCell.addSubview((self.viewModel.rView)!)
-                        self.viewModel.rView?.fillSuperview()
+                        videoCell.isHidden = false
+                        videoCell.addSubview((viewModel.rView)!)
+                        viewModel.rView?.fillSuperview()
+                        viewModel.rView?.layoutIfNeeded()
                     }
+                    
+
 
 
 
@@ -132,7 +126,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                 }
                 
             }
-        }
     }
     
     func didReceiveGroupChatMessage(groupMessage: MessageItem) {

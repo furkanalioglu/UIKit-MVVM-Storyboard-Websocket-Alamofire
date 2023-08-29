@@ -115,37 +115,29 @@ class RaceView: UIView {
     
     
     func generateNewUserCircle(withUserModel userModel: GroupEventModel, newCircle: UserConatiner) {
-        newCircle.configure(user: userModel)
+        guard let handler = handler else { return }
 
-        let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)
-        newCircle.bottomConstraing = bottomConstraint
+        newCircle.configure(user: userModel)
 
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            guard let handler = handler else { return }
             newCircle.setWidth(35)
             newCircle.setHeight(75)
             addSubview(newCircle)
-            
+
             if userModel.userId == ghostCarView.userId{
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                    guard let self = self else {return}
-                    ghostCarView.isHidden = true
-                }
+                ghostCarView.isHidden = true
             }
+
             let bottomConstraint = newCircle.bottomAnchor.constraint(equalTo: bottomAnchor)
             let leadingConstraint = newCircle.leadingAnchor.constraint(equalTo: leadingAnchor)
             leadingConstraint.isActive = true
             bottomConstraint.isActive = true
             newCircle.leadingConstraing = leadingConstraint
             newCircle.bottomConstraing = bottomConstraint
-//            newCircle.configure(user: userModel)
-            print("ADDED NEW CIRCLE WITH ID \(newCircle.userId)")
-
-            print("*-*-*-Created circle with \(newCircle)")
-            moveUserCircles(topUsers: handler.userModels)
-            
+            layoutIfNeeded()
         }
+        moveUserCircles(topUsers: handler.userModels)
     }
     
     func generateUserCircleInTopList(groupId: Int) {
@@ -155,8 +147,10 @@ class RaceView: UIView {
             if userCircles.first(where: {$0.userId == user.userId}) == nil,
                user.userId != 0,
                user.userId != -1{
+                let newCircle = UserConatiner()
+                userCircles.append(newCircle)
                 print("*-*-*- GENERATINBG USER CIRCLE FOR \(user.userId) with \(user.itemCount)")
-                generateNewUserCircle(withUserModel: user,newCircle: UserConatiner())
+                generateNewUserCircle(withUserModel: user,newCircle: newCircle)
                 //FİX LATER
             }
         }
@@ -198,7 +192,7 @@ class RaceView: UIView {
             ghostCarView.leadingConstraing = leadingConstraint
             leadingConstraint.isActive = true
             ghostCarView.configure(user: myUser)
-            ghostCarView.anchor(bottom: lottieAnimationView.centerYAnchor)
+            ghostCarView.anchor(bottom: bottomAnchor)
             ghostCarView.setWidth(35)
             ghostCarView.setHeight(75)
             ghostCarView.isHidden = !handler.shouldCreateGhostCar

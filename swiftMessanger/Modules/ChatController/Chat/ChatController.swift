@@ -41,12 +41,13 @@ class ChatController: UIViewController {
             AppConfig.instance.currentChat = nil
             viewModel.handleMessageSeen(forUserId: user.id)
         case .group(let group):
+            viewModel.rView?.handler?.stopTimer()
+            viewModel.player?.pause()
+            AppConfig.instance.currentChat = nil
+
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                AppConfig.instance.currentChat = nil
                 viewModel.handleMessageSeen(forUserId: group.id)
-                viewModel.player?.pause()
-                viewModel.rView?.handler?.stopTimer()
                 viewModel.rView?.lottieAnimationView.isHidden = true
                 viewModel.rView?.flagView.isHidden = true
                 viewModel.rView = nil
