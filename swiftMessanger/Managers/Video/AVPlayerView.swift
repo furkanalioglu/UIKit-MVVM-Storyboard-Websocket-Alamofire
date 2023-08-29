@@ -69,7 +69,7 @@ public class AVPlayerView: UIView {
     /// When set to `true`, the player view automatically adds an observer on its AVPlayer,
     /// and it will play again from start every time playback ends.
     /// * Warning: This will not result in a smooth video loop.
-    public var isLoopingEnabled: Bool = false {
+    public var isLoopingEnabled: Bool = true {
         didSet { setupLooping() }
     }
     

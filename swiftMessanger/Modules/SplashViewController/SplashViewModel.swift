@@ -13,6 +13,8 @@ class SplashViewModel {
     
     var messages : [MessagesCellItem]?
     
+    let downloadManager = GiftManager()
+    
     init() {
         attemptAutoLogin()
         fetchCarAssets()
@@ -61,7 +63,7 @@ class SplashViewModel {
     
     func fetchCarAssets() {
         for i in  0..<AppConfig.instance.carURLS.count{
-            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.carURLS[i],assetString: AssetTypes.urlCAR ,forAsset: i) { didCompleted, err in
+            downloadManager.didDownloadVideo(from: AppConfig.instance.carURLS[i],assetString: AssetTypes.urlCAR ,forAsset: i) { didCompleted, err in
                 if err == nil && didCompleted == true {
                     print("Downloaded car asset for \(i)")
                 }else{
@@ -75,7 +77,7 @@ class SplashViewModel {
     
     func fetchEnvironmentAssets() {
         for i in 0..<AppConfig.instance.otherAssets.count {
-            GiftManager.shared.didDownloadVideo(from: AppConfig.instance.otherAssets[i],assetString: AssetTypes.urlEnvironment, forAsset: i) { didCompleted, err in
+            downloadManager.didDownloadVideo(from: AppConfig.instance.otherAssets[i],assetString: AssetTypes.urlEnvironment, forAsset: i) { didCompleted, err in
                 if err == nil && didCompleted == true {
                     print("Downloaded environment asset for \(i)")
                 }else{

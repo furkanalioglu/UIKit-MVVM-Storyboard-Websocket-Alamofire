@@ -21,6 +21,7 @@ class UserConatiner: UIView{
         }
     }
     
+    
     private let usernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -45,6 +46,11 @@ class UserConatiner: UIView{
     init() {
         super.init(frame: .zero)
         setupView()
+        print("CONTAINER 11 CREATED")
+    }
+    
+    deinit {
+        print("CONTAINER 11 DELETED")
     }
     
     required init?(coder: NSCoder) {
@@ -73,16 +79,17 @@ class UserConatiner: UIView{
     }
     
     func configure(user: GroupEventModel) {
+        userCircle.configure(withUser: user,withCarId: carId)
         userId = user.userId
         carId = user.carId
         itemCount = user.itemCount
 
-            userCircle.configure(withUser: user,withCarId: carId)
   
             DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             usernameLabel.text = String(user.userId)
             itemCountLabel.text = String(user.itemCount)
+
         }
     }
     

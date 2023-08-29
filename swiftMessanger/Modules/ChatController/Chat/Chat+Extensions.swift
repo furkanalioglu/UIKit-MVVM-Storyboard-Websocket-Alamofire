@@ -45,7 +45,6 @@ extension ChatController : ChatControllerDelegate {
                     viewModel.rView?.updateUserCircles(newUsers: nil)
                     viewModel.rView?.ghostCarView.itemCount = userItemCount
                     viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
-                    print("1")
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         videoCell.addSubview(self.viewModel.rView!)
@@ -103,6 +102,7 @@ extension ChatController : SocketIOManagerChatDelegate {
                     self.viewModel.rView = RaceView(frame: (self.view.frame),
                                                handler: handler,
                                                groupId: groupId)
+
                     self.viewModel.rView?.handler?.startTimer()
                     self.viewModel.rView?.updateUserCircles(newUsers: nil)
 

@@ -17,6 +17,7 @@ class RootManager {
     
     static func switchRoot(_ type: PageType,sender: Any? = nil) {
         DispatchQueue.main.async {
+            
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                   let delegate = windowScene.delegate as? SceneDelegate
             else { return }

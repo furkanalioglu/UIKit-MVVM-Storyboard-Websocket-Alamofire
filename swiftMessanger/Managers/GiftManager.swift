@@ -13,17 +13,32 @@ import CoreImage
 
 final class GiftManager {
     
-    struct Static {
-        fileprivate static var instance: GiftManager?
+//    struct Static {
+//        fileprivate static var instance: GiftManager?
+//    }
+//    
+//    class var shared: GiftManager {
+//        if let currentInstance = Static.instance {
+//            return currentInstance
+//        } else {
+//            Static.instance = GiftManager()
+//            return Static.instance!
+//        }
+//    }
+    
+    init() {
+        print("GIFT MANAGER 11 CREATED")
     }
     
-    class var shared: GiftManager {
-        if let currentInstance = Static.instance {
-            return currentInstance
-        } else {
-            Static.instance = GiftManager()
-            return Static.instance!
-        }
+    deinit {
+        print("GIFT MANAGER 11 DELETED")
+    }
+    
+    public func removePlayerView() {
+        playerView?.isLoopingEnabled = false
+        playerView?.removeFromSuperview()
+        playerView?.player?.pause()
+        self.playerView = nil
     }
         
     private var playerView: AVPlayerView?
@@ -68,12 +83,9 @@ final class GiftManager {
                     completion()
                     return print("Something went wrong when loading our video:", error.localizedDescription, url)
                 case .success(let player):
-                    NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { (_) in
-                         player.seek(to: CMTime.zero)
-                         player.play()
-                     }
-
                      player.play()
+                    print("PLAYING VIDEOO")
+                    
                 }
             }
         }
@@ -85,7 +97,7 @@ final class GiftManager {
             return
         }
         
-        var destinationPath = AssetManager.shared.getAssetPath(forAssetId: assetId, type: assetString.rawValue, extension: videoUrl.pathExtension)
+        let destinationPath = AssetManager.shared.getAssetPath(forAssetId: assetId, type: assetString.rawValue, extension: videoUrl.pathExtension)
         let destinationURL = URL(fileURLWithPath: destinationPath)
         
         if FileManager.default.fileExists(atPath: destinationPath) {

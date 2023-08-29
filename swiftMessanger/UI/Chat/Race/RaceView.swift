@@ -13,6 +13,7 @@ class RaceView: UIView {
     var timerLabel = UILabel()
     var handler : RaceHandler?
     var groupId: Int?
+
     
     private var playerLooper:  AVPlayerLooper?
     private var playerLayer : AVPlayerLayer?
@@ -32,9 +33,14 @@ class RaceView: UIView {
         handler.delegate = self
         print("refreshing view")
         backgroundColor = .clear
-    }
+        print("RACE VIEW 11 CREATED")
+    } 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        print("RACE VIEW 11 DELETED")
     }
     
     
@@ -191,12 +197,11 @@ class RaceView: UIView {
             guard let self = self else { return }
             addSubview(ghostCarView)
             ghostCarView.anchor(bottom: bottomAnchor)
-
+            ghostCarView.isHidden = !handler.shouldCreateGhostCar
             ghostCarView.leadingConstraing = leadingConstraint
             leadingConstraint.isActive = true
             ghostCarView.setWidth(35)
             ghostCarView.setHeight(75)
-            ghostCarView.isHidden = !handler.shouldCreateGhostCar
             layoutIfNeeded()
         }
     }
@@ -240,6 +245,13 @@ class RaceView: UIView {
     private func playLottieAnimation() {
         lottieAnimationView.play()
     }
+    
+    func removeAllCircles() {
+        for user in userCircles{
+            user.userCircle.carAnimationManager.removePlayerView()
+            user.removeFromSuperview()
+        }
+    }
 }
 
 //Timer Delegate
@@ -264,5 +276,16 @@ extension RaceView : RaceHandlerProtocol{
     }
     
     
+}
+
+
+extension UIView {
+    func subviews<T: UIView>(ofType WhatType: T.Type) -> [T] {
+        var result = self.subviews.compactMap { $0 as? T }
+        for sub in self.subviews {
+            result.append(contentsOf: sub.subviews(ofType: WhatType))
+        }
+        return result
+    }
 }
 

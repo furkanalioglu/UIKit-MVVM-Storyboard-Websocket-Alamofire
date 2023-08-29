@@ -44,15 +44,19 @@ class ChatController: UIViewController {
             viewModel.rView?.handler?.stopTimer()
             viewModel.player?.pause()
             AppConfig.instance.currentChat = nil
+            viewModel.rView?.removeAllCircles()
 
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 viewModel.handleMessageSeen(forUserId: group.id)
                 viewModel.rView?.lottieAnimationView.isHidden = true
+                viewModel.rView?.lottieAnimationView.stop()
                 viewModel.rView?.flagView.isHidden = true
                 viewModel.rView = nil
                 SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
             }
+            viewModel.rView?.removeFromSuperview()
+            
         default:
             print("Error")
         }
@@ -241,6 +245,7 @@ extension ChatController : UITableViewDataSource {
         cell.message = viewModel.messages?[indexPath.row]
         return cell
     }
+    
 }
 
 

@@ -120,9 +120,10 @@ class RaceHandler {
         let elapsed = CACurrentMediaTime() - startTime
         
         if elapsed >= 1.0 {
-            DispatchQueue.main.async {
-                self.countdownValue -= 1
-                self.delegate?.timerDidChange(value: self.countdownValue)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                countdownValue -= 1
+                delegate?.timerDidChange(value: countdownValue)
             }
             
             startTime = CACurrentMediaTime()
