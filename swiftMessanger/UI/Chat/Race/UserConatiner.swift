@@ -79,7 +79,6 @@ class UserConatiner: UIView{
     }
     
     func configure(user: GroupEventModel) {
-        userCircle.configure(withUser: user,withCarId: carId)
         userId = user.userId
         carId = user.carId
         itemCount = user.itemCount
@@ -91,6 +90,8 @@ class UserConatiner: UIView{
             itemCountLabel.text = String(user.itemCount)
 
         }
+        userCircle.configure(withUser: user,withCarId: carId)
+
     }
     
     func updateItemCount(user: GroupEventModel) {

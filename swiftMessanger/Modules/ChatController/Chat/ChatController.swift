@@ -45,6 +45,9 @@ class ChatController: UIViewController {
             viewModel.player?.pause()
             AppConfig.instance.currentChat = nil
             viewModel.rView?.removeAllCircles()
+            viewModel.rView?.removeLottieAnimation()
+            viewModel.rView?.removeFromSuperview()
+
 
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -55,7 +58,6 @@ class ChatController: UIViewController {
                 viewModel.rView = nil
                 SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
             }
-            viewModel.rView?.removeFromSuperview()
             
         default:
             print("Error")

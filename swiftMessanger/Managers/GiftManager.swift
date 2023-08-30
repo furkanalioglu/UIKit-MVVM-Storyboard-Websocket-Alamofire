@@ -13,19 +13,6 @@ import CoreImage
 
 final class GiftManager {
     
-//    struct Static {
-//        fileprivate static var instance: GiftManager?
-//    }
-//    
-//    class var shared: GiftManager {
-//        if let currentInstance = Static.instance {
-//            return currentInstance
-//        } else {
-//            Static.instance = GiftManager()
-//            return Static.instance!
-//        }
-//    }
-    
     init() {
         print("GIFT MANAGER 11 CREATED")
     }

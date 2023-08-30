@@ -24,17 +24,18 @@ class RaceView: UIView {
         super.init (frame: frame)
         self.handler = handler
         self.groupId = groupId
+        handler.delegate = self
         configureRoadUI()
-        configureGhostCarUI()
         configureFlagUI()
         generateUserCircleInTopList(groupId: groupId)
         playLottieAnimation()
         setupTimer()
-        handler.delegate = self
         print("refreshing view")
         backgroundColor = .clear
         print("RACE VIEW 11 CREATED")
-    } 
+        configureGhostCarUI()
+
+    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -63,8 +64,9 @@ class RaceView: UIView {
     
     var ghostCarView : UserConatiner =  {
         let view = UserConatiner()
-        view.setWidth(100)
-        view.setHeight(100)
+//        guard let currenUid = Int(AppConfig.instance.currentUserId ?? "") else { fatalError("sdas")}
+//        let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: 44, carId: 4)
+//        view.configure(user: myUser)
         return view
     }()
     
@@ -190,7 +192,6 @@ class RaceView: UIView {
         let myUser = GroupEventModel(userId: currenUid, itemCount: 0, groupId: groupId, carId: 4)
         let leadingConstraint = ghostCarView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 12)
         ghostCarView.configure(user: myUser)
-        layoutIfNeeded()
 
         DispatchQueue.main.async {
             [weak self] in
@@ -202,7 +203,7 @@ class RaceView: UIView {
             leadingConstraint.isActive = true
             ghostCarView.setWidth(35)
             ghostCarView.setHeight(75)
-            layoutIfNeeded()
+//            layoutIfNeeded()
         }
     }
     
@@ -251,6 +252,11 @@ class RaceView: UIView {
             user.userCircle.carAnimationManager.removePlayerView()
             user.removeFromSuperview()
         }
+    }
+    
+    func removeLottieAnimation() {
+        lottieAnimationView.stop()
+        lottieAnimationView.removeFromSuperview()
     }
 }
 

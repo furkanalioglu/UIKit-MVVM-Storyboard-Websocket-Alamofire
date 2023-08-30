@@ -40,6 +40,10 @@ final class AlphaFrameFilter: CIFilter {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    deinit {
+        print("AlphaFrameFilter is being deallocated.")
+    }
 
     override var outputImage: CIImage? {
         // Output is nil if an input image and a mask image aren't provided
