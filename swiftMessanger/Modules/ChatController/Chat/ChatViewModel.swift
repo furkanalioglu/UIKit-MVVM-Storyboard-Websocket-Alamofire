@@ -32,8 +32,10 @@ class ChatViewModel {
     var rView:RaceView? = nil
     
     let cellNib = "ChatCell2"
+    let cellWithImageNib = "ChatCellWithImage"
     lazy var segueId = "toShowInformation"
     lazy var startSegueId = "toShowStart"
+    
     
     var chatType : ChatType? {
         didSet{
@@ -191,16 +193,17 @@ class ChatViewModel {
         
         switch chatType {
         case .group(let group):
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString())
+            //TODO: - FIX TYPE ACCORDING TO MESSAGE
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString(),type:"text")
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-            SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id))
+            SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
             print("MESSAGELOFGGG \(group.id)")
         case .user(let user):
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.id, sendTime: Date().toString())
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.id, sendTime: Date().toString(),type: "text")
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.id))
+            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.id),type: myMessage.type)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -273,8 +276,13 @@ class ChatViewModel {
             ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData in
                 if err == nil {
                     guard let MPData = MPData else { return }
-                    MessagesService.instance.uploadImageToDB(imageData: MPData) { err in
+                    MessagesService.instance.uploadImageToDB(groupId: group.id,imageData: MPData) { err, response in
                         if err == nil {
+                            guard let imageURL = response?.url else { return }
+                            guard let currentUid = AppConfig.instance.currentUserId else { return }
+                            let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: group.id, sendTime: Date().toString(),type:"image")
+                            self.messages?.append(myMessage)
+                            SocketIOManager.shared().sendGroupMessage(message: response!.url, toGroup: String(group.id), type: "image")
                             self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
                             print("IMAGEDEBUG: ",image)
                         }else{
@@ -289,52 +297,5 @@ class ChatViewModel {
             break
         }
     }
-    
-    //    func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
-    //        switch chatType {
-    //        case .group(let group):
-    //            for userModel in userModelArray.Array {
-    //                if isEventStartedForNonStreamer(forGroup: group, forUser: userModel){
-    //                    guard var raceDetails = raceDetails,
-    //                          let myId = Int(AppConfig.instance.currentUserId ?? "") else { return }
-    //                    if shouldCreateGhostCar{
-    //                        raceDetails.append(GroupEventModel(userId: myId,
-    //                                                           itemCount: 0,
-    //                                                           groupId: group.id,
-    //                                                           carId: 4))
-    //                    }
-    //                    completion(.showVideoCell(raceDetails: raceDetails,
-    //                                              groupId: group.id,
-    //                                              countdownValue: userModel.itemCount))
-    //                }
-    //
-    //
-    //                if isEventAvaible(forGroup: group, forUser: userModel){
-    //                    //                if let existedUserIndex = rView?.handler?.userModels.firstIndex(where: {$0.userId == userModel.userId}) {
-    //                    //                    rView?.handler?.userModels[existedUserIndex] = userModel
-    //                    //                    if let matchingCircle = rView?.userCircles.first(where: { $0.userId == userModel.userId }) {
-    //                    //                        DispatchQueue.main.async {
-    //                    //                            matchingCircle.updateItemCount(user: userModel)
-    //                    //                        }
-    //                    //                    }
-    //                    //                    completion(.updateUserCircles(newUser: nil))
-    //                    //                } else{
-    //                    //                    if userModel.userId != EventResponse.eventAvaible.rawValue {
-    //                    //                        //checking is it a user or not?
-    //                    //                        rView?.handler?.userModels.append(userModel)
-    //                    //                        completion(.updateUserCircles(newUser: userModel))
-    //                    //                    }
-    //                    //                }
-    //                    rView?.handler?.userModels = userModelArray[i]
-    //                }
-    //                if isEventFinished(forGroup: group, forUser: userModel){
-    //                    completion(.hideVideoCell)
-    //                }
-    //            }
-    //        default:
-    //            break
-    //        }
-    //
-    //    }
     
 }

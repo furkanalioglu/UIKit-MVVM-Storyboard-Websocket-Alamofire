@@ -10,4 +10,5 @@ import Foundation
 struct SentMessage : Codable {
     let receiverId : Int
     let message : String
+    let type: String
 }

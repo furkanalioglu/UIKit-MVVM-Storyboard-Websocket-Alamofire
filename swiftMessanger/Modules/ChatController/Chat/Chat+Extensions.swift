@@ -215,7 +215,6 @@ extension ChatController: StartControllerProtocol{
 }
 
 extension ChatController : PhotoPickerDelegate {
-    
     func didPickImageData(_ image: UIImage) {
         switch viewModel.chatType{
         case .group(let group):

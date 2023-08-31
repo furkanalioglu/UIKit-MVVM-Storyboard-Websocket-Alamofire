@@ -86,17 +86,23 @@ class MessagesService {
         }
     }
     
-    func uploadImageToDB(imageData: MultipartFormBodyPart, completion: @escaping(Error?) -> Void ){
-        provider.requestJSON(target: .uploadImageToDB(image: imageData)) { result in
+    func uploadImageToDB(groupId: Int,imageData: MultipartFormBodyPart, completion: @escaping(Error?,MessageURLResponse?) -> Void ){
+        provider.requestJSON(target: .uploadImageToDB(groupId: groupId, image: imageData)) { result in
             switch result {
             case .success(let response):
                 print("IMAGEDEBUG NO ERR: \(response)")
-                completion(nil)
+                let urlResponse = try? response.map(MessageURLResponse.self)
+                completion(nil,urlResponse)
             case .failure(let error):
                 print("IMAGEDEBUG ERR: \(error.localizedDescription)")
-                completion(error)
+                completion(error,nil)
             }
         }
     }
 
+}
+
+
+struct MessageURLResponse: Codable {
+    let url : String
 }

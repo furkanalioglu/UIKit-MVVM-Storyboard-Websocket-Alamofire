@@ -25,7 +25,7 @@ enum AuthAPI {
     case createGroup(groupModel : CreateGroupModel)
     case getAllGroups
     case getMessagesForGroup(groupId: Int, page: Int)
-    case uploadImageToDB(image: MultipartFormBodyPart)
+    case uploadImageToDB(groupId: Int, image: MultipartFormBodyPart)
 }
 
 extension AuthAPI: TargetType {
@@ -61,8 +61,8 @@ extension AuthAPI: TargetType {
             return "chats/groups"
         case .getMessagesForGroup(let groupId, _):
             return "chats/group/\(groupId)"
-        case .uploadImageToDB(_):
-            return "auth/profile/addPhoto"
+        case .uploadImageToDB(let groupId ,_):
+            return "chats/group/\(groupId)/photo"
         }
     }
     
@@ -137,7 +137,7 @@ extension AuthAPI: TargetType {
         case .getMessagesForGroup(groupId: let groupId, page: let page):
             let parameters : [String: Any] = ["page": page]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
-        case .uploadImageToDB(let image):
+        case .uploadImageToDB(let groupId, let image):
             return .uploadMultipartFormData([image])
         }
         

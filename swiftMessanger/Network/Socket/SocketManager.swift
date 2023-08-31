@@ -100,18 +100,16 @@ class SocketIOManager {
         socket?.disconnect()
     }
     
-    func sendMessage(message: String, toUser: String) {
+    func sendMessage(message: String, toUser: String,type: String) {
         guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
-        let myMessage = SentMessage(receiverId: userId, message: message)
-        socket?.emit(SocketEmits.message.rawValue, myMessage.toData())
-        
-        
+        let myMessage = SentMessage(receiverId: userId, message: message,type: type)
+        socket?.emit(SocketEmits.message.rawValue, myMessage.toData())        
     }
     
     //FIX LATERRR
-    func sendGroupMessage(message: String, toGroup: String) {
+    func sendGroupMessage(message: String, toGroup: String, type: String) {
         guard let gid = Int(toGroup) else { fatalError("group does not exist") }
-        let myMessage = SentMessage(receiverId: gid, message: message)
+        let myMessage = SentMessage(receiverId: gid, message: message,type: type)
         
         socket?.emitWithAck(SocketEmits.groupMessage.emitString, myMessage.toData()).timingOut(after: 10, callback: { data in
             guard let responseData = data[0] as? [String: Any] else {
@@ -161,7 +159,8 @@ class SocketIOManager {
             let socketMessage = MessageItem(message: modeledData.message ,
                                             senderId: modeledData.senderId,
                                             receiverId: modeledData.receiverId,
-                                            sendTime: modeledData.sendTime)
+                                            sendTime: modeledData.sendTime,
+                                            type: modeledData.type)
             print("receiveddebugSOCKET: \(socketMessage)")
             self.delegate?.didReceiveMessage(message: socketMessage)
             self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
@@ -178,7 +177,8 @@ class SocketIOManager {
             let socketMessage = MessageItem(message: modeledData.message ,
                                             senderId: modeledData.senderId,
                                             receiverId: modeledData.receiverId,
-                                            sendTime: modeledData.sendTime)
+                                            sendTime: modeledData.sendTime,
+                                            type: modeledData.type)
             print("receiveddebugSOCKET: \(socketMessage)")
             self.delegate?.didReceiveGroupMessage(groupMessage: socketMessage)
             self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)

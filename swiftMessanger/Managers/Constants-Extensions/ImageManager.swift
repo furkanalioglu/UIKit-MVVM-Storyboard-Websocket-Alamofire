@@ -28,7 +28,7 @@ class ImageManager {
         
         let imagePart = MultipartFormBodyPart(provider: .data(imageData),
                                               name: "image",
-                                              fileName: "image.jpeg", mimeType: "image/jpeg")
+                                              fileName: imageName, mimeType: "image/jpeg")
         
         completion(nil, imagePart)
     }

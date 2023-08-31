@@ -48,6 +48,9 @@
 		9156BF982A98DFF200F3AECB /* img_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 9156BF952A98DFF200F3AECB /* img_1.png */; };
 		9156BF992A98DFF200F3AECB /* img_0.png in Resources */ = {isa = PBXBuildFile; fileRef = 9156BF962A98DFF200F3AECB /* img_0.png */; };
 		9156BF9A2A98DFF200F3AECB /* data2.json in Resources */ = {isa = PBXBuildFile; fileRef = 9156BF972A98DFF200F3AECB /* data2.json */; };
+		9162CB0E2AA0D39A0085A26E /* ChatCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB0C2AA0D39A0085A26E /* ChatCellWithImage.swift */; };
+		9162CB0F2AA0D39A0085A26E /* ChatCellWithImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9162CB0D2AA0D39A0085A26E /* ChatCellWithImage.xib */; };
+		9162CB122AA0D83C0085A26E /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9162CB112AA0D83C0085A26E /* Kingfisher */; };
 		916713AE2A78DC2C00C8AD50 /* UsersCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916713AC2A78DC2C00C8AD50 /* UsersCell.swift */; };
 		916713AF2A78DC2C00C8AD50 /* UsersCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 916713AD2A78DC2C00C8AD50 /* UsersCell.xib */; };
 		9171B33A2A8A273200C698EC /* Messages+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3392A8A273200C698EC /* Messages+Extensions.swift */; };
@@ -197,6 +200,8 @@
 		9156BF952A98DFF200F3AECB /* img_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_1.png; sourceTree = "<group>"; };
 		9156BF962A98DFF200F3AECB /* img_0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_0.png; sourceTree = "<group>"; };
 		9156BF972A98DFF200F3AECB /* data2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data2.json; sourceTree = "<group>"; };
+		9162CB0C2AA0D39A0085A26E /* ChatCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellWithImage.swift; sourceTree = "<group>"; };
+		9162CB0D2AA0D39A0085A26E /* ChatCellWithImage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCellWithImage.xib; sourceTree = "<group>"; };
 		916713AC2A78DC2C00C8AD50 /* UsersCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersCell.swift; sourceTree = "<group>"; };
 		916713AD2A78DC2C00C8AD50 /* UsersCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UsersCell.xib; sourceTree = "<group>"; };
 		9171B3392A8A273200C698EC /* Messages+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Extensions.swift"; sourceTree = "<group>"; };
@@ -286,6 +291,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9162CB122AA0D83C0085A26E /* Kingfisher in Frameworks */,
 				919C40852A964E8400E813EB /* Lottie in Frameworks */,
 				919CDE7F2A78FF3500EB5DDE /* Moya in Frameworks */,
 				91934F3C2A82348A00D827B3 /* OneSignal in Frameworks */,
@@ -778,6 +784,8 @@
 			children = (
 				91934F2C2A80BA8800D827B3 /* ChatCell2.swift */,
 				91934F2D2A80BA8800D827B3 /* ChatCell2.xib */,
+				9162CB0C2AA0D39A0085A26E /* ChatCellWithImage.swift */,
+				9162CB0D2AA0D39A0085A26E /* ChatCellWithImage.xib */,
 			);
 			path = ChatCell2;
 			sourceTree = "<group>";
@@ -953,6 +961,7 @@
 				91DEF2922A7BED790072C6FF /* SocketIO */,
 				91934F3B2A82348A00D827B3 /* OneSignal */,
 				919C40842A964E8400E813EB /* Lottie */,
+				9162CB112AA0D83C0085A26E /* Kingfisher */,
 			);
 			productName = swiftMessanger;
 			productReference = 918B33762A77E0EE00AB0EB8 /* swiftMessanger.app */;
@@ -1008,6 +1017,7 @@
 				91DEF2912A7BED790072C6FF /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 				91934F3A2A82348A00D827B3 /* XCRemoteSwiftPackageReference "OneSignal-iOS-SDK" */,
 				919C40832A964E8400E813EB /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				9162CB102AA0D83C0085A26E /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 918B33772A77E0EE00AB0EB8 /* Products */;
 			projectDirPath = "";
@@ -1045,6 +1055,7 @@
 				91DEF2962A7BF6F00072C6FF /* Splash.storyboard in Resources */,
 				9108FBA92A77F4B500875CFD /* MainTab.storyboard in Resources */,
 				918B33832A77E0EF00AB0EB8 /* Assets.xcassets in Resources */,
+				9162CB0F2AA0D39A0085A26E /* ChatCellWithImage.xib in Resources */,
 				913B6E0F2A7A337400B9D5C4 /* EditProfileCell.xib in Resources */,
 				9156BF9A2A98DFF200F3AECB /* data2.json in Resources */,
 				919CDE762A78F18C00EB5DDE /* UsersHeader.xib in Resources */,
@@ -1087,6 +1098,7 @@
 				9171B3432A8B58F700C698EC /* ChatInformationController.swift in Sources */,
 				91BE7F272A948FAB009B55DF /* GiftManager.swift in Sources */,
 				910C24AE2A78E0D200E70900 /* UsersViewModel.swift in Sources */,
+				9162CB0E2AA0D39A0085A26E /* ChatCellWithImage.swift in Sources */,
 				913B6E382A7B76E000B9D5C4 /* RegisterViewModel.swift in Sources */,
 				918B33972A77EA6400AB0EB8 /* RegisterController.swift in Sources */,
 				919CDE9A2A7A247700EB5DDE /* SettingsController.swift in Sources */,
@@ -1475,6 +1487,14 @@
 				kind = branch;
 			};
 		};
+		9162CB102AA0D83C0085A26E /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		91934F3A2A82348A00D827B3 /* XCRemoteSwiftPackageReference "OneSignal-iOS-SDK" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/OneSignal/OneSignal-iOS-SDK.git";
@@ -1514,6 +1534,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 910C24A92A78E05800E70900 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
+		};
+		9162CB112AA0D83C0085A26E /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9162CB102AA0D83C0085A26E /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		91934F3B2A82348A00D827B3 /* OneSignal */ = {
 			isa = XCSwiftPackageProductDependency;

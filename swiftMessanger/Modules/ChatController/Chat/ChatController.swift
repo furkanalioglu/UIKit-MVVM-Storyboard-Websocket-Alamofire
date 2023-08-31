@@ -23,6 +23,7 @@ class ChatController: UIViewController {
     
     private func registerNibs() {
         tableView.register(UINib(nibName: viewModel.cellNib, bundle: nil), forCellReuseIdentifier: viewModel.cellNib)
+        tableView.register(UINib(nibName: viewModel.cellWithImageNib, bundle: nil), forCellReuseIdentifier: viewModel.cellWithImageNib)
     }
     
     
@@ -248,9 +249,17 @@ extension ChatController : UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellNib) as? ChatCell2 else { fatalError("Could not load table view cell !!")}
-        cell.message = viewModel.messages?[indexPath.row]
-        return cell
+        let messageItemType = viewModel.messages?[indexPath.row].type
+        if messageItemType == "text"{
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellNib) as? ChatCell2 else { fatalError("Could not load table view cell !!")}
+            cell.message = viewModel.messages?[indexPath.row]
+            return cell
+        }else{
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellWithImageNib) as? ChatCellWithImage else { fatalError("Could not load table view cell !!")}
+            cell.message = viewModel.messages?[indexPath.row]
+            return cell
+
+        }
     }
 }
 
@@ -259,6 +268,8 @@ extension ChatController : ChatControllerSentPhotoDelegate {
         if error == nil {
             print("IMAGE SENT \(image)")
             self.tableView.reloadData()
+            scrollToBottom(animated: true)
+
         }
     }
 }
