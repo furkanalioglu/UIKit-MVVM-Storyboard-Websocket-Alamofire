@@ -55,7 +55,7 @@ public class AVPlayerView: UIView {
             case .readyToPlay:
                 completion(.success(player))
                 // Stop observing
-                self?.playerItemStatusObserver = nil
+                self?.playerItemStatusObserver = nil    
             case .unknown:
                 break
             @unknown default:

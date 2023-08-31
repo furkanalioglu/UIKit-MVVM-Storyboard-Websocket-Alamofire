@@ -47,8 +47,6 @@ class ChatController: UIViewController {
             viewModel.rView?.removeAllCircles()
             viewModel.rView?.removeLottieAnimation()
             viewModel.rView?.removeFromSuperview()
-
-
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 viewModel.handleMessageSeen(forUserId: group.id)

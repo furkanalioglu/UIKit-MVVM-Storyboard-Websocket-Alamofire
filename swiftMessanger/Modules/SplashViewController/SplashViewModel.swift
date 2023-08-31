@@ -6,14 +6,20 @@
 //
 
 import Foundation
+import UIKit
 
 class SplashViewModel {
     
     weak var delegate : SplashControllerDelegate?
     
-    var messages : [MessagesCellItem]?
+    let giftManager = GiftManager()
     
-    let downloadManager = GiftManager()
+    var messages : [MessagesCellItem]?
+        
+    let video : UIView  = {
+        let view = UIView()
+        return view
+    }()
     
     init() {
         attemptAutoLogin()
@@ -63,7 +69,7 @@ class SplashViewModel {
     
     func fetchCarAssets() {
         for i in  0..<AppConfig.instance.carURLS.count{
-            downloadManager.didDownloadVideo(from: AppConfig.instance.carURLS[i],assetString: AssetTypes.urlCAR ,forAsset: i) { didCompleted, err in
+            DownloadManager.shared.didDownloadVideo(from: AppConfig.instance.carURLS[i],assetString: AssetTypes.urlCAR ,forAsset: i) { didCompleted, err in
                 if err == nil && didCompleted == true {
                     print("Downloaded car asset for \(i)")
                 }else{
@@ -73,11 +79,15 @@ class SplashViewModel {
             }
         }
         self.delegate?.couldCheckUser(error: nil)
+        guard let localURL = AssetManager.shared.getUDAssetPath(for: .urlCAR, assetId: 4) else { return }
+        //better solution?
+        giftManager.playSuperAnimation(view: UIView(), videoURLString: localURL) {}
+        giftManager.removePlayerView()
     }
     
     func fetchEnvironmentAssets() {
         for i in 0..<AppConfig.instance.otherAssets.count {
-            downloadManager.didDownloadVideo(from: AppConfig.instance.otherAssets[i],assetString: AssetTypes.urlEnvironment, forAsset: i) { didCompleted, err in
+            DownloadManager.shared.didDownloadVideo(from: AppConfig.instance.otherAssets[i],assetString: AssetTypes.urlEnvironment, forAsset: i) { didCompleted, err in
                 if err == nil && didCompleted == true {
                     print("Downloaded environment asset for \(i)")
                 }else{

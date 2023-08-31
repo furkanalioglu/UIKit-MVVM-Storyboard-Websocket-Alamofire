@@ -249,7 +249,9 @@ class RaceView: UIView {
     
     func removeAllCircles() {
         for user in userCircles{
-            user.userCircle.carAnimationManager.removePlayerView()
+            guard let carAnimationManager = user.userCircle.carAnimationManager else { return }
+            user.userCircle.carAnimationManager = nil
+            carAnimationManager.removePlayerView()
             user.removeFromSuperview()
         }
     }

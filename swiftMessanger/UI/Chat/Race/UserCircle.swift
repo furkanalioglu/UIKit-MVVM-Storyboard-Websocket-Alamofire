@@ -15,7 +15,7 @@ class UserCircle: UIView {
     var carId = 0
     var fileName = "framelights1"
     
-    let carAnimationManager = GiftManager()
+    var carAnimationManager : GiftManager?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +34,7 @@ class UserCircle: UIView {
     }
     
     func configure(withUser user: GroupEventModel, withCarId carId:Int ) {
+        self.carAnimationManager = GiftManager()
         self.carId = user.carId
         self.userId = user.userId
         self.playAnimation()
@@ -47,6 +48,7 @@ class UserCircle: UIView {
     
     func playAnimation() {
         guard let localURL = AssetManager.shared.getUDAssetPath(for: .urlCAR, assetId: carId) else { return }
+        guard let carAnimationManager = carAnimationManager else { return }
         print("AssetDEBUG: trying to play \(localURL)")
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }

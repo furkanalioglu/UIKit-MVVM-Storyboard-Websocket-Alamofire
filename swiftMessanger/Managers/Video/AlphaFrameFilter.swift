@@ -26,9 +26,9 @@ final class AlphaFrameFilter: CIFilter {
         case unknown
     }
 
-    private(set) var inputImage: CIImage?
-    private(set) var maskImage: CIImage?
-    private(set) var outputError: Swift.Error?
+    var inputImage: CIImage?
+    var maskImage: CIImage?
+    var outputError: Swift.Error?
 
     private let renderingMode: RenderingMode
 
@@ -72,6 +72,12 @@ final class AlphaFrameFilter: CIFilter {
         }
 
         return outputImage
+    }
+    
+    func clearResources() {
+        self.inputImage = nil
+        self.maskImage = nil
+        self.outputError = nil
     }
 
     // MARK: - Rendering

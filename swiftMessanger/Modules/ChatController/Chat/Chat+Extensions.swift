@@ -32,8 +32,6 @@ extension ChatController : ChatControllerDelegate {
                 guard let timeleft = viewModel.timeLeft else { return }
                 if timeleft <= 0{
                     videoCell.isHidden = true
-                    
-
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }
@@ -42,9 +40,9 @@ extension ChatController : ChatControllerDelegate {
                     let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     viewModel.rView?.handler?.startTimer()
-                    viewModel.rView?.updateUserCircles(newUsers: nil)
                     viewModel.rView?.ghostCarView.itemCount = userItemCount
                     viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+                    viewModel.rView?.layoutIfNeeded()
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         videoCell.addSubview(self.viewModel.rView!)
@@ -53,6 +51,7 @@ extension ChatController : ChatControllerDelegate {
                         viewModel.rView?.layoutIfNeeded()
                         print("2")
                     }
+                    viewModel.rView?.updateUserCircles(newUsers: nil)
                     print("3")
 
                 }
