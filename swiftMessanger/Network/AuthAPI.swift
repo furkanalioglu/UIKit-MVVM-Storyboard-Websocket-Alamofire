@@ -138,7 +138,6 @@ extension AuthAPI: TargetType {
             let parameters : [String: Any] = ["page": page]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case .uploadImageToDB(let image):
-            
             return .uploadMultipartFormData([image])
         }
         
