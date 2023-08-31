@@ -7,6 +7,8 @@
 
 import Foundation
 import AVFoundation
+import UIKit
+
 
 enum ChatType {
     case user(MessagesCellItem)
@@ -119,6 +121,7 @@ class ChatViewModel {
     
     weak var delegate : ChatControllerDelegate?
     weak var seenDelegate : ChatMessageSeenDelegate?
+    weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page) { error, messages in
@@ -259,6 +262,29 @@ class ChatViewModel {
             if isEventFinished(forGroup: group,forUser: userModelArray) {
                 completion(.hideVideoCell)
             }
+        default:
+            break
+        }
+    }
+    
+    func handleSentPhotoAction(image: UIImage) {
+        switch chatType {
+        case .group(let group):
+            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData in
+                if err == nil {
+                    guard let MPData = MPData else { return }
+                    MessagesService.instance.uploadImageToDB(imageData: MPData) { err in
+                        if err == nil {
+                            self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
+                            print("IMAGEDEBUG: ",image)
+                        }else{
+                            print("IMAGEDEBUG: ",err?.localizedDescription)
+                            self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
+                        }
+                    }
+                }
+            }
+            
         default:
             break
         }

@@ -25,6 +25,7 @@ enum AuthAPI {
     case createGroup(groupModel : CreateGroupModel)
     case getAllGroups
     case getMessagesForGroup(groupId: Int, page: Int)
+    case uploadImageToDB(image: MultipartFormBodyPart)
 }
 
 extension AuthAPI: TargetType {
@@ -60,12 +61,14 @@ extension AuthAPI: TargetType {
             return "chats/groups"
         case .getMessagesForGroup(let groupId, _):
             return "chats/group/\(groupId)"
+        case .uploadImageToDB(_):
+            return "auth/profile/addPhoto"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .register, .login, .requestRefreshToken, .logout, .createGroup:
+        case .register, .login, .requestRefreshToken, .logout, .createGroup, .uploadImageToDB:
             return .post
         case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .getAllGroupUsers,.getAllGroups,.getMessagesForGroup:
             return .get
@@ -134,13 +137,16 @@ extension AuthAPI: TargetType {
         case .getMessagesForGroup(groupId: let groupId, page: let page):
             let parameters : [String: Any] = ["page": page]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+        case .uploadImageToDB(let image):
+            
+            return .uploadMultipartFormData([image])
         }
         
     }
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup,.uploadImageToDB:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
             return ["Authorization": "Bearer \(AuthService.instance.getRefreshToken() ?? "")"]

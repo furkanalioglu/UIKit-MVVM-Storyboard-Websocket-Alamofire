@@ -16,6 +16,10 @@ enum API{
         return "http://ec2-18-196-242-245.eu-central-1.compute.amazonaws.com:3000/api/v1/"
     }
     
+//    static var baseURLString: String {
+//        return "http://10.82.0.102:3000/api/v1/"
+//    }
+    
     static var baseURL : URL {
         guard let url = URL(string: baseURLString) else{
             fatalError("BASE URL IS NOT VALID")

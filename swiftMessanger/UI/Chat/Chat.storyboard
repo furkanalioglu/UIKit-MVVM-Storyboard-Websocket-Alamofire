@@ -40,22 +40,37 @@
                                         <rect key="frame" x="8" y="8" width="377" height="34"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="XFE-yd-LRk">
-                                                <rect key="frame" x="0.0" y="0.0" width="312" height="34"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="250" height="34"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="312" id="7Wr-Vb-9bf"/>
+                                                    <constraint firstAttribute="width" constant="250" id="Ly3-32-Is3"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BAk-Ef-dsW">
-                                                <rect key="frame" x="320" y="0.0" width="57" height="34"/>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="paperplane.fill" catalog="system" title="  "/>
-                                                <connections>
-                                                    <action selector="sendMessageAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="FR0-2r-OAP"/>
-                                                </connections>
-                                            </button>
+                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QnH-tv-k2B">
+                                                <rect key="frame" x="258" y="0.0" width="119" height="34"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BAk-Ef-dsW">
+                                                        <rect key="frame" x="0.0" y="0.0" width="69.333333333333329" height="34"/>
+                                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <state key="normal" title="Button"/>
+                                                        <buttonConfiguration key="configuration" style="plain" image="paperplane.fill" catalog="system" title="  "/>
+                                                        <connections>
+                                                            <action selector="sendMessageAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="FR0-2r-OAP"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sAi-JU-qTs">
+                                                        <rect key="frame" x="69.333333333333314" y="0.0" width="49.666666666666657" height="34"/>
+                                                        <state key="normal" title="Button"/>
+                                                        <buttonConfiguration key="configuration" style="plain" image="camera.circle.fill" catalog="system">
+                                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </buttonConfiguration>
+                                                        <connections>
+                                                            <action selector="takePhotoAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="3Qd-oB-iqo"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
@@ -87,6 +102,7 @@
                         <outlet property="messageTextField" destination="XFE-yd-LRk" id="72h-z9-8YJ"/>
                         <outlet property="sendMessageButton" destination="BAk-Ef-dsW" id="VV9-JY-DdJ"/>
                         <outlet property="tableView" destination="gQF-xJ-CwD" id="aCc-C3-NYy"/>
+                        <outlet property="takePhotoButton" destination="sAi-JU-qTs" id="g73-Py-v5b"/>
                         <outlet property="videoCell" destination="vVZ-m3-lXv" id="iNW-gw-64C"/>
                         <segue destination="WRa-Bq-wzj" kind="show" identifier="toShowInformation" id="RsT-s7-2fr"/>
                         <segue destination="QEZ-QO-JRE" kind="presentation" identifier="toShowStart" id="7G8-Yx-Yv6"/>
@@ -122,6 +138,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="camera.circle.fill" catalog="system" width="128" height="123"/>
         <image name="paperplane.fill" catalog="system" width="128" height="119"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

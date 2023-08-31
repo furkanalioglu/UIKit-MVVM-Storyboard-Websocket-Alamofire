@@ -11,6 +11,7 @@ class ChatController: UIViewController {
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var videoCell: UIView!
+    @IBOutlet weak var takePhotoButton: UIButton!
     
     @IBOutlet weak var tableView: UITableView! {
         didSet{
@@ -28,6 +29,8 @@ class ChatController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        viewModel.photoSentDelegate = self
+        PhotoPickerManager.shared.delegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
         setupRefreshControl()
@@ -130,6 +133,10 @@ class ChatController: UIViewController {
         
         tableView.reloadData()
         scrollToBottom(animated: true)
+    }
+    
+    @IBAction func takePhotoAction(_ sender: Any) {
+        PhotoPickerManager.shared.presentPhotoPicker(from: self)
     }
     
     private func setupTapGesture() {
@@ -245,7 +252,15 @@ extension ChatController : UITableViewDataSource {
         cell.message = viewModel.messages?[indexPath.row]
         return cell
     }
-    
+}
+
+extension ChatController : ChatControllerSentPhotoDelegate {
+    func userDidSentPhoto(image: UIImage?, error: String?) {
+        if error == nil {
+            print("IMAGE SENT \(image)")
+            self.tableView.reloadData()
+        }
+    }
 }
 
 

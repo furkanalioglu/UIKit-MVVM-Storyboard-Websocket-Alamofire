@@ -119,6 +119,8 @@
 		91BE7F402A949D23009B55DF /* CIImage+VerticalSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F3B2A949D22009B55DF /* CIImage+VerticalSplit.swift */; };
 		91BE7F422A949E8D009B55DF /* AlphaFrameFilter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F412A949E8D009B55DF /* AlphaFrameFilter.metal */; };
 		91BE7F462A94B9BB009B55DF /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BE7F452A94B9BB009B55DF /* DownloadManager.swift */; };
+		91C4E8852AA084B800E42B49 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C4E8842AA084B800E42B49 /* ImageManager.swift */; };
+		91C4E8872AA08A6300E42B49 /* PhotoPickerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */; };
 		91C9A7DC2A8F8623009EBD56 /* RaceTimer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */; };
 		91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */; };
 		91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 91DEF2922A7BED790072C6FF /* SocketIO */; };
@@ -267,6 +269,8 @@
 		91BE7F3B2A949D22009B55DF /* CIImage+VerticalSplit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIImage+VerticalSplit.swift"; sourceTree = "<group>"; };
 		91BE7F412A949E8D009B55DF /* AlphaFrameFilter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AlphaFrameFilter.metal; sourceTree = "<group>"; };
 		91BE7F452A94B9BB009B55DF /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		91C4E8842AA084B800E42B49 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
+		91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RaceTimer.storyboard; sourceTree = "<group>"; };
 		91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRaceController.swift; sourceTree = "<group>"; };
 		91DEF2952A7BF6F00072C6FF /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
@@ -786,6 +790,8 @@
 				9171B3512A8B827800C698EC /* NSLayoutExtensions.swift */,
 				9171B3562A8B9C7500C698EC /* ColorExtensions.swift */,
 				919C40812A964C2400E813EB /* AssetManager.swift */,
+				91C4E8842AA084B800E42B49 /* ImageManager.swift */,
+				91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -1102,6 +1108,7 @@
 				913B6E292A7A5CD900B9D5C4 /* MessagesViewModel.swift in Sources */,
 				9108FBAC2A77F55D00875CFD /* MessagesController.swift in Sources */,
 				91934F342A80F60500D827B3 /* TokenModel.swift in Sources */,
+				91C4E8872AA08A6300E42B49 /* PhotoPickerManager.swift in Sources */,
 				919CDE852A790EFC00EB5DDE /* LoginModel.swift in Sources */,
 				918B337A2A77E0EE00AB0EB8 /* AppDelegate.swift in Sources */,
 				9171B34B2A8B5A0600C698EC /* ChatInformationCell.swift in Sources */,
@@ -1111,6 +1118,7 @@
 				9171B3592A8BA29700C698EC /* RaceEvent.swift in Sources */,
 				91934F292A7D1F1B00D827B3 /* SpecificUser.swift in Sources */,
 				913B6E3E2A7B8BDC00B9D5C4 /* RootExtension.swift in Sources */,
+				91C4E8852AA084B800E42B49 /* ImageManager.swift in Sources */,
 				91B62E732A86193C00B3C56E /* NewGroupViewModel.swift in Sources */,
 				91DEF29C2A7BF76B0072C6FF /* SplashViewModel.swift in Sources */,
 				918B33A82A77F3EB00AB0EB8 /* MainTab.swift in Sources */,
@@ -1316,6 +1324,8 @@
 				DEVELOPMENT_TEAM = G853KP8PLG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = swiftMessanger/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = ss;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = ss;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1349,6 +1359,8 @@
 				DEVELOPMENT_TEAM = G853KP8PLG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = swiftMessanger/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = ss;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = ss;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

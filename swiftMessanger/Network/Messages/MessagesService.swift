@@ -85,5 +85,18 @@ class MessagesService {
             }
         }
     }
+    
+    func uploadImageToDB(imageData: MultipartFormBodyPart, completion: @escaping(Error?) -> Void ){
+        provider.requestJSON(target: .uploadImageToDB(image: imageData)) { result in
+            switch result {
+            case .success(let response):
+                print("IMAGEDEBUG NO ERR: \(response)")
+                completion(nil)
+            case .failure(let error):
+                print("IMAGEDEBUG ERR: \(error.localizedDescription)")
+                completion(error)
+            }
+        }
+    }
 
 }

@@ -77,7 +77,53 @@
                   endingLineNumber = "41"
                   offsetFromSymbolStart = "304">
                </Location>
+               <Location
+                  uuid = "2F114785-DC7D-4A6F-BD45-2BFFEADBCB3C - b4fa6724520d67ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.GiftManager.playSuperAnimation(view: __C.UIView, videoURLString: Swift.String, _: () -&gt; ()) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/Managers/GiftManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "492">
+               </Location>
+               <Location
+                  uuid = "2F114785-DC7D-4A6F-BD45-2BFFEADBCB3C - 2cb5d5c64d7e1d6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in swiftMessanger.GiftManager.playSuperAnimation(view: __C.UIView, videoURLString: Swift.String, _: () -&gt; ()) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/swiftMessanger2/swiftMessanger/Managers/GiftManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "304">
+               </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DB8ABADF-8FBE-43BA-9702-8B060A68D2B2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Network/AuthAPI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "task"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

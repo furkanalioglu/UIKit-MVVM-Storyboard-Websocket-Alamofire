@@ -18,6 +18,11 @@ protocol ChatMessageSeenDelegate : AnyObject {
     func chatMessageReceivedFromUser(error: String?, message: MessageItem)
 }
 
+protocol ChatControllerSentPhotoDelegate: AnyObject {
+    func userDidSentPhoto(image:UIImage?, error: String?)
+}
+
+
 extension ChatController : ChatControllerDelegate {
     func datasReceived(error: String?) {
         switch viewModel.chatType{
@@ -207,6 +212,24 @@ extension ChatController: StartControllerProtocol{
             break
         }
     }
+}
+
+extension ChatController : PhotoPickerDelegate {
+    
+    func didPickImageData(_ image: UIImage) {
+        switch viewModel.chatType{
+        case .group(let group):
+            viewModel.handleSentPhotoAction(image: image)
+        default:
+            break
+        }
+    }
+    
+    func didCancelPicking() {
+        print("IMAGEDEBUG: Picker dismieed")
+    }
+    
+    
 }
 
 
