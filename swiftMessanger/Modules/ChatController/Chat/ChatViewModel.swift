@@ -203,13 +203,14 @@ class ChatViewModel {
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
             print("MESSAGELOFGGG \(group.id)")
-            saveToLocal(myMessage)
+//            saveToLocal(myMessage)
         case .user(let user):
             let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toString(),type: "text")
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
-            saveToLocal(myMessage)
+//            saveToLocal(myMessage)
+            print("MESSSS: \(myMessage)")
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -252,8 +253,6 @@ class ChatViewModel {
             break
         }
     }
-    
-    
     
     func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {

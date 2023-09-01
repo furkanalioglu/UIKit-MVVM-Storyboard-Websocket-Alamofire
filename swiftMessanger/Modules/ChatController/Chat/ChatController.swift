@@ -37,6 +37,12 @@ class ChatController: UIViewController {
         setupRefreshControl()
         setupNotificationObservers()
         videoCell.isHidden = true
+        switch viewModel.chatType{
+        case .user(let user):
+            print("USERUSERUSER",user)
+        default:break
+        }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

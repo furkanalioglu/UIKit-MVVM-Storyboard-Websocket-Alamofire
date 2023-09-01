@@ -108,7 +108,7 @@ class MessagesViewModel {
     
     func handleIncomingMessage(message: MessageItem) {
         if message.senderId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-            if let index = messages?.firstIndex(where: {$0.id == message.receiverId}) {
+            if let index = messages?.firstIndex(where: {$0.userId == message.receiverId}) {
                 print("MESSAGELOFGGG updaet message: \(message)")
                 updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: false)
             }
@@ -117,7 +117,7 @@ class MessagesViewModel {
                 generateMessageForUser(forUserId: message.receiverId, message: message,isGroupMessage: false)
             }
         } else {
-            if let index = messages?.firstIndex(where: {$0.id == message.senderId}) {
+            if let index = messages?.firstIndex(where: {$0.userId == message.senderId}) {
                 print("MESSAGELOFGGG generate message: \(message)")
                 updateMessageAtIndex(index: index, withMessage: message,isGroupMessage: false)
             } else {
