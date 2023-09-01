@@ -31,7 +31,7 @@ extension MessagesController : MessagesControllerDelegate {
         }else{
             tableView.reloadData()
             if AppConfig.instance.dynamicLinkId != nil {
-                guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
+                guard let index = (viewModel.messages?.firstIndex(where: {$0.userId == AppConfig.instance.dynamicLinkId})) else { fatalError("NO USER")}
                 let user = viewModel.messages?[index]
                 performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
             }
@@ -102,7 +102,7 @@ extension MessagesController: ChatMessageSeenDelegate {
                 print("SEENDEBUG: group \(groupIndex) is setting to seen")
             }
         case .messages:
-            if let messageIndex = viewModel.messages?.firstIndex(where: {$0.id == senderId}) {
+            if let messageIndex = viewModel.messages?.firstIndex(where: {$0.userId == senderId}) {
                 viewModel.messages?[messageIndex].isSeen = true
                 tableView.reloadData()
                 print("SEENDEBUG: message \(messageIndex) is setting to seen")

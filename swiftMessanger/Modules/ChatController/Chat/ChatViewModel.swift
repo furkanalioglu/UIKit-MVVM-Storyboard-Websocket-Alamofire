@@ -45,9 +45,7 @@ class ChatViewModel {
                 fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
 //                fetchLocalMessages(for: user.userId)
             case .group(let group):
-                print("d")
-//                fetchLocalMessages()
-//                fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
+                fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
             default:
                 print("CHATVIEWMODELDEBUG: COULD NOT FIND GROUP/USER")
             }
@@ -130,6 +128,9 @@ class ChatViewModel {
     weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
+        guard let userIdInt = Int(userId) else { return }
+//        fetchLocalMessages(for: userIdInt)
+        
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page) { error, messages in
             if let error = error {
                 self.delegate?.datasReceived(error: error.localizedDescription)
@@ -202,15 +203,13 @@ class ChatViewModel {
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
-            print("MESSAGELOFGGG \(group.id)")
 //            saveToLocal(myMessage)
         case .user(let user):
             let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toString(),type: "text")
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
-//            saveToLocal(myMessage)
-            print("MESSSS: \(myMessage)")
+            saveToLocal(myMessage)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -289,9 +288,7 @@ class ChatViewModel {
                             self.messages?.append(myMessage)
                             SocketIOManager.shared().sendGroupMessage(message: response!.url, toGroup: String(group.id), type: "image")
                             self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
-                            print("IMAGEDEBUG: ",image)
                         }else{
-                            print("IMAGEDEBUG: ",err?.localizedDescription)
                             self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
                         }
                     }
@@ -310,7 +307,6 @@ class ChatViewModel {
                             SocketIOManager.shared().sendMessage(message: myMessage.message, toUser: String(myMessage.receiverId), type: "image")
                             self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
                         }else{
-                            print("IMAGEDEBUG: ",err?.localizedDescription)
                             self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
                         }
                     }
@@ -336,7 +332,6 @@ class ChatViewModel {
         switch chatType {
         case .user(let user):
             let localMessages = CoreDataManager.shared.fetchMessages()
-            print("COREDEBUG CLOCALCD: \(localMessages)")
             var localMessageItems = [MessageItem]()
             for message in localMessages {
                 guard let messages = message.message,
@@ -348,21 +343,16 @@ class ChatViewModel {
                                            receiverId: Int(message.receiverId),
                                            sendTime: sendTime,
                                            type: type,
-                                           imageData: message.imageData)
-                print("COREDEBUG Appending \(message)")
+                                           imageData: message.imageData
+                )
                 localMessageItems.append(message)
             }
             self.messages = localMessageItems.filter({$0.receiverId == user.userId})
-            print("COREDEBUG: LOCAL ",localMessageItems.count)
-            print("COREDEBUG: WHY\(self.messages)")
             self.delegate?.datasReceived(error: nil)
         case .group(let group):
-            print("ss")
+            print(group.groupName)
         default:
             break
         }
-
-
-        
     }
 }

@@ -88,7 +88,7 @@ final class CoreDataManager {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
         
         if message.type == "image" {
-            newMessageModel.imageData = message.imageData
+//            newMessageModel.imageData = message.imageData
             newMessageModel.senderId = Int16(message.senderId)
             newMessageModel.receiverId = Int16(message.receiverId)
             newMessageModel.sendTime = message.sendTime
