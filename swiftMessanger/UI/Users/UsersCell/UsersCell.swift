@@ -10,7 +10,7 @@ import SDWebImage
 
 class UsersCell: UITableViewCell {
     
-    var user: FetchUsersModel? {
+    var user: MessagesCellItem? {
         didSet  {
             print("userdebug: \(user) SETT!!")
             configureUI()

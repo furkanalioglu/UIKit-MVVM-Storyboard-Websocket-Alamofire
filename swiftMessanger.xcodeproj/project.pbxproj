@@ -21,6 +21,9 @@
 		910C24AB2A78E05800E70900 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 910C24AA2A78E05800E70900 /* SDWebImage */; };
 		910C24AE2A78E0D200E70900 /* UsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910C24AD2A78E0D200E70900 /* UsersViewModel.swift */; };
 		911914DF2A9CBD2F00DE55C7 /* ItemCountAck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911914DE2A9CBD2F00DE55C7 /* ItemCountAck.swift */; };
+		912498222AA2137800299419 /* MessageEntity.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 912498202AA2137800299419 /* MessageEntity.xcdatamodeld */; };
+		912498252AA213E900299419 /* MessageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912498232AA213E900299419 /* MessageEntity+CoreDataClass.swift */; };
+		912498262AA213E900299419 /* MessageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912498242AA213E900299419 /* MessageEntity+CoreDataProperties.swift */; };
 		913B6E012A7A2D3D00B9D5C4 /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913B6DFF2A7A2D3D00B9D5C4 /* SettingsCell.swift */; };
 		913B6E022A7A2D3D00B9D5C4 /* SettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 913B6E002A7A2D3D00B9D5C4 /* SettingsCell.xib */; };
 		913B6E042A7A31A600B9D5C4 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913B6E032A7A31A600B9D5C4 /* SettingsViewModel.swift */; };
@@ -51,10 +54,7 @@
 		9162CB0E2AA0D39A0085A26E /* ChatCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB0C2AA0D39A0085A26E /* ChatCellWithImage.swift */; };
 		9162CB0F2AA0D39A0085A26E /* ChatCellWithImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9162CB0D2AA0D39A0085A26E /* ChatCellWithImage.xib */; };
 		9162CB122AA0D83C0085A26E /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 9162CB112AA0D83C0085A26E /* Kingfisher */; };
-		9162CB142AA1B1670085A26E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB132AA1B1670085A26E /* CoreDataManager.swift */; };
-		9162CB172AA1B23F0085A26E /* MessageEntity.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB152AA1B23F0085A26E /* MessageEntity.xcdatamodeld */; };
-		9162CB262AA1BAA10085A26E /* MessageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB242AA1BAA10085A26E /* MessageEntity+CoreDataClass.swift */; };
-		9162CB272AA1BAA10085A26E /* MessageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB252AA1BAA10085A26E /* MessageEntity+CoreDataProperties.swift */; };
+		9162CB392AA210040085A26E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9162CB382AA210040085A26E /* CoreDataManager.swift */; };
 		916713AE2A78DC2C00C8AD50 /* UsersCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916713AC2A78DC2C00C8AD50 /* UsersCell.swift */; };
 		916713AF2A78DC2C00C8AD50 /* UsersCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 916713AD2A78DC2C00C8AD50 /* UsersCell.xib */; };
 		9171B33A2A8A273200C698EC /* Messages+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9171B3392A8A273200C698EC /* Messages+Extensions.swift */; };
@@ -91,8 +91,6 @@
 		91934F372A80F90200D827B3 /* UDConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91934F362A80F90200D827B3 /* UDConstants.swift */; };
 		91934F392A81044B00D827B3 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91934F382A81044B00D827B3 /* DateExtension.swift */; };
 		91934F3C2A82348A00D827B3 /* OneSignal in Frameworks */ = {isa = PBXBuildFile; productRef = 91934F3B2A82348A00D827B3 /* OneSignal */; };
-		91934F442A8234BC00D827B3 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91934F432A8234BC00D827B3 /* NotificationService.swift */; };
-		91934F482A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91934F412A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		919C40822A964C2400E813EB /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919C40812A964C2400E813EB /* AssetManager.swift */; };
 		919C40852A964E8400E813EB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 919C40842A964E8400E813EB /* Lottie */; };
 		919CDE762A78F18C00EB5DDE /* UsersHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 919CDE752A78F18C00EB5DDE /* UsersHeader.xib */; };
@@ -135,16 +133,6 @@
 		91E31F1E2A839A8B00F2FF23 /* SentMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		91934F462A8234BC00D827B3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 918B336E2A77E0EE00AB0EB8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 91934F402A8234BC00D827B3;
-			remoteInfo = OneSignalNotificationServiceExtension;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		91934F4C2A8234BC00D827B3 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -152,7 +140,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				91934F482A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -173,6 +160,10 @@
 		910C24A72A78DF2300E70900 /* RegisterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterModel.swift; sourceTree = "<group>"; };
 		910C24AD2A78E0D200E70900 /* UsersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersViewModel.swift; sourceTree = "<group>"; };
 		911914DE2A9CBD2F00DE55C7 /* ItemCountAck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCountAck.swift; sourceTree = "<group>"; };
+		9124981A2AA2109300299419 /* MessageEntity.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MessageEntity.xcdatamodel; sourceTree = "<group>"; };
+		912498212AA2137800299419 /* MessageEntity.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MessageEntity.xcdatamodel; sourceTree = "<group>"; };
+		912498232AA213E900299419 /* MessageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		912498242AA213E900299419 /* MessageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		913B6DFF2A7A2D3D00B9D5C4 /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
 		913B6E002A7A2D3D00B9D5C4 /* SettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsCell.xib; sourceTree = "<group>"; };
 		913B6E032A7A31A600B9D5C4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -202,10 +193,7 @@
 		9156BF972A98DFF200F3AECB /* data2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data2.json; sourceTree = "<group>"; };
 		9162CB0C2AA0D39A0085A26E /* ChatCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCellWithImage.swift; sourceTree = "<group>"; };
 		9162CB0D2AA0D39A0085A26E /* ChatCellWithImage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCellWithImage.xib; sourceTree = "<group>"; };
-		9162CB132AA1B1670085A26E /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
-		9162CB162AA1B23F0085A26E /* MessageItem.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MessageItem.xcdatamodel; sourceTree = "<group>"; };
-		9162CB242AA1BAA10085A26E /* MessageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		9162CB252AA1BAA10085A26E /* MessageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		9162CB382AA210040085A26E /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		916713AC2A78DC2C00C8AD50 /* UsersCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersCell.swift; sourceTree = "<group>"; };
 		916713AD2A78DC2C00C8AD50 /* UsersCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UsersCell.xib; sourceTree = "<group>"; };
 		9171B3392A8A273200C698EC /* Messages+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Messages+Extensions.swift"; sourceTree = "<group>"; };
@@ -243,7 +231,6 @@
 		91934F332A80F60500D827B3 /* TokenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenModel.swift; sourceTree = "<group>"; };
 		91934F362A80F90200D827B3 /* UDConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDConstants.swift; sourceTree = "<group>"; };
 		91934F382A81044B00D827B3 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
-		91934F412A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		91934F432A8234BC00D827B3 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		91934F452A8234BC00D827B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91934F4D2A82354F00D827B3 /* swiftMessanger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = swiftMessanger.entitlements; sourceTree = "<group>"; };
@@ -297,13 +284,6 @@
 				91934F3C2A82348A00D827B3 /* OneSignal in Frameworks */,
 				910C24AB2A78E05800E70900 /* SDWebImage in Frameworks */,
 				91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		91934F3E2A8234BC00D827B3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,7 +447,7 @@
 				913B6E402A7B9B3400B9D5C4 /* MessageItem.swift */,
 				91934F252A7CE05700D827B3 /* MessagesCellItem.swift */,
 				91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */,
-				9162CB152AA1B23F0085A26E /* MessageEntity.xcdatamodeld */,
+				912498202AA2137800299419 /* MessageEntity.xcdatamodeld */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -618,8 +598,8 @@
 		918B336D2A77E0EE00AB0EB8 = {
 			isa = PBXGroup;
 			children = (
-				9162CB242AA1BAA10085A26E /* MessageEntity+CoreDataClass.swift */,
-				9162CB252AA1BAA10085A26E /* MessageEntity+CoreDataProperties.swift */,
+				912498232AA213E900299419 /* MessageEntity+CoreDataClass.swift */,
+				912498242AA213E900299419 /* MessageEntity+CoreDataProperties.swift */,
 				918B33782A77E0EE00AB0EB8 /* swiftMessanger */,
 				91934F422A8234BC00D827B3 /* OneSignalNotificationServiceExtension */,
 				918B33772A77E0EE00AB0EB8 /* Products */,
@@ -630,7 +610,6 @@
 			isa = PBXGroup;
 			children = (
 				918B33762A77E0EE00AB0EB8 /* swiftMessanger.app */,
-				91934F412A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -649,6 +628,7 @@
 				918B33822A77E0EF00AB0EB8 /* Assets.xcassets */,
 				918B33842A77E0EF00AB0EB8 /* LaunchScreen.storyboard */,
 				918B33872A77E0EF00AB0EB8 /* Info.plist */,
+				912498192AA2109300299419 /* MessageEntity.xcdatamodeld */,
 			);
 			path = swiftMessanger;
 			sourceTree = "<group>";
@@ -667,7 +647,6 @@
 			children = (
 				91BE7F282A949A81009B55DF /* Video */,
 				91934F352A80F8F600D827B3 /* Constants-Extensions */,
-				9162CB132AA1B1670085A26E /* CoreDataManager.swift */,
 				913B6E392A7B886D00B9D5C4 /* Rootmanager.swift */,
 				91BE7F452A94B9BB009B55DF /* DownloadManager.swift */,
 				913B6E3D2A7B8BDC00B9D5C4 /* RootExtension.swift */,
@@ -800,6 +779,7 @@
 				919C40812A964C2400E813EB /* AssetManager.swift */,
 				91C4E8842AA084B800E42B49 /* ImageManager.swift */,
 				91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */,
+				9162CB382AA210040085A26E /* CoreDataManager.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -952,7 +932,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				91934F472A8234BC00D827B3 /* PBXTargetDependency */,
 			);
 			name = swiftMessanger;
 			packageProductDependencies = (
@@ -967,23 +946,6 @@
 			productReference = 918B33762A77E0EE00AB0EB8 /* swiftMessanger.app */;
 			productType = "com.apple.product-type.application";
 		};
-		91934F402A8234BC00D827B3 /* OneSignalNotificationServiceExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 91934F492A8234BC00D827B3 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
-			buildPhases = (
-				91934F3D2A8234BC00D827B3 /* Sources */,
-				91934F3E2A8234BC00D827B3 /* Frameworks */,
-				91934F3F2A8234BC00D827B3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = OneSignalNotificationServiceExtension;
-			productName = OneSignalNotificationServiceExtension;
-			productReference = 91934F412A8234BC00D827B3 /* OneSignalNotificationServiceExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -996,9 +958,6 @@
 				TargetAttributes = {
 					918B33752A77E0EE00AB0EB8 = {
 						CreatedOnToolsVersion = 14.2;
-					};
-					91934F402A8234BC00D827B3 = {
-						CreatedOnToolsVersion = 14.3.1;
 					};
 				};
 			};
@@ -1024,7 +983,6 @@
 			projectRoot = "";
 			targets = (
 				918B33752A77E0EE00AB0EB8 /* swiftMessanger */,
-				91934F402A8234BC00D827B3 /* OneSignalNotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -1067,13 +1025,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91934F3F2A8234BC00D827B3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1101,12 +1052,12 @@
 				919CDE812A78FF6500EB5DDE /* API.swift in Sources */,
 				9171B3502A8B5ED600C698EC /* GroupMessageModel.swift in Sources */,
 				913B6E172A7A3B0B00B9D5C4 /* LogoutCell.swift in Sources */,
-				9162CB262AA1BAA10085A26E /* MessageEntity+CoreDataClass.swift in Sources */,
 				9100AC442A8659AB00AE6FEC /* GroupCellModel.swift in Sources */,
 				9100AC422A864BF600AE6FEC /* NewGroupEditViewModel.swift in Sources */,
 				9171B33F2A8A286200C698EC /* MessagesHeaderViewModel.swift in Sources */,
 				9100AC462A865A0C00AE6FEC /* CreateGroupModel.swift in Sources */,
 				91BE7F3F2A949D23009B55DF /* AlphaFrameFilter.swift in Sources */,
+				912498222AA2137800299419 /* MessageEntity.xcdatamodeld in Sources */,
 				919CDE832A7900EA00EB5DDE /* AuthAPI.swift in Sources */,
 				91BE7F3D2A949D23009B55DF /* AVPlayerView.swift in Sources */,
 				91BE7F402A949D23009B55DF /* CIImage+VerticalSplit.swift in Sources */,
@@ -1118,9 +1069,10 @@
 				9108FBAC2A77F55D00875CFD /* MessagesController.swift in Sources */,
 				91934F342A80F60500D827B3 /* TokenModel.swift in Sources */,
 				91C4E8872AA08A6300E42B49 /* PhotoPickerManager.swift in Sources */,
+				912498252AA213E900299419 /* MessageEntity+CoreDataClass.swift in Sources */,
 				919CDE852A790EFC00EB5DDE /* LoginModel.swift in Sources */,
 				918B337A2A77E0EE00AB0EB8 /* AppDelegate.swift in Sources */,
-				9162CB142AA1B1670085A26E /* CoreDataManager.swift in Sources */,
+				9162CB392AA210040085A26E /* CoreDataManager.swift in Sources */,
 				9171B34B2A8B5A0600C698EC /* ChatInformationCell.swift in Sources */,
 				911914DF2A9CBD2F00DE55C7 /* ItemCountAck.swift in Sources */,
 				913B6E3A2A7B886D00B9D5C4 /* Rootmanager.swift in Sources */,
@@ -1135,7 +1087,6 @@
 				913B6E302A7A9A5300B9D5C4 /* SocketManager.swift in Sources */,
 				919CDE8E2A793D2800EB5DDE /* UserService.swift in Sources */,
 				913B6E012A7A2D3D00B9D5C4 /* SettingsCell.swift in Sources */,
-				9162CB272AA1BAA10085A26E /* MessageEntity+CoreDataProperties.swift in Sources */,
 				913B6E072A7A32CA00B9D5C4 /* EditProfileController.swift in Sources */,
 				91BE7F422A949E8D009B55DF /* AlphaFrameFilter.metal in Sources */,
 				914A7F482A78D7AC00499D49 /* UsersController.swift in Sources */,
@@ -1155,11 +1106,11 @@
 				91934F2E2A80BA8800D827B3 /* ChatCell2.swift in Sources */,
 				913B6E412A7B9B3400B9D5C4 /* MessageItem.swift in Sources */,
 				9171B33C2A8A276300C698EC /* Chat+Extensions.swift in Sources */,
-				9162CB172AA1B23F0085A26E /* MessageEntity.xcdatamodeld in Sources */,
 				91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */,
 				918B337C2A77E0EE00AB0EB8 /* SceneDelegate.swift in Sources */,
 				91B62E702A86178D00B3C56E /* NewGroupCell.swift in Sources */,
 				913B6E272A7A4FD700B9D5C4 /* ChatViewModel.swift in Sources */,
+				912498262AA213E900299419 /* MessageEntity+CoreDataProperties.swift in Sources */,
 				91BE7F462A94B9BB009B55DF /* DownloadManager.swift in Sources */,
 				913B6E442A7BA28E00B9D5C4 /* MessagesService.swift in Sources */,
 				91BE7F252A948325009B55DF /* UserConatiner.swift in Sources */,
@@ -1172,23 +1123,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91934F3D2A8234BC00D827B3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				91934F442A8234BC00D827B3 /* NotificationService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		91934F472A8234BC00D827B3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 91934F402A8234BC00D827B3 /* OneSignalNotificationServiceExtension */;
-			targetProxy = 91934F462A8234BC00D827B3 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		918B337F2A77E0EE00AB0EB8 /* Main.storyboard */ = {
@@ -1394,58 +1329,6 @@
 			};
 			name = Release;
 		};
-		91934F4A2A8234BC00D827B3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G853KP8PLG;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.furkanalioglu.swiftMessanger.OneSignalNotificationServiceExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		91934F4B2A8234BC00D827B3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G853KP8PLG;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.furkanalioglu.swiftMessanger.OneSignalNotificationServiceExtension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1463,15 +1346,6 @@
 			buildConfigurations = (
 				918B338B2A77E0EF00AB0EB8 /* Debug */,
 				918B338C2A77E0EF00AB0EB8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		91934F492A8234BC00D827B3 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				91934F4A2A8234BC00D827B3 /* Debug */,
-				91934F4B2A8234BC00D827B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1563,12 +1437,22 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
-		9162CB152AA1B23F0085A26E /* MessageEntity.xcdatamodeld */ = {
+		912498192AA2109300299419 /* MessageEntity.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				9162CB162AA1B23F0085A26E /* MessageItem.xcdatamodel */,
+				9124981A2AA2109300299419 /* MessageEntity.xcdatamodel */,
 			);
-			currentVersion = 9162CB162AA1B23F0085A26E /* MessageItem.xcdatamodel */;
+			currentVersion = 9124981A2AA2109300299419 /* MessageEntity.xcdatamodel */;
+			path = MessageEntity.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		912498202AA2137800299419 /* MessageEntity.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				912498212AA2137800299419 /* MessageEntity.xcdatamodel */,
+			);
+			currentVersion = 912498212AA2137800299419 /* MessageEntity.xcdatamodel */;
 			path = MessageEntity.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

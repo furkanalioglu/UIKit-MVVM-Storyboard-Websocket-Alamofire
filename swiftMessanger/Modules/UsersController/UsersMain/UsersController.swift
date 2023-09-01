@@ -11,7 +11,7 @@ protocol UsersControllerProtocol : AnyObject{
 }
 
 protocol DidSelectUserProtocol : AnyObject {
-    func didSelectUser(user: FetchUsersModel)
+    func didSelectUser(user: MessagesCellItem)
 }
 
 class UsersController: UIViewController {

@@ -18,8 +18,8 @@ class UsersViewModel {
         getDatas()
     }
     
-    var users : [FetchUsersModel]?
-    var filteredUsers: [FetchUsersModel]?
+    var users : [MessagesCellItem]?
+    var filteredUsers: [MessagesCellItem]?
     var currentUser : CurrentUserModel?
 
     

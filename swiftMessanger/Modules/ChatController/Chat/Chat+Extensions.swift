@@ -31,7 +31,6 @@ extension ChatController : ChatControllerDelegate {
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 setupNavigationController()
-                print("COREDEBUG FROM DATAS \(viewModel.messages?.count)")
                 if let count = viewModel.messages?.count, count > 0 {
                     tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
@@ -176,10 +175,12 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.messages?.append(message)
                 viewModel.socketMessages.append(message)
                 let count = Double(viewModel.socketMessages.count) * viewModel.playbackDurationToAdd
+                if message.senderId != Int(AppConfig.instance.currentUserId ?? "") {
+                    viewModel.playVideoForDuration(count)
+                }
                 viewModel.socketMessages.removeAll()
                 tableView.reloadData()
                 scrollToBottom(animated: true)
-                viewModel.saveToLocal(message)
             }
         default:
             break
@@ -215,7 +216,12 @@ extension ChatController: StartControllerProtocol{
 
 extension ChatController : PhotoPickerDelegate {
     func didPickImageData(_ image: UIImage) {
-        viewModel.handleSentPhotoAction(image: image)
+        switch viewModel.chatType{
+        case .group(let group):
+            viewModel.handleSentPhotoAction(image: image)
+        default:
+            break
+        }
     }
     
     func didCancelPicking() {

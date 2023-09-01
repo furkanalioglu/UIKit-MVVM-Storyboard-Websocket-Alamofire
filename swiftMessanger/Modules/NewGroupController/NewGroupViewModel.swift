@@ -13,7 +13,7 @@ class NewGroupViewModel {
     
     lazy var segueId = "toShowGroupEditController"
     
-    var users : [FetchUsersModel]?
+    var users : [MessagesCellItem]?
     var selectedUsers = [Int]()
     
     weak var delegate : NewGroupControllerProtocol?

@@ -18,11 +18,11 @@ class UserService {
                                                                                                     logOptions: .verbose))])
     
     
-    func getAllUsers(completion: @escaping(Error?, [FetchUsersModel]?) -> Void) {
+    func getAllUsers(completion: @escaping(Error?, [MessagesCellItem]?) -> Void) {
         provider.requestJSON(target: .getAllUsers,retryCount: 1) { apiResult in
             switch apiResult{
             case .success(let response):
-                let usersResponse = try? JSONDecoder().decode([FetchUsersModel].self, from: response.data)
+                let usersResponse = try? JSONDecoder().decode([MessagesCellItem].self, from: response.data)
                 print("DEBUG5:",usersResponse)
                 completion(nil, usersResponse)
             case .failure(let error):
@@ -84,11 +84,11 @@ class UserService {
         }
     }
     
-    func getAllUsersForGroups(completion: @escaping(Error?, [FetchUsersModel]?) -> Void) {
+    func getAllUsersForGroups(completion: @escaping(Error?, [MessagesCellItem]?) -> Void) {
         provider.requestJSON(target: .getAllGroupUsers) { apiResult in
             switch apiResult {
             case .success(let response):
-                let usersResponse = try? response.map([FetchUsersModel].self)
+                let usersResponse = try? response.map([MessagesCellItem].self)
             
                 print("asdasdasd \(usersResponse)")
                 completion(nil,usersResponse)

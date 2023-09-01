@@ -160,7 +160,8 @@ class SocketIOManager {
                                             senderId: modeledData.senderId,
                                             receiverId: modeledData.receiverId,
                                             sendTime: modeledData.sendTime,
-                                            type: modeledData.type)
+                                            type: modeledData.type,
+                                            imageData: modeledData.imageData)
             print("receiveddebugSOCKET: \(socketMessage)")
             self.delegate?.didReceiveMessage(message: socketMessage)
             self.chatDelegate?.didReceiveChatMessage(message: socketMessage)
@@ -178,7 +179,8 @@ class SocketIOManager {
                                             senderId: modeledData.senderId,
                                             receiverId: modeledData.receiverId,
                                             sendTime: modeledData.sendTime,
-                                            type: modeledData.type)
+                                            type: modeledData.type,
+                                            imageData: modeledData.imageData)
             print("receiveddebugSOCKET: \(socketMessage)")
             self.delegate?.didReceiveGroupMessage(groupMessage: socketMessage)
             self.chatDelegate?.didReceiveGroupChatMessage(groupMessage: socketMessage)

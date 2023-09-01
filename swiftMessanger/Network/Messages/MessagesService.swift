@@ -99,19 +99,6 @@ class MessagesService {
             }
         }
     }
-    
-    func uploadImageToUser(userId: Int, imageData: MultipartFormBodyPart, completion: @escaping(Error?, MessageURLResponse?) -> Void) {
-        provider.requestJSON(target: .uploadImageToUser(userId: userId, image: imageData)) { result in
-            switch result {
-            case .success(let response):
-                let urlResponse = try? response.map(MessageURLResponse.self)
-                print(urlResponse)
-                completion(nil, urlResponse)
-            case .failure(let error):
-                completion(error,nil)
-            }
-        }
-    }
 
 }
 

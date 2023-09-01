@@ -8,7 +8,7 @@
 import Foundation
 
 class UserModel : Codable{
-    let userId: Int
+    let id: Int
     let username: String
     let status: String
     let photoUrl: String

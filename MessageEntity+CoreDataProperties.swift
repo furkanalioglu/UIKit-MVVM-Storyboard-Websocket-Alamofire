@@ -16,12 +16,12 @@ extension MessageEntity {
         return NSFetchRequest<MessageEntity>(entityName: "MessageEntity")
     }
 
-    @NSManaged public var message: String?
+    @NSManaged public var imageData: Data?
     @NSManaged public var senderId: Int16
     @NSManaged public var receiverId: Int16
     @NSManaged public var sendTime: String?
+    @NSManaged public var message: String?
     @NSManaged public var type: String?
-    @NSManaged public var imageData: Data?
 
 }
 

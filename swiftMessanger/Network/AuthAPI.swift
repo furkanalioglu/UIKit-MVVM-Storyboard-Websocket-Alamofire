@@ -37,7 +37,7 @@ extension AuthAPI: TargetType {
         case .login:
             return "auth/login"
         case .getCurrentUser:
-            return "auth/profile"   
+            return "auth/profile"
         case .getAllUsers:
             return "chats/mainPage"
         case .updateCurrentUser:
@@ -62,11 +62,10 @@ extension AuthAPI: TargetType {
             return "chats/groups"
         case .getMessagesForGroup(let groupId, _):
             return "chats/group/\(groupId)"
-        case .uploadImageToGroup(let groupId, _ ):
+        case .uploadImageToGroup(let groupId ,_):
             return "chats/group/\(groupId)/photo"
-        case .uploadImageToUser(let userId, _ ):
+        case .uploadImageToUser(let userId,_):
             return "chats/\(userId)/photo"
-        
         }
     }
     
@@ -76,7 +75,7 @@ extension AuthAPI: TargetType {
             return .post
         case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .getAllGroupUsers,.getAllGroups,.getMessagesForGroup:
             return .get
-        case .updateCurrentUser,.handleMessageSeen:
+        case .updateCurrentUser, .handleMessageSeen:
             return .patch
         }
     }
@@ -143,7 +142,7 @@ extension AuthAPI: TargetType {
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case .uploadImageToGroup(let groupId, let image):
             return .uploadMultipartFormData([image])
-        case .uploadImageToUser(let userId, let image):
+        case .uploadImageToUser(let userId,let image):
             return .uploadMultipartFormData([image])
         }
         
@@ -151,7 +150,7 @@ extension AuthAPI: TargetType {
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup,.uploadImageToGroup, .uploadImageToUser:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup,.uploadImageToGroup:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
             return ["Authorization": "Bearer \(AuthService.instance.getRefreshToken() ?? "")"]

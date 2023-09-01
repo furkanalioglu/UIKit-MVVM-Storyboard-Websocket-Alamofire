@@ -53,7 +53,7 @@ class MessagesController: UIViewController{
     }
     
     @objc func handleNotificationArrived() {
-        guard let index = (viewModel.messages?.firstIndex(where: {$0.id == AppConfig.instance.dynamicLinkId})) else {
+        guard let index = (viewModel.messages?.firstIndex(where: {$0.userId == AppConfig.instance.dynamicLinkId})) else {
             self.viewModel.getAllMessages()
             return
         }
@@ -117,9 +117,8 @@ extension MessagesController : UITableViewDelegate {
         
         switch viewModel.currentSegment {
         case .messages:
-            guard let model = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
-            let user = FetchUsersModel(userId: model.userId, username: model.username, status: model.status, lastMsg: model.lastMsg, url: model.url)
-            performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
+            guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
+            performSegue(withIdentifier: viewModel.chatSegueId, sender: userId)
             viewModel.messages?[indexPath.row].isSeen = true
             tableView.deselectRow(at: indexPath, animated: true)
             
@@ -153,7 +152,7 @@ extension MessagesController {
         }
         
         if segue.identifier == viewModel.chatSegueId, let chatVC = segue.destination as? ChatController {
-            if let selectedMessage = sender as? FetchUsersModel {
+            if let selectedMessage = sender as? MessagesCellItem {
                 chatVC.viewModel.chatType = .user(selectedMessage)
                 chatVC.viewModel.seenDelegate = self
             }else if let selectedGroup = sender as? GroupCell{

@@ -47,11 +47,7 @@ class ChatCellWithImage: UITableViewCell {
         rightStack.isHidden = isCurrentUserSender
         messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink
         leftStack.isHidden = !isCurrentUserSender
-        if message.imageData == nil{
-            sentImageView.sd_setImage(with: imageString)
-        }else{
-            sentImageView.image = UIImage(data: message.imageData!)
-        }
+        sentImageView.sd_setImage(with: imageString)
     }
     
     

@@ -3,4 +3,118 @@
    uuid = "EBB16DBA-E11B-435D-A17A-1C5A05A38FD4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AF500E24-1798-4FCB-B047-E9FC73F0D516"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "handleSentPhotoAction(image:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AF500E24-1798-4FCB-B047-E9FC73F0D516 - 1578eeb6d2dc213a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;, Swift.Optional&lt;Moya.MultipartFormBodyPart&gt;) -&gt; () in swiftMessanger.ChatViewModel.handleSentPhotoAction(image: __C.UIImage) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/2pac/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "277"
+                  endingLineNumber = "277"
+                  offsetFromSymbolStart = "364">
+               </Location>
+               <Location
+                  uuid = "AF500E24-1798-4FCB-B047-E9FC73F0D516 - 18a04185aa367089"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;, Swift.Optional&lt;Swift.String&gt;) -&gt; () in closure #1 (Swift.Optional&lt;Swift.Error&gt;, Swift.Optional&lt;Moya.MultipartFormBodyPart&gt;) -&gt; () in swiftMessanger.ChatViewModel.handleSentPhotoAction(image: __C.UIImage) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/2pac/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "278"
+                  endingLineNumber = "278"
+                  offsetFromSymbolStart = "164">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8412D36-53C5-4A8F-B556-B1DD6919B79C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Network/Socket/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
+            landmarkName = "sendGroupMessage(message:toGroup:type:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A8412D36-53C5-4A8F-B556-B1DD6919B79C - 335c98f15584f386"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.SocketIOManager.sendGroupMessage(message: Swift.String, toGroup: Swift.String, type: Swift.String) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/2pac/swiftMessanger2/swiftMessanger/Network/Socket/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "116"
+                  endingLineNumber = "116"
+                  offsetFromSymbolStart = "284">
+               </Location>
+               <Location
+                  uuid = "A8412D36-53C5-4A8F-B556-B1DD6919B79C - d3132be3601bec96"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Array&lt;Any&gt;) -&gt; () in swiftMessanger.SocketIOManager.sendGroupMessage(message: Swift.String, toGroup: Swift.String, type: Swift.String) -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Desktop/2pac/swiftMessanger2/swiftMessanger/Network/Socket/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "117"
+                  endingLineNumber = "117"
+                  offsetFromSymbolStart = "144">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9A7FF9DB-A849-4353-83E3-73527C7C3547"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Network/Socket/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "sendGroupMessage(message:toGroup:type:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -69,7 +69,6 @@ extension NewGroupController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellId) as? NewGroupCell else { fatalError("could not load NewGroupCell")}
         cell.user = viewModel.users?[indexPath.row]
-        
         return cell
     }
 }
