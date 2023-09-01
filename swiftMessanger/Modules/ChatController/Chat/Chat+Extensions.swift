@@ -175,12 +175,11 @@ extension ChatController : SocketIOManagerChatDelegate {
                 viewModel.messages?.append(message)
                 viewModel.socketMessages.append(message)
                 let count = Double(viewModel.socketMessages.count) * viewModel.playbackDurationToAdd
-                if message.senderId != Int(AppConfig.instance.currentUserId ?? "") {
-                    viewModel.playVideoForDuration(count)
-                }
                 viewModel.socketMessages.removeAll()
                 tableView.reloadData()
                 scrollToBottom(animated: true)
+                viewModel.saveToLocal(message)
+
             }
         default:
             break
@@ -213,15 +212,9 @@ extension ChatController: StartControllerProtocol{
         }
     }
 }
-
 extension ChatController : PhotoPickerDelegate {
     func didPickImageData(_ image: UIImage) {
-        switch viewModel.chatType{
-        case .group(let group):
-            viewModel.handleSentPhotoAction(image: image)
-        default:
-            break
-        }
+        viewModel.handleSentPhotoAction(image: image)
     }
     
     func didCancelPicking() {

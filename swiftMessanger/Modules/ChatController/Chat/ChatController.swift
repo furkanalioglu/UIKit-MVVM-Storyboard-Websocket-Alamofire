@@ -36,6 +36,7 @@ class ChatController: UIViewController {
         setupTapGesture()
         setupRefreshControl()
         setupNotificationObservers()
+        configureSendImageButton()
         videoCell.isHidden = true
     }
     
@@ -131,13 +132,17 @@ class ChatController: UIViewController {
     @IBAction func sendMessageAction(_ sender: Any) {
         viewModel.sendMessage(myText: messageTextField.text)
         messageTextField.text = ""
-        
         tableView.reloadData()
         scrollToBottom(animated: true)
     }
     
     @IBAction func takePhotoAction(_ sender: Any) {
-        PhotoPickerManager.shared.presentPhotoPicker(from: self)
+        switch viewModel.chatType {
+        case .user(_):
+            PhotoPickerManager.shared.presentPhotoPicker(from: self)
+        default:
+            break
+        }
     }
     
     private func setupTapGesture() {
@@ -236,6 +241,17 @@ class ChatController: UIViewController {
             navigationItem.largeTitleDisplayMode = .never
         default:
             break
+        }
+    }
+    
+    func configureSendImageButton(){
+        switch viewModel.chatType{
+        case .group(let group):
+            takePhotoButton.isHidden = true
+        case .user(let user):
+            takePhotoButton.isHidden = false
+        default:
+                break
         }
     }
     

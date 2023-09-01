@@ -79,6 +79,7 @@ extension MessagesController : SocketIOManagerDelegate {
     func didReceiveMessage(message: MessageItem) {
         viewModel.handleIncomingMessage(message: message)
         viewModel.messages = viewModel.messages?.sorted(by: { $0.sendTime?.toDate() ?? Date() > $1.sendTime?.toDate() ?? Date()})
+//        savelocally
         tableView.reloadData()
     }
 }

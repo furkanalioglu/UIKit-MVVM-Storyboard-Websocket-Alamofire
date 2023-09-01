@@ -18,8 +18,8 @@ class MessagesService {
     private init() {}
     
     //TODO: - USE MAP RATHER THAN DECODE LATER
-    func fetchMessagesForSpecificUser(userId: String,page: Int, completion: @escaping(Error?, [MessageItem]?) -> Void) {
-        provider.requestJSON(target: .getMessagesForId(userId: userId,page: page),retryCount: 1) { result in
+    func fetchMessagesForSpecificUser(userId: String,page: Int,lastMsgTime: String, completion: @escaping(Error?, [MessageItem]?) -> Void) {
+        provider.requestJSON(target: .getMessagesForId(userId: userId,page: page,lastMsgTime: lastMsgTime),retryCount: 1) { result in
             switch result {
             case .success(let response):
                 let messagesResponse = try? JSONDecoder().decode([MessageItem].self, from: response.data)
@@ -95,6 +95,19 @@ class MessagesService {
                 completion(nil,urlResponse)
             case .failure(let error):
                 print("IMAGEDEBUG ERR: \(error.localizedDescription)")
+                completion(error,nil)
+            }
+        }
+    }
+    
+    func uploadImageToUser(userId: Int, imageData: MultipartFormBodyPart, completion: @escaping(Error?, MessageURLResponse?) -> Void) {
+        provider.requestJSON(target: .uploadImageToUser(userId: userId, image: imageData)) { result in
+            switch result {
+            case .success(let response):
+                let urlResponse = try? response.map(MessageURLResponse.self)
+                print(urlResponse)
+                completion(nil, urlResponse)
+            case .failure(let error):
                 completion(error,nil)
             }
         }

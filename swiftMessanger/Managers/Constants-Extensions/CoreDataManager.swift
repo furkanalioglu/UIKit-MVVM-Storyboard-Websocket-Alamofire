@@ -1,6 +1,7 @@
 import Foundation
 import CoreData
 import UIKit
+import Kingfisher
 
 enum MessageType: String {
     case text, image
@@ -57,9 +58,20 @@ final class CoreDataManager {
     }
     func saveMessageEntity(_ message: MessageItem) {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
-        
+
         if message.type == "image" {
-            //            newMessageModel.imageData = message.imageData
+            if let imageData = message.imageData{
+                newMessageModel.imageData = imageData
+            }else if let imageUrl = URL(string: message.message){
+                KingfisherManager.shared.retrieveImage(with: imageUrl) { result in
+                    switch result {
+                    case .success(let imageResult):
+                        newMessageModel.imageData = imageResult.image.pngData()
+                    case .failure:
+                        newMessageModel.imageData = nil
+                    }
+                }
+            }
             newMessageModel.senderId = Int16(message.senderId)
             newMessageModel.receiverId = Int16(message.receiverId)
             newMessageModel.sendTime = message.sendTime

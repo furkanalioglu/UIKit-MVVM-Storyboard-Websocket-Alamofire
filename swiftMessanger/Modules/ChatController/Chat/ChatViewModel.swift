@@ -126,7 +126,8 @@ class ChatViewModel {
     weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
-        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page) { error, messages in
+        let lastMsg = messages?.last?.sendTime ?? ""
+        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page,lastMsgTime: lastMsg) { error, messages in
             if let error = error {
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
@@ -198,45 +199,18 @@ class ChatViewModel {
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
-            print("MESSAGELOFGGG \(group.id)")
+            //NO Local message save on groups
         case .user(let user):
             let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toString(),type: "text", imageData: nil)
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
+            saveToLocal(myMessage)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
     }
-    
-    
-    //MARK: - deprecated
-    func configureVideo(ofType type: String = "mp4") -> AVPlayerLayer? {
-        guard let path = Bundle.main.path(forResource:  "superanimation1_3" , ofType: type) else {
-            debugPrint("superanimation1_3.\(type) not found")
-            return nil
-        }
-        player = AVPlayer(url: URL(fileURLWithPath: path))
-        return AVPlayerLayer(player: player)
-    }
-    
-    
-    func playVideoForDuration(_ duration: Double) {
-        guard let player = self.player else { return }
-        let currentTime = player.currentTime()
-        let endTime = CMTimeAdd(currentTime, CMTimeMakeWithSeconds(duration, preferredTimescale: 600))
-        endPlaybackTime = endTime
-        player.play()
-        player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(0.1, preferredTimescale: 600), queue: .main) { [weak self] time in
-            guard let strongSelf = self else { return }
-            if CMTimeCompare(time, strongSelf.endPlaybackTime!) != -1 {
-                strongSelf.player?.pause()
-            }else{
-            }
-        }
-    }
-    //MARK: - deprecated
-    
+        
     func finishEventForCurrentUser() {
         switch chatType {
         case .group(let group):
@@ -272,27 +246,26 @@ class ChatViewModel {
     
     func handleSentPhotoAction(image: UIImage) {
         switch chatType {
-        case .group(let group):
-            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData in
+        case .group(_):
+            print("No image send for groups")
+        case .user(let user):
+            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData,imageData in
                 if err == nil {
                     guard let MPData = MPData else { return }
-                    MessagesService.instance.uploadImageToDB(groupId: group.id,imageData: MPData) { err, response in
+                    MessagesService.instance.uploadImageToUser(userId: user.userId, imageData: MPData ) { err, response in
                         if err == nil {
                             guard let imageURL = response?.url else { return }
                             guard let currentUid = AppConfig.instance.currentUserId else { return }
-                            let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: group.id, sendTime: Date().toString(),type:"image",imageData: nil)
+                            let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: user.userId, sendTime: Date().toString(), type: "image", imageData: imageData)
                             self.messages?.append(myMessage)
-                            SocketIOManager.shared().sendGroupMessage(message: response!.url, toGroup: String(group.id), type: "image")
+                            SocketIOManager.shared().sendMessage(message: myMessage.message, toUser: String(myMessage.receiverId), type: "image")
                             self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
-                            print("IMAGEDEBUG: ",image)
                         }else{
-                            print("IMAGEDEBUG: ",err?.localizedDescription)
                             self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
                         }
                     }
                 }
             }
-            
         default:
             break
         }
@@ -300,7 +273,8 @@ class ChatViewModel {
     
     func saveToLocal(_ message: MessageItem) {
         switch chatType {
-        case .user(let user):
+        case .user(_):
+            
             CoreDataManager.shared.saveMessageEntity(message)
         default:
             break
@@ -329,11 +303,10 @@ class ChatViewModel {
                 localMessageItems.append(message)
             }
             self.messages = localMessageItems.filter({$0.receiverId == user.userId})
-            print("COREDEBUG: LOCAL ",localMessageItems.count)
-            print("COREDEBUG: WHY\(self.messages)")
+            
             self.delegate?.datasReceived(error: nil)
-        case .group(let group):
-            print("ss")
+        case .group(_):
+            print("No local stuff for groups")
         default:
             break
         }
