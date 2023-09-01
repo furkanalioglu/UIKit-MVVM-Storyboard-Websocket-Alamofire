@@ -11,7 +11,7 @@ protocol UsersControllerProtocol : AnyObject{
 }
 
 protocol DidSelectUserProtocol : AnyObject {
-    func didSelectUser(user: MessagesCellItem)
+    func didSelectUser(user: FetchUsersModel)
 }
 
 class UsersController: UIViewController {
@@ -72,7 +72,7 @@ extension UsersController: UITableViewDelegate {
         self.searchController.searchBar.endEditing(true)
         self.dismiss(animated: true)
         guard let user = viewModel.filteredUsers?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
-        print("Preparing to call delegate with user: \(user.id)")  // Debug print statement
+        print("Preparing to call delegate with user: \(user.userId)")  // Debug print statement
         viewModel.selectUserDelegate?.didSelectUser(user: user)
         self.dismiss(animated: true)
     }

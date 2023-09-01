@@ -13,6 +13,8 @@ struct MessageItem: Codable{
     let receiverId: Int
     let sendTime : String
     let type: String
+
+    var imageData: Data?
 }
 
 

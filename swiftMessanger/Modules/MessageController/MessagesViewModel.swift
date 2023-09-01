@@ -78,11 +78,11 @@ class MessagesViewModel {
             print(user)
                 if !isGroupMessage{
                     if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-                        let newMessage = MessagesCellItem( id:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
+                        let newMessage = MessagesCellItem( id:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false,userId:message.senderId )
                         self.messages?.append(newMessage)
                         self.delegate?.newMessageCellDataReceived(error: nil)
                     }else{
-                        let newMessage = MessagesCellItem(id:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true)
+                        let newMessage = MessagesCellItem(id:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true,userId: message.senderId)
                         self.messages?.append(newMessage)
                         self.delegate?.newMessageCellDataReceived(error: nil)
                     }

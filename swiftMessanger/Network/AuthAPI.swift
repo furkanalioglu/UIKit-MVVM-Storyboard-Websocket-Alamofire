@@ -25,7 +25,8 @@ enum AuthAPI {
     case createGroup(groupModel : CreateGroupModel)
     case getAllGroups
     case getMessagesForGroup(groupId: Int, page: Int)
-    case uploadImageToDB(groupId: Int, image: MultipartFormBodyPart)
+    case uploadImageToGroup(groupId: Int, image: MultipartFormBodyPart)
+    case uploadImageToUser(userId: Int, image: MultipartFormBodyPart)
 }
 
 extension AuthAPI: TargetType {
@@ -36,7 +37,7 @@ extension AuthAPI: TargetType {
         case .login:
             return "auth/login"
         case .getCurrentUser:
-            return "auth/profile"
+            return "auth/profile"   
         case .getAllUsers:
             return "chats/mainPage"
         case .updateCurrentUser:
@@ -61,18 +62,21 @@ extension AuthAPI: TargetType {
             return "chats/groups"
         case .getMessagesForGroup(let groupId, _):
             return "chats/group/\(groupId)"
-        case .uploadImageToDB(let groupId ,_):
+        case .uploadImageToGroup(let groupId, _ ):
             return "chats/group/\(groupId)/photo"
+        case .uploadImageToUser(let userId, _ ):
+            return "chats/\(userId)/photo"
+        
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .register, .login, .requestRefreshToken, .logout, .createGroup, .uploadImageToDB:
+        case .register, .login, .requestRefreshToken, .logout, .createGroup, .uploadImageToGroup, .uploadImageToUser:
             return .post
-        case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .getAllGroupUsers,.getAllGroups,.getMessagesForGroup:
+        case .getCurrentUser, .getAllUsers, .getMessagesForId,.getAllMessages,.getSpecificUser, .getAllGroupUsers,.getAllGroups,.getMessagesForGroup:
             return .get
-        case .updateCurrentUser:
+        case .updateCurrentUser,.handleMessageSeen:
             return .patch
         }
     }
@@ -137,7 +141,9 @@ extension AuthAPI: TargetType {
         case .getMessagesForGroup(groupId: let groupId, page: let page):
             let parameters : [String: Any] = ["page": page]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
-        case .uploadImageToDB(let groupId, let image):
+        case .uploadImageToGroup(let groupId, let image):
+            return .uploadMultipartFormData([image])
+        case .uploadImageToUser(let userId, let image):
             return .uploadMultipartFormData([image])
         }
         
@@ -145,7 +151,7 @@ extension AuthAPI: TargetType {
     
     var headers: [String : String]? {
         switch self{
-        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup,.uploadImageToDB:
+        case .getCurrentUser, .getAllUsers, .updateCurrentUser,.getMessagesForId,.getAllMessages,.getSpecificUser, .handleMessageSeen, .logout, .getAllGroupUsers,.createGroup,.getAllGroups,.getMessagesForGroup,.uploadImageToGroup, .uploadImageToUser:
             return ["Authorization": "Bearer \(AuthService.instance.getToken() ?? "")"]
         case .requestRefreshToken:
             return ["Authorization": "Bearer \(AuthService.instance.getRefreshToken() ?? "")"]

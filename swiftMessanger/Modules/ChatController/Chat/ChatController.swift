@@ -43,7 +43,7 @@ class ChatController: UIViewController {
         switch viewModel.chatType {
         case .user(let user):
             AppConfig.instance.currentChat = nil
-            viewModel.handleMessageSeen(forUserId: user.id)
+            viewModel.handleMessageSeen(forUserId: user.userId)
         case .group(let group):
             viewModel.rView?.handler?.stopTimer()
             viewModel.player?.pause()
@@ -70,7 +70,7 @@ class ChatController: UIViewController {
         AppConfig.instance.dynamicLinkId = nil
         switch viewModel.chatType {
         case .user(let user):
-            AppConfig.instance.currentChat = user.id
+            AppConfig.instance.currentChat = user.userId
         case .group(let group):
             AppConfig.instance.currentChat = group.id
         default:
@@ -115,7 +115,7 @@ class ChatController: UIViewController {
         case .group(let group):
             viewModel.fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
         case .user(let user):
-            viewModel.fetchMessagesForSelectedUser(userId: String(user.id), page: 1)
+            viewModel.fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
         default:
             break
         }

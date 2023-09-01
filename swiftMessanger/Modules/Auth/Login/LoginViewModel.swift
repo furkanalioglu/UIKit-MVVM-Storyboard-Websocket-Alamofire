@@ -34,10 +34,12 @@ class LoginViewModel {
                     self.delegate?.userLoggedIn(error: error)
                     return
                 }
-                UserDefaults.standard.string(forKey: userToken)
+                print("SOCKETDEBUG:: \(UserDefaults.standard.string(forKey: userToken))")
                 OneSignal.setExternalUserId(pushToken)
-                AppConfig.instance.currentUser = currentUser
+                print("SOCKETDEBUG:: \(currentUser)")
                 AppConfig.instance.currentUserId = UserDefaults.standard.string(forKey: currentUserIdK)
+                AppConfig.instance.currentUser = currentUser
+
 
 
 //                SocketIOManager.shared().establishConnection()

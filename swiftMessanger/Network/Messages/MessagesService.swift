@@ -87,7 +87,7 @@ class MessagesService {
     }
     
     func uploadImageToDB(groupId: Int,imageData: MultipartFormBodyPart, completion: @escaping(Error?,MessageURLResponse?) -> Void ){
-        provider.requestJSON(target: .uploadImageToDB(groupId: groupId, image: imageData)) { result in
+        provider.requestJSON(target: .uploadImageToGroup(groupId: groupId, image: imageData)) { result in
             switch result {
             case .success(let response):
                 print("IMAGEDEBUG NO ERR: \(response)")
@@ -95,6 +95,19 @@ class MessagesService {
                 completion(nil,urlResponse)
             case .failure(let error):
                 print("IMAGEDEBUG ERR: \(error.localizedDescription)")
+                completion(error,nil)
+            }
+        }
+    }
+    
+    func uploadImageToUser(userId: Int, imageData: MultipartFormBodyPart, completion: @escaping(Error?, MessageURLResponse?) -> Void) {
+        provider.requestJSON(target: .uploadImageToUser(userId: userId, image: imageData)) { result in
+            switch result {
+            case .success(let response):
+                let urlResponse = try? response.map(MessageURLResponse.self)
+                print(urlResponse)
+                completion(nil, urlResponse)
+            case .failure(let error):
                 completion(error,nil)
             }
         }

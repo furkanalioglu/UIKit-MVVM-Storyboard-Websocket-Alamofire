@@ -17,7 +17,7 @@ protocol MessagesControllerDelegate : AnyObject {
 
 
 extension MessagesController : DidSelectUserProtocol {
-    func didSelectUser(user: MessagesCellItem) {
+    func didSelectUser(user: FetchUsersModel) {
         print("SELECTED USER ::\(user)")
         self.performSegue(withIdentifier: viewModel.chatSegueId, sender: user)
     }

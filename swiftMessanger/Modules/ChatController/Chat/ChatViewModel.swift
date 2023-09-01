@@ -7,11 +7,12 @@
 
 import Foundation
 import AVFoundation
+import Kingfisher
 import UIKit
 
 
 enum ChatType {
-    case user(MessagesCellItem)
+    case user(FetchUsersModel)
     case group(GroupCell)
 }
 
@@ -41,9 +42,12 @@ class ChatViewModel {
         didSet{
             switch chatType {
             case .user(let user):
-                fetchMessagesForSelectedUser(userId: String(user.id), page: 1)
+                fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
+//                fetchLocalMessages(for: user.userId)
             case .group(let group):
-                fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
+                print("d")
+//                fetchLocalMessages()
+//                fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
             default:
                 print("CHATVIEWMODELDEBUG: COULD NOT FIND GROUP/USER")
             }
@@ -63,7 +67,7 @@ class ChatViewModel {
     }
     
     var isGroupOwner: Bool {
-        if let currentUserInfo = userInformations?.first(where: { $0.id == Int(AppConfig.instance.currentUserId ?? "")}) {
+        if let currentUserInfo = userInformations?.first(where: { $0.userId == Int(AppConfig.instance.currentUserId ?? "")}) {
             return currentUserInfo.groupRole != "User"
         }
         return false
@@ -71,7 +75,7 @@ class ChatViewModel {
     
     var groupOwnerId: Int? {
         if let ownerIndex = userInformations?.firstIndex(where: {$0.groupRole != "User"}) {
-            return userInformations?[ownerIndex].id
+            return userInformations?[ownerIndex].userId
         }
         return nil
     }
@@ -100,7 +104,7 @@ class ChatViewModel {
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: currentPage)
             case .user(let user):
-                fetchMessagesForSelectedUser(userId: String(user.id), page: currentPage)
+                fetchMessagesForSelectedUser(userId: String(user.userId), page: currentPage)
             default:
                 break
             }
@@ -199,11 +203,13 @@ class ChatViewModel {
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
             print("MESSAGELOFGGG \(group.id)")
+            saveToLocal(myMessage)
         case .user(let user):
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.id, sendTime: Date().toString(),type: "text")
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toString(),type: "text")
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.id),type: myMessage.type)
+            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
+            saveToLocal(myMessage)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -219,7 +225,7 @@ class ChatViewModel {
         player = AVPlayer(url: URL(fileURLWithPath: path))
         return AVPlayerLayer(player: player)
     }
-
+    
     
     func playVideoForDuration(_ duration: Double) {
         guard let player = self.player else { return }
@@ -248,7 +254,7 @@ class ChatViewModel {
     }
     
     
-
+    
     func handleEventActions(userModelArray: GroupEventModelArray, group: ChatType, completion: (ActionType) -> Void) {
         switch chatType {
         case .group(let group):
@@ -292,10 +298,72 @@ class ChatViewModel {
                     }
                 }
             }
+        case .user(let user):
+            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData in
+                if err == nil {
+                    guard let MPData = MPData else { return }
+                    MessagesService.instance.uploadImageToUser(userId: user.userId, imageData: MPData ) { err, response in
+                        if err == nil {
+                            guard let imageURL = response?.url else { return }
+                            guard let currentUid = AppConfig.instance.currentUserId else { return }
+                            let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: user.userId, sendTime: Date().toString(), type: "image")
+                            self.messages?.append(myMessage)
+                            SocketIOManager.shared().sendMessage(message: myMessage.message, toUser: String(myMessage.receiverId), type: "image")
+                            self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
+                        }else{
+                            print("IMAGEDEBUG: ",err?.localizedDescription)
+                            self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
+                        }
+                    }
+                }
+            }
             
         default:
             break
         }
     }
     
+    func saveToLocal(_ message: MessageItem) {
+        switch chatType {
+        case .user(let user):
+            CoreDataManager.shared.saveMessageEntity(message)
+        default:
+            break
+        }
+        
+    }
+    
+    func fetchLocalMessages(for userId: Int) {
+        switch chatType {
+        case .user(let user):
+            let localMessages = CoreDataManager.shared.fetchMessages()
+            print("COREDEBUG CLOCALCD: \(localMessages)")
+            var localMessageItems = [MessageItem]()
+            for message in localMessages {
+                guard let messages = message.message,
+                      let sendTime = message.sendTime,
+                      let type = message.type
+                else { return }
+                let message  = MessageItem(message: messages,
+                                           senderId: Int(message.senderId),
+                                           receiverId: Int(message.receiverId),
+                                           sendTime: sendTime,
+                                           type: type,
+                                           imageData: message.imageData)
+                print("COREDEBUG Appending \(message)")
+                localMessageItems.append(message)
+            }
+            self.messages = localMessageItems.filter({$0.receiverId == user.userId})
+            print("COREDEBUG: LOCAL ",localMessageItems.count)
+            print("COREDEBUG: WHY\(self.messages)")
+            self.delegate?.datasReceived(error: nil)
+        case .group(let group):
+            print("ss")
+        default:
+            break
+        }
+
+
+        
+    }
 }

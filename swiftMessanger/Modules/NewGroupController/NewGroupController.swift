@@ -51,10 +51,10 @@ extension NewGroupController : UITableViewDelegate {
         if viewModel.users?[indexPath.row].selectedForCell == true {
             viewModel.users?[indexPath.row].selectedForCell = false
             
-            viewModel.selectedUsers.removeAll { $0 == user.id }
+            viewModel.selectedUsers.removeAll { $0 == user.userId }
         } else {
             viewModel.users?[indexPath.row].selectedForCell = true
-            viewModel.selectedUsers.append(user.id)
+            viewModel.selectedUsers.append(user.userId)
         }
         tableView.reloadData()
         nextButtonLabel.isEnabled = !viewModel.selectedUsers.isEmpty
@@ -69,6 +69,7 @@ extension NewGroupController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellId) as? NewGroupCell else { fatalError("could not load NewGroupCell")}
         cell.user = viewModel.users?[indexPath.row]
+        
         return cell
     }
 }

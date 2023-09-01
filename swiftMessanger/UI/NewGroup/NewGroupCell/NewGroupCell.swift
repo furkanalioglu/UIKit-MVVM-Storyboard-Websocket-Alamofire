@@ -9,7 +9,7 @@ import UIKit
 
 class NewGroupCell: UITableViewCell {
     
-    var user: MessagesCellItem? {
+    var user: FetchUsersModel? {
         didSet  {
             print("userdebug: \(user?.selectedForCell) SETT!!")
             configureUI()
