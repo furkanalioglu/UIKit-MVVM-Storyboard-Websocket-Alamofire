@@ -7,6 +7,8 @@ class ChatController: UIViewController {
     
     let viewModel = ChatViewModel()
     
+    let photoPicker = PhotoPickerManager()
+    
     @IBOutlet weak var inputViewBottonAnchor: NSLayoutConstraint!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendMessageButton: UIButton!
@@ -30,14 +32,15 @@ class ChatController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         showLoader(true)
+
         viewModel.delegate = self
         viewModel.photoSentDelegate = self
-        PhotoPickerManager.shared.delegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
         setupRefreshControl()
         setupNotificationObservers()
         configureSendImageButton()
+        photoPicker.delegate = self
         videoCell.isHidden = true
     }
     
@@ -107,7 +110,10 @@ class ChatController: UIViewController {
         if viewModel.newLocalMessageItems.count > 0 {
             viewModel.fetchNewMessages()
         }else{
-            tableView.refreshControl?.endRefreshing()
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                tableView.refreshControl?.endRefreshing()
+            }
         }
     }
     
@@ -140,7 +146,7 @@ class ChatController: UIViewController {
     @IBAction func takePhotoAction(_ sender: Any) {
         switch viewModel.chatType {
         case .user(_):
-            PhotoPickerManager.shared.presentPhotoPicker(from: self)
+            photoPicker.presentPhotoPicker(from: self)
         default:
             break
         }
@@ -240,6 +246,7 @@ class ChatController: UIViewController {
         case .user:
             navigationItem.title = viewModel.navigationTitle
             navigationItem.largeTitleDisplayMode = .never
+
         default:
             break
         }
@@ -267,7 +274,7 @@ extension ChatController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let messageItemType = viewModel.messages?[indexPath.row].type
-        if messageItemType == "text"{
+        if messageItemType == MessageTypes.text.rawValue{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellNib) as? ChatCell2 else { fatalError("Could not load table view cell !!")}
             cell.message = viewModel.messages?[indexPath.row]
             return cell

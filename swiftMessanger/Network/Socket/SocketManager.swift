@@ -21,6 +21,7 @@ protocol SocketIOManagerChatDelegate: AnyObject {
     func didReceiveNewEventUser(userModel: GroupEventModelArray)
     func didReceiveCurrentuserCountFromAck(itemCount: ItemCountAck)
     func didSendNewEventRequest(groupId: Int, seconds: Int,statusCode: Int)
+    func didSentNewChatMessage(payloadDate: String,text: String,type: String)
 }
 
 struct SocketURL {
@@ -103,7 +104,21 @@ class SocketIOManager {
     func sendMessage(message: String, toUser: String,type: String) {
         guard let userId = Int(toUser) else { fatalError(" USER DOES NOT EXIST ")}
         let myMessage = SentMessage(receiverId: userId, message: message,type: type)
-        socket?.emit(SocketEmits.message.rawValue, myMessage.toData())        
+//        socket?.emit(SocketEmits.message.rawValue, myMessage.toData())\
+        
+        socket?.emitWithAck(SocketEmits.message.rawValue, myMessage.toData()).timingOut(after: 10, callback: { data in
+            guard let response = data[0] as? [String: Any] else{ return }
+            
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: response, options: [])
+                let decoder = JSONDecoder()
+                let ackResponse = try decoder.decode(ItemCountAck.self, from: jsonData)
+                self.chatDelegate?.didSentNewChatMessage(payloadDate: ackResponse.payloadDate!,text: myMessage.message,type:type)
+            } catch let error {
+                dump("Failed to decode JSON: \(error.localizedDescription)")
+            }
+
+        })
     }
     
     //FIX LATERRR

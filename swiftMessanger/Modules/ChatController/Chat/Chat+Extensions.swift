@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SocketIO
+import SDWebImage
 
 protocol ChatControllerDelegate : AnyObject {
     func datasReceived(error : String?)
@@ -63,12 +64,12 @@ extension ChatController : ChatControllerDelegate {
             }
         case .user:
             if error == nil {
+                showLoader(false)
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 scrollToBottom()
                 //MOVE IT TO SOMEWHERE ELSE!!!1
                 setupNavigationController()
-                showLoader(false)
             }else{
                 showLoader(false)
 
@@ -80,6 +81,39 @@ extension ChatController : ChatControllerDelegate {
 }
 
 extension ChatController : SocketIOManagerChatDelegate {
+    func didSentNewChatMessage(payloadDate: String,text: String,type:String) {
+        guard let currentUserId = AppConfig.instance.currentUserId else { return }
+        switch viewModel.chatType{
+        case .user(let user):
+            if type == MessageTypes.text.rawValue {
+                let myMessage = MessageItem(message: text, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toTimestampString(),type: type, imageData: nil)
+                viewModel.messages?.append(myMessage)
+                viewModel.saveToLocal(myMessage, payloadDate: payloadDate)
+                print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
+                viewModel.seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
+                tableView.reloadData()
+                scrollToBottom()
+            }else{
+                var myMessage = MessageItem(message: text, senderId:  Int(currentUserId)!, receiverId: user.userId, sendTime: payloadDate, type: type, imageData: nil)
+                SDWebImageManager.shared.loadImage(with: URL(string:text), progress: nil) { image, data, error, _, _, _ in
+                    if  error == nil {
+                        myMessage.imageData = data
+                        self.viewModel.messages?.append(myMessage)
+                        self.viewModel.saveToLocal(myMessage, payloadDate: payloadDate)
+                        print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
+                        self.viewModel.seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
+                        self.tableView.reloadData()
+                        self.showLoader(false)
+                        
+                    }
+                }
+
+            }
+        default:
+            break
+        }
+    }
+    
     func didReceiveCurrentuserCountFromAck(itemCount: ItemCountAck) {
         guard let itemCount = itemCount.itemCount else { return }
         self.viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: itemCount)
@@ -182,7 +216,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                 tableView.reloadData()
                 scrollToBottom(animated: true)
 //                viewModel.saveToLocal(message)
-
             }
         default:
             break

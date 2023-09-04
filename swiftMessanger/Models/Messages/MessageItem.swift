@@ -14,7 +14,13 @@ struct MessageItem: Codable{
     let sendTime : String
     let type: String
     
-    let imageData: Data?
+    var imageData: Data?
+}
+
+
+struct ChatACKModel : Codable {
+    let receiverId: Int
+    let payloadDate: String
 }
 
 

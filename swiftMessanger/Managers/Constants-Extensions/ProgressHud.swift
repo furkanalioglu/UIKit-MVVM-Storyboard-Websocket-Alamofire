@@ -10,16 +10,26 @@ import JGProgressHUD
 
 extension UIViewController {
     
-    static let hud = JGProgressHUD(style: .dark)
+    private static var huds: [UIViewController: JGProgressHUD] = [:]
+    
+    private var hud: JGProgressHUD {
+        if let hud = UIViewController.huds[self] {
+            return hud
+        } else {
+            let newHUD = JGProgressHUD(style: .dark)
+            UIViewController.huds[self] = newHUD
+            return newHUD
+        }
+    }
     
     func showLoader(_ show: Bool) {
         view.endEditing(true)
         
         if show {
-            UIViewController.hud.show(in: view)
-        }else {
-            UIViewController.hud.dismiss()
+            hud.show(in: view)
+        } else {
+            hud.dismiss()
+            UIViewController.huds[self] = nil
         }
-        
     }
 }

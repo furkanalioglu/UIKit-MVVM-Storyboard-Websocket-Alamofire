@@ -15,12 +15,11 @@ class ImageManager {
     
     static let instance = ImageManager()
     
-    
-    func convertUIImage(image: UIImage?,compressionQuality: CGFloat, completion: @escaping(Error?, MultipartFormBodyPart?,Data?) -> Void) {
+    func convertUIImage(image: UIImage?,compressionQuality: CGFloat, completion: @escaping(Error?, MultipartFormBodyPart?) -> Void) {
         guard let image = image else { return }
         guard let imageData = image.jpegData(compressionQuality: compressionQuality) else {
             print("IMAGEDEBUG: Could not convert image to data ")
-            completion(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"]), nil,nil)
+            completion(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to data"]), nil)
             return
         }
         
@@ -30,6 +29,6 @@ class ImageManager {
                                               name: "image",
                                               fileName: imageName, mimeType: "image/jpeg")
         
-        completion(nil, imagePart,imageData)
+        completion(nil, imagePart)
     }
 }

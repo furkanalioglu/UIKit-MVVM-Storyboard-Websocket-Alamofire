@@ -56,28 +56,15 @@ final class CoreDataManager {
             }
         }
     }
-    func saveMessageEntity(_ message: MessageItem) {
+    func saveMessageEntity(_ message: MessageItem, payloadDate: String) {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
-        guard let sendTime = Int(message.sendTime) else { return }
+//        guard let sendTime = Int(message.sendTime) else { return }
 
-
-        if message.type == "image" {
-            if let imageData = message.imageData{
-                newMessageModel.imageData = imageData
-            }else if let imageUrl = URL(string: message.message){
-                KingfisherManager.shared.retrieveImage(with: imageUrl) { result in
-                    switch result {
-                    case .success(let imageResult):
-                        newMessageModel.imageData = imageResult.image.pngData()
-                        print("trying to download")
-                    case .failure:
-                        newMessageModel.imageData = nil
-                    }
-                }
-            }
+        if message.type == MessageTypes.image.rawValue {
+            newMessageModel.imageData = message.imageData
             newMessageModel.senderId = Int16(message.senderId)
             newMessageModel.receiverId = Int16(message.receiverId)
-            newMessageModel.sendTime = message.sendTime
+            newMessageModel.sendTime = payloadDate
             newMessageModel.message = message.message
             newMessageModel.type = message.type
             print("messagelog: \(newMessageModel)")
@@ -95,19 +82,6 @@ final class CoreDataManager {
         print("COREDEBUG: Saved Message Entity")
     }
     
-    func doesMessageExistWithSendTime(_ sendTime: Int) -> Bool {
-        let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "sendTime == %d", sendTime)
-        fetchRequest.fetchLimit = 1 // We just need to check the existence, not fetch all
-        
-        do {
-            let fetchedResults = try self.persistentContainer.viewContext.fetch(fetchRequest)
-            return !fetchedResults.isEmpty
-        } catch let error {
-            print("Error fetching messages with sendTime: \(error.localizedDescription)")
-            return false
-        }
-    }
     
     func fetchMessages(currentUserId: Int, userId: Int, page: Int) -> [MessageEntity] {
         let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()

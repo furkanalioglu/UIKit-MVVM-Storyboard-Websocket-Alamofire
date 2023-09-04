@@ -1,12 +1,4 @@
-//
-//  ChatCellWithImage.swift
-//  swiftMessanger
-//
-//  Created by Furkan Alioglu on 31.08.2023.
-//
-
-import UIKit
-import Kingfisher
+import SDWebImage
 
 class ChatCellWithImage: UITableViewCell {
     
@@ -16,57 +8,35 @@ class ChatCellWithImage: UITableViewCell {
         }
     }
 
-    
-    
     @IBOutlet weak var leftStack: UIStackView!
     @IBOutlet weak var rightStack: UIStackView!
     @IBOutlet weak var senderLabel: UILabel!
     @IBOutlet weak var sentImageView: UIImageView!
     @IBOutlet weak var messageBuble: UIView!
-    
-    
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    func imageDataAsBytes(from image: UIImage) -> [UInt8]? {
-        guard let imageData = image.pngData() else {
-            return nil
-        }
-        
-        let bytePointer = (imageData as NSData).bytes.bindMemory(to: UInt8.self, capacity: imageData.count)
-        let byteArray = Array(UnsafeBufferPointer(start: bytePointer, count: imageData.count))
-        
-        return byteArray
     }
     
     private func configureUI() {
         guard let message = message else { return }
         guard let currentUserId = AppConfig.instance.currentUserId else { return }
-        guard let imageString = URL(string: message.message) else { return }
+        
         let isCurrentUserSender = message.senderId == Int(currentUserId)
         senderLabel.text = String(message.senderId)
         senderLabel.font = UIFont.systemFont(ofSize: 10)
         rightStack.isHidden = isCurrentUserSender
         messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink
         leftStack.isHidden = !isCurrentUserSender
-        if message.imageData == nil{
-            sentImageView.sd_setImage(with: imageString)
-            print("IMAGENILLLLLLL")
-        }else{
+        
+        if message.imageData != nil {
             sentImageView.image = UIImage(data: message.imageData!)
-            print("şşşş\(message.imageData?.count)")
-
-            print("SETTTIMAGENILLLLLLL")
+        }else{
+            sentImageView.image = UIImage(systemName: "magnifyingglass")
         }
     }
-    
-    
 }

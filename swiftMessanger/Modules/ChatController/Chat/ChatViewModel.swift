@@ -8,11 +8,16 @@
 import Foundation
 import AVFoundation
 import UIKit
+import SDWebImage
 
 
 enum ChatType {
     case user(MessagesCellItem)
     case group(GroupCell)
+}
+
+enum MessageTypes : String{
+    case image, text
 }
 
 enum EventResponse : Int {
@@ -155,7 +160,7 @@ class ChatViewModel {
 
                 print("FETCHLOG: FETCHING \(newMessages.count) NEW MESSAGES....")
                 for newMessage in newMessages {
-                    self.saveToLocal(newMessage)
+                    self.saveToLocal(newMessage,payloadDate: newMessage.sendTime)
                 }
                 self.fetchMessagesForSelectedUser(userId: userId, page: page + 1)
 
@@ -223,18 +228,13 @@ class ChatViewModel {
         switch chatType {
         case .group(let group):
             //TODO: - FIX TYPE ACCORDING TO MESSAGE
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString(),type:"text", imageData: nil)
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: group.id, sendTime: Date().toString(),type:MessageTypes.text.rawValue, imageData: nil)
             messages?.append(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
             //NO Local message save on groups
         case .user(let user):
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toTimestampString(),type: "text", imageData: nil)
-            messages?.append(myMessage)
-            print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
-            saveToLocal(myMessage)
-            seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
+            SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: MessageTypes.text.rawValue)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -278,22 +278,30 @@ class ChatViewModel {
         case .group(_):
             print("No image send for groups")
         case .user(let user):
-            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData,imageData in
+            ImageManager.instance.convertUIImage(image: image, compressionQuality: 1.0) { err, MPData in
                 if err == nil {
                     guard let MPData = MPData else { return }
                     MessagesService.instance.uploadImageToUser(userId: user.userId, imageData: MPData ) { err, response in
                         if err == nil {
                             guard let imageURL = response?.url else { return }
                             guard let currentUid = AppConfig.instance.currentUserId else { return }
-                            print("IMAGEDATA: \(imageData)")
-                            let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: user.userId, sendTime: Date().toString(), type: "image", imageData: imageData)
-                            self.messages?.append(myMessage)
-                            self.saveToLocal(myMessage)
-                            print("FETCHLOG: Saving From Photosent \(myMessage)")
-                            SocketIOManager.shared().sendMessage(message: myMessage.message, toUser: String(myMessage.receiverId), type: "image")
-                            self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
+                            
+                            
+//                            SDWebImageManager.shared.loadImage(with: URL(string:imageURL), progress: nil) { image, data, error, _, _, _ in
+//                                if let error = error {
+//                                    print("Error fetching image data: \(error.localizedDescription)")
+//                                    return
+//                                }
+//                                print("asfddfadafsfads",imageURL)
+//                                let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: user.userId, sendTime: Date().toTimestampString(), type: MessageTypes.image.rawValue, imageData: data)
+//                                self.messages?.append(myMessage)
+//                                self.saveToLocal(myMessage,payloadDate: "")
+//                                print("FETCHLOG: Saving From Photosent \(myMessage)")
+                                SocketIOManager.shared().sendMessage(message:imageURL , toUser: String(user.userId), type: MessageTypes.image.rawValue)
+//                                self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
+//                            }
                         }else{
-                            self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
+//                            self.photoSentDelegate?.userDidSentPhoto(image: nil, error: err?.localizedDescription)
                         }
                     }
                 }
@@ -303,28 +311,16 @@ class ChatViewModel {
         }
     }
     
-    func saveToLocal(_ message: MessageItem) {
+    func saveToLocal(_ message: MessageItem,payloadDate: String) {
         switch chatType {
         case .user(_):
-            CoreDataManager.shared.saveMessageEntity(message)
+            CoreDataManager.shared.saveMessageEntity(message, payloadDate: payloadDate)
         default:
             break
         }
         
     }
     
-//    localMessageIndex keeps track of how many messages we've already retrieved. Initially, it is set to 0.
-//    The first time the user opens the chat:
-//    start = sortedMessages.count - messagesPerPage - localMessageIndex
-//    (Assuming you have 100 total messages, 10 per page, and you've retrieved none yet, the start index becomes 90)
-//    end = sortedMessages.count - localMessageIndex
-//    (Again, with 100 total messages and having retrieved none yet, the end index becomes 100)
-//    So, the slice is from 90 to 100, effectively retrieving the 10 newest messages.
-//    The next time the user scrolls up:
-//    We increase localMessageIndex by 10 (the number of messages per page)
-//    So now, start becomes 80 (100 total - 10 per page - 10 already retrieved)
-//    And end becomes 90 (100 total - 10 already retrieved)
-//    Now, the slice is from 80 to 90, retrieving the next 10 messages.
     
     func fetchLocalMessages(forPage page: Int) {
         switch chatType {
@@ -351,19 +347,18 @@ class ChatViewModel {
                                                   type: type,
                                                   imageData: message.imageData)
                     newLocalMessageItems.append(messageItem)
-                    print("DEBUGLOC:\(messageItem)")
                 }
             }
             let sortedMessages = newLocalMessageItems.sorted(by: { ($0.sendTime.timeStampToDate()!) < ($1.sendTime.timeStampToDate()!) })
+            print("DEBUGLOC:\(sortedMessages)")
+
             if messages == nil {
                 self.messages = sortedMessages
                 self.delegate?.datasReceived(error: nil)
-//                newLocalMessageItems = []
             }else{
                 
                 self.messages?.insert(contentsOf: newLocalMessageItems, at: 0)
                 self.delegate?.datasReceived(error: nil)
-//                newLocalMessageItems = []
             }
         default:
             break

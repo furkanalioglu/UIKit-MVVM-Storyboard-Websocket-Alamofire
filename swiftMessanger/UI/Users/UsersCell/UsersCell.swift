@@ -32,7 +32,6 @@ class UsersCell: UITableViewCell {
         fullname.text = user.status
         userImageView.sd_setImage(with: URL(string: user.url))
         
-        
         userImageView.layer.borderWidth = 1.0
         userImageView.layer.masksToBounds = false
         userImageView.layer.borderColor = UIColor.white.cgColor
