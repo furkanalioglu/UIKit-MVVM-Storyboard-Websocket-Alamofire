@@ -29,6 +29,7 @@ class ChatController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        showLoader(true)
         viewModel.delegate = self
         viewModel.photoSentDelegate = self
         PhotoPickerManager.shared.delegate = self
@@ -284,8 +285,8 @@ extension ChatController : ChatControllerSentPhotoDelegate {
         if error == nil {
             print("IMAGE SENT \(image)")
             self.tableView.reloadData()
+            self.showLoader(false)
             scrollToBottom(animated: true)
-
         }
     }
 }

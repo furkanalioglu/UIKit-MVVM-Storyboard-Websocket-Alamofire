@@ -36,6 +36,16 @@ class ChatCellWithImage: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    func imageDataAsBytes(from image: UIImage) -> [UInt8]? {
+        guard let imageData = image.pngData() else {
+            return nil
+        }
+        
+        let bytePointer = (imageData as NSData).bytes.bindMemory(to: UInt8.self, capacity: imageData.count)
+        let byteArray = Array(UnsafeBufferPointer(start: bytePointer, count: imageData.count))
+        
+        return byteArray
+    }
     
     private func configureUI() {
         guard let message = message else { return }
@@ -52,6 +62,8 @@ class ChatCellWithImage: UITableViewCell {
             print("IMAGENILLLLLLL")
         }else{
             sentImageView.image = UIImage(data: message.imageData!)
+            print("şşşş\(message.imageData?.count)")
+
             print("SETTTIMAGENILLLLLLL")
         }
     }

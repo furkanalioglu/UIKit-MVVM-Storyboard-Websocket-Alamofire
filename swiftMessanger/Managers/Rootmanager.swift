@@ -5,7 +5,6 @@
 //  Created by Furkan Alioglu on 3.08.2023.
 //
 import UIKit
-
 class RootManager {
     
     static let shared: RootManager = {

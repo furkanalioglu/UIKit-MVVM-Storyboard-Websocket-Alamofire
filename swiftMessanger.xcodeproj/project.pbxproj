@@ -125,6 +125,7 @@
 		91C9A7DC2A8F8623009EBD56 /* RaceTimer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */; };
 		91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */; };
 		91CC865E2AA5FC830079110D /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 91CC865D2AA5FC830079110D /* JGProgressHUD */; };
+		91CC86602AA5FD070079110D /* ProgressHud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CC865F2AA5FD070079110D /* ProgressHud.swift */; };
 		91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 91DEF2922A7BED790072C6FF /* SocketIO */; };
 		91DEF2962A7BF6F00072C6FF /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91DEF2952A7BF6F00072C6FF /* Splash.storyboard */; };
 		91DEF2992A7BF74B0072C6FF /* SplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DEF2982A7BF74B0072C6FF /* SplashController.swift */; };
@@ -266,6 +267,7 @@
 		91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerManager.swift; sourceTree = "<group>"; };
 		91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RaceTimer.storyboard; sourceTree = "<group>"; };
 		91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRaceController.swift; sourceTree = "<group>"; };
+		91CC865F2AA5FD070079110D /* ProgressHud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHud.swift; sourceTree = "<group>"; };
 		91DEF2952A7BF6F00072C6FF /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		91DEF2982A7BF74B0072C6FF /* SplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashController.swift; sourceTree = "<group>"; };
 		91DEF29B2A7BF76B0072C6FF /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
@@ -782,6 +784,7 @@
 				91C4E8842AA084B800E42B49 /* ImageManager.swift */,
 				91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */,
 				9162CB382AA210040085A26E /* CoreDataManager.swift */,
+				91CC865F2AA5FD070079110D /* ProgressHud.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -1040,6 +1043,7 @@
 				9171B3572A8B9C7500C698EC /* ColorExtensions.swift in Sources */,
 				91BE7F3C2A949D23009B55DF /* AVAsset+VideoSize.swift in Sources */,
 				9100AC402A864B6200AE6FEC /* NewGroupEditController.swift in Sources */,
+				91CC86602AA5FD070079110D /* ProgressHud.swift in Sources */,
 				913B6E112A7A338200B9D5C4 /* EditProfileViewModel.swift in Sources */,
 				9171B35D2A8BB05A00C698EC /* GroupEventModel.swift in Sources */,
 				913B6E142A7A377500B9D5C4 /* AppConfig.swift in Sources */,

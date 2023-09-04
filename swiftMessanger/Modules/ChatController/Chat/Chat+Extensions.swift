@@ -68,6 +68,10 @@ extension ChatController : ChatControllerDelegate {
                 scrollToBottom()
                 //MOVE IT TO SOMEWHERE ELSE!!!1
                 setupNavigationController()
+                showLoader(false)
+            }else{
+                showLoader(false)
+
             }
         default:
             break
@@ -213,6 +217,7 @@ extension ChatController: StartControllerProtocol{
 }
 extension ChatController : PhotoPickerDelegate {
     func didPickImageData(_ image: UIImage) {
+        self.showLoader(true)
         viewModel.handleSentPhotoAction(image: image)
     }
     
