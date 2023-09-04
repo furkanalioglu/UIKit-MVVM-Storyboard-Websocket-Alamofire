@@ -18,7 +18,7 @@ class MessagesService {
     private init() {}
     
     //TODO: - USE MAP RATHER THAN DECODE LATER
-    func fetchMessagesForSpecificUser(userId: String,page: Int,lastMsgTime: String, completion: @escaping(Error?, [MessageItem]?) -> Void) {
+    func fetchMessagesForSpecificUser(userId: String,page: Int,lastMsgTime: Int, completion: @escaping(Error?, [MessageItem]?) -> Void) {
         provider.requestJSON(target: .getMessagesForId(userId: userId,page: page,lastMsgTime: lastMsgTime),retryCount: 1) { result in
             switch result {
             case .success(let response):

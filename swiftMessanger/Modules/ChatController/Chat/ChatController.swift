@@ -103,7 +103,7 @@ class ChatController: UIViewController {
     }
     
     @objc func handleRefresh() {
-        if viewModel.newMessages?.count ?? 0 > 0 {
+        if viewModel.newLocalMessageItems.count > 0 {
             viewModel.fetchNewMessages()
         }else{
             tableView.refreshControl?.endRefreshing()
@@ -116,7 +116,7 @@ class ChatController: UIViewController {
         case .group(let group):
             viewModel.fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
         case .user(let user):
-            viewModel.fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
+            viewModel.fetchLocalMessages(forPage: 1)
         default:
             break
         }
@@ -246,9 +246,9 @@ class ChatController: UIViewController {
     
     func configureSendImageButton(){
         switch viewModel.chatType{
-        case .group(let group):
+        case .group(_):
             takePhotoButton.isHidden = true
-        case .user(let user):
+        case .user(_):
             takePhotoButton.isHidden = false
         default:
                 break

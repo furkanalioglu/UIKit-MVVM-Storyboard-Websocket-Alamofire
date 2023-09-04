@@ -76,20 +76,20 @@ class MessagesViewModel {
             }
             guard let user = user else { return }
             print(user)
-                if !isGroupMessage{
-                    if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
-                        let newMessage = MessagesCellItem( userId:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
-                        self.messages?.append(newMessage)
-                        self.delegate?.newMessageCellDataReceived(error: nil)
-                    }else{
-                        let newMessage = MessagesCellItem(userId:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true)
-                        self.messages?.append(newMessage)
-                        self.delegate?.newMessageCellDataReceived(error: nil)
-                    }
+            if !isGroupMessage{
+                if message.receiverId == Int(AppConfig.instance.currentUserId ?? "") ?? 0 {
+                    let newMessage = MessagesCellItem( userId:message.senderId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(), isSeen: false)
+                    self.messages?.append(newMessage)
+                    self.delegate?.newMessageCellDataReceived(error: nil)
                 }else{
-                    self.getAllGroups()
+                    let newMessage = MessagesCellItem(userId:message.receiverId, username: user.username, status: user.status, url: user.photoUrl, lastMsg: message.message,sendTime: Date().toString(),isSeen: true)
+                    self.messages?.append(newMessage)
+                    self.delegate?.newMessageCellDataReceived(error: nil)
                 }
+            }else{
+                self.getAllGroups()
             }
+        }
     }
     
     private func updateMessageAtIndex(index: Int, withMessage message: MessageItem,isGroupMessage: Bool) {
@@ -153,9 +153,10 @@ class MessagesViewModel {
             groups?[groupIndex].isEvent = false
             
         }
-//        self.groups = groups?.sorted(by: { $0.sendTime.toDate() ?? Date() > $1.sendTime.toDate() ?? Date()})
-         
-        //set cell color
-        
     }
+    
+    func saveToLocal(_ message: MessageItem) {
+        CoreDataManager.shared.saveMessageEntity(message)
+    }
+
 }

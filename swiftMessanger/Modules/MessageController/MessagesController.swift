@@ -98,7 +98,7 @@ extension MessagesController : UITableViewDataSource{
             fatalError("COULD NOT LOAD MESSAGES CELL")
         }
         switch viewModel.currentSegment {
-         case .messages:
+        case .messages:
              cell.message = viewModel.messages?[indexPath.row]
          case .groups:
              cell.group = viewModel.groups?[indexPath.row]
@@ -117,7 +117,7 @@ extension MessagesController : UITableViewDelegate {
         
         switch viewModel.currentSegment {
         case .messages:
-            guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER")}
+            guard let userId = viewModel.messages?[indexPath.row] else { fatalError("COULD NOT FIND USER") }
             performSegue(withIdentifier: viewModel.chatSegueId, sender: userId)
             viewModel.messages?[indexPath.row].isSeen = true
             tableView.deselectRow(at: indexPath, animated: true)

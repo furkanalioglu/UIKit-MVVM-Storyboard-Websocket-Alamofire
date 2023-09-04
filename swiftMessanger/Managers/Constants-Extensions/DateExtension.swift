@@ -8,7 +8,35 @@
 import Foundation
 
 
+extension Int {
+    func toDate() -> Date? {
+        return Date(timeIntervalSince1970: TimeInterval(self) / 1000.0)
+    }
+    
+    func toDateString(withFormat format: String = "dd-MM-yyyy, HH:mm:ss") -> String? {
+        guard let date = self.toDate() else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_GB")
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: date)
+    }
+}
+
 extension String {
+    func timeStampToDate(withFormat format: String = "dd-MM-yyyy, HH:mm:ss") -> Date? {
+        // If the string can be converted to TimeInterval (Double)
+        // then we assume it's a timestamp in milliseconds.
+        if let milliseconds = TimeInterval(self) {
+            return Date(timeIntervalSince1970: milliseconds/1000.0)
+        } else {
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale(identifier: "en_GB") // set locale to reliable en_GB
+            dateFormatter.dateFormat = format
+            let date = dateFormatter.date(from: self)
+            return date
+        }
+    }
+    
     func toDate(withFormat format: String = "dd-MM-yyyy, HH:mm:ss") -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_GB") // set locale to reliable US_POSIX
@@ -19,6 +47,10 @@ extension String {
 }
 
 extension Date {
+    func toTimestampString() -> String {
+        return String(Int64(self.timeIntervalSince1970 * 1000))
+    }
+    
     func toString(withFormat format: String = "dd-MM-yyyy, HH:mm:ss") -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_GB")
@@ -55,7 +87,7 @@ extension Encodable {
 extension String {
     func timeElapsedSinceDate() -> String? {
         guard let date = self.toDate() else { return nil }
-
+        
         let currentDate = Date()
         let components = Calendar.current.dateComponents([.day, .hour, .minute], from: date, to: currentDate)
         

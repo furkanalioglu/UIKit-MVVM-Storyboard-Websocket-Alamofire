@@ -15,7 +15,7 @@ enum AuthAPI {
     case getCurrentUser
     case getAllUsers
     case updateCurrentUser(updateModel : UpdateUserModel)
-    case getMessagesForId(userId: String, page: Int, lastMsgTime: String)
+    case getMessagesForId(userId: String, page: Int, lastMsgTime: Int)
     case getAllMessages
     case getSpecificUser(userId: Int)
     case requestRefreshToken

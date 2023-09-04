@@ -49,8 +49,10 @@ class ChatCellWithImage: UITableViewCell {
         leftStack.isHidden = !isCurrentUserSender
         if message.imageData == nil{
             sentImageView.sd_setImage(with: imageString)
+            print("IMAGENILLLLLLL")
         }else{
             sentImageView.image = UIImage(data: message.imageData!)
+            print("SETTTIMAGENILLLLLLL")
         }
     }
     

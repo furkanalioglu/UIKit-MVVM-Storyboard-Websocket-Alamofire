@@ -36,11 +36,16 @@ class ChatViewModel {
     lazy var segueId = "toShowInformation"
     lazy var startSegueId = "toShowStart"
     
+    //Local Message Paginition
+    var localMessageIndex = 0
+    let messagesPerPage = 10
+    
     
     var chatType : ChatType? {
         didSet{
             switch chatType {
             case .user(let user):
+                fetchLocalMessages(forPage: 1)
                 fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
@@ -88,6 +93,12 @@ class ChatViewModel {
         return userModel.Array[0].groupId == group.id && userModel.Array[0].userId == EventResponse.eventFinished.rawValue
     }
     
+    private func isRelevantMessage(user: MessagesCellItem ,senderId: Int, receiverId: Int) -> Bool {
+        guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return false }
+        return (senderId == user.userId && receiverId == currentUid) ||
+               (senderId == currentUid && receiverId == user.userId)
+    }
+    
     var shouldCreateGhostCar:  Bool {
         guard let raceDetails = raceDetails else { return false }
         guard let myId = AppConfig.instance.currentUserId else { return false}
@@ -100,12 +111,14 @@ class ChatViewModel {
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: currentPage)
             case .user(let user):
-                fetchMessagesForSelectedUser(userId: String(user.userId), page: currentPage)
+                print("* FETCHHHHHH ")
+                fetchLocalMessages(forPage: currentPage)
             default:
                 break
             }
         }
     }
+
     
     var player: AVPlayer?
     var playbackDurationToAdd: Double = 0.5
@@ -116,6 +129,8 @@ class ChatViewModel {
     var newMessages : [MessageItem]?
     var socketMessages = [MessageItem]()
     var raceDetails : [GroupEventModel]? = []
+    var newLocalMessageItems = [MessageItem]()
+
     var userItemCount : Int?
     var timeLeft : Int?
     
@@ -126,25 +141,31 @@ class ChatViewModel {
     weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
-        let lastMsg = messages?.last?.sendTime ?? ""
-        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page,lastMsgTime: lastMsg) { error, messages in
+        let lastMsgTime = Int(messages?.last?.sendTime ?? "") ?? 0
+        print("*..... \(lastMsgTime)")
+        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page, lastMsgTime: lastMsgTime) { error, messages in
+            print("lox: \(messages)")
             if let error = error {
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
             }
-            if self.messages == nil {
-                self.messages = messages
-                self.newMessages = messages
-                self.delegate?.datasReceived(error: nil)
-            }else{
-                if self.newMessages?.count ?? 0 > 0 {
-                    self.newMessages = messages
-                    self.messages?.insert(contentsOf: self.newMessages!, at: 0)
-                    self.delegate?.datasReceived(error: nil)
+            
+            if let newMessages = messages, newMessages.count > 0 {
+                self.messages?.append(contentsOf: newMessages)
+
+                print("FETCHLOG: FETCHING \(newMessages.count) NEW MESSAGES....")
+                for newMessage in newMessages {
+                    self.saveToLocal(newMessage)
                 }
+                self.fetchMessagesForSelectedUser(userId: userId, page: page + 1)
+
+            }else{
+                print("FETCHLOG: MESSAGES EXIST IN DB")
+                self.delegate?.datasReceived(error: nil)
             }
         }
     }
+
     
     func fetchGroupMessagesForSelectedGroup(gid : Int, page: Int ){
         MessagesService.instance.getGroupMessages(groupId: gid, page: page) { err, messages in
@@ -171,7 +192,14 @@ class ChatViewModel {
     }
     
     func fetchNewMessages() {
-        currentPage += 1
+        switch chatType {
+        case .user(let user):
+            currentPage += 1
+        case .group(let group):
+            currentPage += 1
+        default:
+            break
+        }
     }
     
     func handleMessageSeen(forUserId userId: Int) {
@@ -201,11 +229,12 @@ class ChatViewModel {
             SocketIOManager.shared().sendGroupMessage(message: text, toGroup: String(group.id),type: myMessage.type)
             //NO Local message save on groups
         case .user(let user):
-            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toString(),type: "text", imageData: nil)
+            let myMessage = MessageItem(message: message, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toTimestampString(),type: "text", imageData: nil)
             messages?.append(myMessage)
+            print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
+            saveToLocal(myMessage)
             seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
             SocketIOManager.shared().sendMessage(message: text, toUser: String(user.userId),type: myMessage.type)
-            saveToLocal(myMessage)
         default:
             print("CHATVIEWMODELDEBUG: COULD NOT SEND MESSAGE ")
         }
@@ -256,8 +285,11 @@ class ChatViewModel {
                         if err == nil {
                             guard let imageURL = response?.url else { return }
                             guard let currentUid = AppConfig.instance.currentUserId else { return }
+                            print("IMAGEDATA: \(imageData)")
                             let myMessage = MessageItem(message: imageURL, senderId: Int(currentUid) ?? 0, receiverId: user.userId, sendTime: Date().toString(), type: "image", imageData: imageData)
                             self.messages?.append(myMessage)
+                            self.saveToLocal(myMessage)
+                            print("FETCHLOG: Saving From Photosent \(myMessage)")
                             SocketIOManager.shared().sendMessage(message: myMessage.message, toUser: String(myMessage.receiverId), type: "image")
                             self.photoSentDelegate?.userDidSentPhoto(image: image, error: nil)
                         }else{
@@ -274,7 +306,6 @@ class ChatViewModel {
     func saveToLocal(_ message: MessageItem) {
         switch chatType {
         case .user(_):
-            
             CoreDataManager.shared.saveMessageEntity(message)
         default:
             break
@@ -282,34 +313,65 @@ class ChatViewModel {
         
     }
     
-    func fetchLocalMessages(for userId: Int) {
+//    localMessageIndex keeps track of how many messages we've already retrieved. Initially, it is set to 0.
+//    The first time the user opens the chat:
+//    start = sortedMessages.count - messagesPerPage - localMessageIndex
+//    (Assuming you have 100 total messages, 10 per page, and you've retrieved none yet, the start index becomes 90)
+//    end = sortedMessages.count - localMessageIndex
+//    (Again, with 100 total messages and having retrieved none yet, the end index becomes 100)
+//    So, the slice is from 90 to 100, effectively retrieving the 10 newest messages.
+//    The next time the user scrolls up:
+//    We increase localMessageIndex by 10 (the number of messages per page)
+//    So now, start becomes 80 (100 total - 10 per page - 10 already retrieved)
+//    And end becomes 90 (100 total - 10 already retrieved)
+//    Now, the slice is from 80 to 90, retrieving the next 10 messages.
+    
+    func fetchLocalMessages(forPage page: Int) {
         switch chatType {
         case .user(let user):
-            let localMessages = CoreDataManager.shared.fetchMessages()
-            print("COREDEBUG CLOCALCD: \(localMessages)")
-            var localMessageItems = [MessageItem]()
+            print("page: \(page)")
+            guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+            let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, page: page)
+            newLocalMessageItems = []
+
             for message in localMessages {
                 guard let messages = message.message,
                       let sendTime = message.sendTime,
                       let type = message.type
-                else { return }
-                let message  = MessageItem(message: messages,
-                                           senderId: Int(message.senderId),
-                                           receiverId: Int(message.receiverId),
-                                           sendTime: sendTime,
-                                           type: type,
-                                           imageData: message.imageData)
-                print("COREDEBUG Appending \(message)")
-                localMessageItems.append(message)
+                else { continue }
+                
+                let senderId = Int(message.senderId)
+                let receiverId = Int(message.receiverId)
+                
+                if isRelevantMessage(user: user, senderId: senderId, receiverId: receiverId) {
+                    let messageItem = MessageItem(message: messages,
+                                                  senderId: senderId,
+                                                  receiverId: receiverId,
+                                                  sendTime: sendTime,
+                                                  type: type,
+                                                  imageData: message.imageData)
+                    newLocalMessageItems.append(messageItem)
+                    print("DEBUGLOC:\(messageItem)")
+                }
             }
-            self.messages = localMessageItems.filter({$0.receiverId == user.userId})
-            
-            self.delegate?.datasReceived(error: nil)
-        case .group(_):
-            print("No local stuff for groups")
+            let sortedMessages = newLocalMessageItems.sorted(by: { ($0.sendTime.timeStampToDate()!) < ($1.sendTime.timeStampToDate()!) })
+            if messages == nil {
+                self.messages = sortedMessages
+                self.delegate?.datasReceived(error: nil)
+//                newLocalMessageItems = []
+            }else{
+                
+                self.messages?.insert(contentsOf: newLocalMessageItems, at: 0)
+                self.delegate?.datasReceived(error: nil)
+//                newLocalMessageItems = []
+            }
         default:
             break
         }
+    }
+    
+    func fetchMessagesForPaginiton() {
         
     }
 }
+    

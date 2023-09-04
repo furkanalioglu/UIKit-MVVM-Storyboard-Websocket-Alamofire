@@ -65,6 +65,8 @@ extension ChatController : ChatControllerDelegate {
             if error == nil {
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
+                scrollToBottom()
+                //MOVE IT TO SOMEWHERE ELSE!!!1
                 setupNavigationController()
             }
         default:
@@ -173,12 +175,9 @@ extension ChatController : SocketIOManagerChatDelegate {
         case .user(let user):
             if message.senderId == user.userId || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
                 viewModel.messages?.append(message)
-                viewModel.socketMessages.append(message)
-                let count = Double(viewModel.socketMessages.count) * viewModel.playbackDurationToAdd
-                viewModel.socketMessages.removeAll()
                 tableView.reloadData()
                 scrollToBottom(animated: true)
-                viewModel.saveToLocal(message)
+//                viewModel.saveToLocal(message)
 
             }
         default:

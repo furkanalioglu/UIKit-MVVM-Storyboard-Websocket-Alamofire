@@ -46,9 +46,9 @@ class ChatCell2: UITableViewCell {
         senderNameLabel.text = String(message.senderId)
         senderNameLabel.font = UIFont.systemFont(ofSize: 10)
         rightStack.isHidden = isCurrentUserSender
+        leftStack.isHidden = !isCurrentUserSender
         messageLabrl.textAlignment = isCurrentUserSender ? .right : .left
         messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink
-        leftStack.isHidden = !isCurrentUserSender
     }
     
 }
