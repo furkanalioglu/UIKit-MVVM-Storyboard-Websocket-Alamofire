@@ -8,7 +8,7 @@
 import Foundation
 
 struct MessageItem: Codable{
-    let message : String
+    var message : String
     let senderId : Int
     let receiverId: Int
     let sendTime : String

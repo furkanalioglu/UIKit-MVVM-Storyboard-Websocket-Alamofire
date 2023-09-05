@@ -11,6 +11,12 @@ enum CoreDataIds : String {
     case MessageEntity
 }
 
+
+protocol loadImageDelegate : AnyObject {
+    func didCompleteLoadingImage(payloadDate:String, imageData: Data?)
+}
+
+
 final class CoreDataManager {
     
     struct Static {
@@ -25,6 +31,8 @@ final class CoreDataManager {
             return Static.instance!
         }
     }
+    
+    weak var loadImageDelegate : loadImageDelegate?
     
     private func dispose() {
         CoreDataManager.Static.instance = nil
@@ -47,7 +55,10 @@ final class CoreDataManager {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
-                try context.save()
+                context.perform {
+                    // CoreData operations here
+                    try? context.save()
+                }
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -56,12 +67,12 @@ final class CoreDataManager {
             }
         }
     }
-    func saveMessageEntity(_ message: MessageItem, payloadDate: String) {
+    func saveMessageEntity(_ message: MessageItem, payloadDate: String, imageData: Data?) {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
-//        guard let sendTime = Int(message.sendTime) else { return }
-
+        //        guard let sendTime = Int(message.sendTime) else { return }
+        
         if message.type == MessageTypes.image.rawValue {
-            newMessageModel.imageData = message.imageData
+            newMessageModel.imageData = imageData
             newMessageModel.senderId = Int16(message.senderId)
             newMessageModel.receiverId = Int16(message.receiverId)
             newMessageModel.sendTime = payloadDate
@@ -83,6 +94,35 @@ final class CoreDataManager {
     }
     
     
+    func updateImageDataInCoreData(forMessageWithSendTime sendTime: String, with imageData: Data) {
+        let context = self.persistentContainer.viewContext
+        context.perform {
+            let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "sendTime == %@", sendTime)
+            do {
+                let results = try context.fetch(fetchRequest)
+                if let messageEntityToUpdate = results.first {
+                    messageEntityToUpdate.imageData = imageData
+                    print("COREDEBUG",messageEntityToUpdate.sendTime)
+                    // Save the changes to persist the updated imageData
+                    do {
+                        try context.save()
+                        self.loadImageDelegate?.didCompleteLoadingImage(payloadDate: sendTime, imageData: imageData)
+                        print("COREDEBUG: Updated Image Data for Message Entity with sendTime: \(sendTime)")
+                        
+                    } catch {
+                        print("Error saving after updating image data: \(error.localizedDescription)")
+                    }
+
+                } else {
+                    print("COREDEBUG: No Message Entity found with sendTime: \(sendTime)")
+                }
+            } catch {
+                print("Error updating image data: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func fetchMessages(currentUserId: Int, userId: Int, page: Int) -> [MessageEntity] {
         let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()
         
@@ -91,7 +131,7 @@ final class CoreDataManager {
         fetchRequest.fetchOffset = (page - 1) * itemsPerPage // If page = 1, then offset is 0, which means it starts from the first record. If page = 2, it will skip the first 10 records, and so on.
         
         let predicate = NSPredicate(format: "(senderId == %d AND receiverId == %d) OR (senderId == %d AND receiverId == %d)", currentUserId, userId, userId, currentUserId)
-
+        
         fetchRequest.predicate = predicate
         
         let dateSortDescriptor = NSSortDescriptor(key: "sendTime", ascending: false)

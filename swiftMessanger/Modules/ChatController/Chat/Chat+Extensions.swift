@@ -12,6 +12,7 @@ import SDWebImage
 
 protocol ChatControllerDelegate : AnyObject {
     func datasReceived(error : String?)
+    func newMessageDatasExist(status: String)
 }
 
 protocol ChatMessageSeenDelegate : AnyObject {
@@ -25,6 +26,18 @@ protocol ChatControllerSentPhotoDelegate: AnyObject {
 
 
 extension ChatController : ChatControllerDelegate {
+    func newMessageDatasExist(status: String) {
+        if status == "fetch" {
+            showLoader(true)
+        }else{
+            tableView.reloadData()
+            setupNavigationController()
+            scrollToBottom()
+            showLoader(false)
+        }
+    }
+    
+    
     func datasReceived(error: String?) {
         switch viewModel.chatType{
         case .group(let group):
@@ -37,7 +50,11 @@ extension ChatController : ChatControllerDelegate {
                 }
                 guard let timeleft = viewModel.timeLeft else { return }
                 if timeleft <= 0{
-                    videoCell.isHidden = true
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        videoCell.isHidden = true
+
+                    }
                 }else{
                     guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }
@@ -62,17 +79,20 @@ extension ChatController : ChatControllerDelegate {
 
                 }
             }
-        case .user:
+        case .user(let user):
             if error == nil {
-                showLoader(false)
-                tableView.refreshControl?.endRefreshing()
+                if tableView.refreshControl?.isRefreshing == true {
+                    if tableView.isDragging {
+                        shouldEndRefreshingAfterDragging = true
+                    } else {
+                        DispatchQueue.main.async {
+                            self.tableView.refreshControl?.endRefreshing()
+                        }
+                    }
+                }
                 tableView.reloadData()
-                scrollToBottom()
-                //MOVE IT TO SOMEWHERE ELSE!!!1
                 setupNavigationController()
             }else{
-                showLoader(false)
-
             }
         default:
             break
@@ -84,30 +104,20 @@ extension ChatController : SocketIOManagerChatDelegate {
     func didSentNewChatMessage(payloadDate: String,text: String,type:String) {
         guard let currentUserId = AppConfig.instance.currentUserId else { return }
         switch viewModel.chatType{
-        case .user(let user):
+        case .user(_ ):
             if type == MessageTypes.text.rawValue {
-                let myMessage = MessageItem(message: text, senderId: Int(currentUserId) ?? 0, receiverId: user.userId, sendTime: Date().toTimestampString(),type: type, imageData: nil)
-                viewModel.messages?.append(myMessage)
-                viewModel.saveToLocal(myMessage, payloadDate: payloadDate)
-                print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
-                viewModel.seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
-                tableView.reloadData()
-                scrollToBottom()
+                viewModel.addNewChatMessage(payloadDate: payloadDate, messageText: text, type: type) { _ in
+                    self.tableView.reloadData()
+                    self.scrollToBottom()
+                }
             }else{
-                var myMessage = MessageItem(message: text, senderId:  Int(currentUserId)!, receiverId: user.userId, sendTime: payloadDate, type: type, imageData: nil)
-                SDWebImageManager.shared.loadImage(with: URL(string:text), progress: nil) { image, data, error, _, _, _ in
-                    if  error == nil {
-                        myMessage.imageData = data
-                        self.viewModel.messages?.append(myMessage)
-                        self.viewModel.saveToLocal(myMessage, payloadDate: payloadDate)
-                        print("FETCHLOG: Saving From MY SEND MESSAGE \(myMessage)")
-                        self.viewModel.seenDelegate?.chatMessageReceivedFromUser(error: nil, message: myMessage)
+                viewModel.addNewChatMessage(payloadDate: payloadDate, messageText: text, type: type) { error in
+                    if error == nil {
                         self.tableView.reloadData()
+                        self.scrollToBottom(animated: true)
                         self.showLoader(false)
-                        
                     }
                 }
-
             }
         default:
             break
@@ -213,10 +223,26 @@ extension ChatController : SocketIOManagerChatDelegate {
         case .user(let user):
             if message.senderId == user.userId || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
                 viewModel.messages?.append(message)
-                tableView.reloadData()
-                scrollToBottom(animated: true)
+
+                if message.type == MessageTypes.text.rawValue {
+                    tableView.reloadData()
+                    scrollToBottom(animated: true)
+                }else{
+                    guard let url = URL(string:message.message) else { return }
+                    ImageLoader.shared.getData(from: url) { data, _, err in
+                        if err == nil {
+                            CoreDataManager.shared.updateImageDataInCoreData(forMessageWithSendTime: message.sendTime, with: data!)
+                            let index = self.viewModel.messages?.firstIndex(where: {$0.sendTime == message.sendTime})
+                            self.viewModel.messages![index!].imageData = data
+                        }
+                    }
+   
+                }
 //                viewModel.saveToLocal(message)
+                self.tableView.reloadData()
+                self.scrollToBottom(animated: true)
             }
+            
         default:
             break
         }

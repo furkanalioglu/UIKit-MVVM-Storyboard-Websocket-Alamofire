@@ -1,7 +1,10 @@
 import SDWebImage
 
+protocol ChatCellWithImageDelegate: AnyObject {
+    func didReceivedCellImage()
+}
+
 class ChatCellWithImage: UITableViewCell {
-    
     var message: MessageItem? {
         didSet {
             configureUI()
@@ -13,13 +16,43 @@ class ChatCellWithImage: UITableViewCell {
     @IBOutlet weak var senderLabel: UILabel!
     @IBOutlet weak var sentImageView: UIImageView!
     @IBOutlet weak var messageBuble: UIView!
-
+    
+    weak var delegate : ChatCellWithImageDelegate?
+    
     override func awakeFromNib() {
-        super.awakeFromNib()
-    }
+         super.awakeFromNib()
+     }
+    
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+    
+    public func resizeImage(image: UIImage) -> UIImage? { // MARK:  Resize Height to 1600px
+
+        let ratio = 2048 / image.size.height
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if (image.size.height > 2048) {
+            newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
+        } else {
+            newSize = image.size
+        }
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(origin: .zero, size: newSize)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+    
+    func updateImage(_ image: Data) {
+        let image = UIImage(data: image)
+        sentImageView.image = resizeImage(image: image!)
     }
     
     private func configureUI() {
@@ -27,16 +60,28 @@ class ChatCellWithImage: UITableViewCell {
         guard let currentUserId = AppConfig.instance.currentUserId else { return }
         
         let isCurrentUserSender = message.senderId == Int(currentUserId)
-        senderLabel.text = String(message.senderId)
-        senderLabel.font = UIFont.systemFont(ofSize: 10)
-        rightStack.isHidden = isCurrentUserSender
-        messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink
-        leftStack.isHidden = !isCurrentUserSender
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            senderLabel.text = String(message.senderId)
+            senderLabel.font = UIFont.systemFont(ofSize: 10)
+            rightStack.isHidden = isCurrentUserSender
+            messageBuble.backgroundColor = isCurrentUserSender ? .systemPurple : .systemPink
+            leftStack.isHidden = !isCurrentUserSender
+        }
         
-        if message.imageData != nil {
-            sentImageView.image = UIImage(data: message.imageData!)
+        if let data = message.imageData{
+            guard let imageData = UIImage(data: data) else { return }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                sentImageView.image = resizeImage(image: imageData)
+            }
         }else{
-            sentImageView.image = UIImage(systemName: "magnifyingglass")
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                sentImageView.image = UIImage(systemName: "tray.and.arrow.down")
+            }
         }
     }
 }
+

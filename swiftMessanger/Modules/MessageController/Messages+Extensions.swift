@@ -76,10 +76,11 @@ extension MessagesController : SocketIOManagerDelegate {
         tableView.reloadData()
     }
     
+    //MARK: - Save all messages to local
     func didReceiveMessage(message: MessageItem) {
         viewModel.handleIncomingMessage(message: message)
         viewModel.messages = viewModel.messages?.sorted(by: { $0.sendTime?.toDate() ?? Date() > $1.sendTime?.toDate() ?? Date()})
-//        viewModel.saveToLocal(message)
+        viewModel.saveToLocal(message,payloadDate: message.sendTime,imageData: nil)
         print("FETCHLOG: Saving From Messages controllrer\(message)")
         tableView.reloadData()
     }

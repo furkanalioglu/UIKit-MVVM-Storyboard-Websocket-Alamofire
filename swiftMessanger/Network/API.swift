@@ -13,7 +13,7 @@ import SocketIO
 
 enum API{
     static var baseURLString: String {
-        return "http://ec2-18-196-242-245.eu-central-1.compute.amazonaws.com:3000/api/v1/"
+        return "http://chat-app-env.eba-ev2ugfcu.eu-central-1.elasticbeanstalk.com/api/v1/"
     }
     
 //    static var baseURLString: String {

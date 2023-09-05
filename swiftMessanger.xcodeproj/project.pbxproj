@@ -126,6 +126,8 @@
 		91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */; };
 		91CC865E2AA5FC830079110D /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 91CC865D2AA5FC830079110D /* JGProgressHUD */; };
 		91CC86602AA5FD070079110D /* ProgressHud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CC865F2AA5FD070079110D /* ProgressHud.swift */; };
+		91CC86622AA720EA0079110D /* MessagePhotoDownloaded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CC86612AA720EA0079110D /* MessagePhotoDownloaded.swift */; };
+		91CC86642AA763D40079110D /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CC86632AA763D40079110D /* ImageLoader.swift */; };
 		91DEF2932A7BED790072C6FF /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 91DEF2922A7BED790072C6FF /* SocketIO */; };
 		91DEF2962A7BF6F00072C6FF /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91DEF2952A7BF6F00072C6FF /* Splash.storyboard */; };
 		91DEF2992A7BF74B0072C6FF /* SplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DEF2982A7BF74B0072C6FF /* SplashController.swift */; };
@@ -268,6 +270,8 @@
 		91C9A7DB2A8F8623009EBD56 /* RaceTimer.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RaceTimer.storyboard; sourceTree = "<group>"; };
 		91C9A7DD2A8F8721009EBD56 /* StartRaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRaceController.swift; sourceTree = "<group>"; };
 		91CC865F2AA5FD070079110D /* ProgressHud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressHud.swift; sourceTree = "<group>"; };
+		91CC86612AA720EA0079110D /* MessagePhotoDownloaded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePhotoDownloaded.swift; sourceTree = "<group>"; };
+		91CC86632AA763D40079110D /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		91DEF2952A7BF6F00072C6FF /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		91DEF2982A7BF74B0072C6FF /* SplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashController.swift; sourceTree = "<group>"; };
 		91DEF29B2A7BF76B0072C6FF /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
@@ -452,6 +456,7 @@
 				91934F252A7CE05700D827B3 /* MessagesCellItem.swift */,
 				91E31F1D2A839A8B00F2FF23 /* SentMessage.swift */,
 				912498202AA2137800299419 /* MessageEntity.xcdatamodeld */,
+				91CC86612AA720EA0079110D /* MessagePhotoDownloaded.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -785,6 +790,7 @@
 				91C4E8862AA08A6300E42B49 /* PhotoPickerManager.swift */,
 				9162CB382AA210040085A26E /* CoreDataManager.swift */,
 				91CC865F2AA5FD070079110D /* ProgressHud.swift */,
+				91CC86632AA763D40079110D /* ImageLoader.swift */,
 			);
 			path = "Constants-Extensions";
 			sourceTree = "<group>";
@@ -1104,6 +1110,7 @@
 				91934F392A81044B00D827B3 /* DateExtension.swift in Sources */,
 				91B62E602A860C9100B3C56E /* MessagesHeader.swift in Sources */,
 				91DEF2A02A7CDCA30072C6FF /* MessagesCell.swift in Sources */,
+				91CC86622AA720EA0079110D /* MessagePhotoDownloaded.swift in Sources */,
 				91BE7F3E2A949D23009B55DF /* CIKernel+DefaultMetalLibrary.swift in Sources */,
 				9171B3622A8E1DE200C698EC /* UserCircle.swift in Sources */,
 				913B6E0E2A7A337400B9D5C4 /* EditProfileCell.swift in Sources */,
@@ -1115,6 +1122,7 @@
 				913B6E412A7B9B3400B9D5C4 /* MessageItem.swift in Sources */,
 				9171B33C2A8A276300C698EC /* Chat+Extensions.swift in Sources */,
 				91C9A7DE2A8F8721009EBD56 /* StartRaceController.swift in Sources */,
+				91CC86642AA763D40079110D /* ImageLoader.swift in Sources */,
 				918B337C2A77E0EE00AB0EB8 /* SceneDelegate.swift in Sources */,
 				91B62E702A86178D00B3C56E /* NewGroupCell.swift in Sources */,
 				913B6E272A7A4FD700B9D5C4 /* ChatViewModel.swift in Sources */,

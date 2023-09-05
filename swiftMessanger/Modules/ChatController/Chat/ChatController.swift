@@ -9,6 +9,12 @@ class ChatController: UIViewController {
     
     let photoPicker = PhotoPickerManager()
     
+    var cellHeights = [IndexPath: CGFloat]()
+    
+    var shouldEndRefreshingAfterDragging = false
+    
+
+    
     @IBOutlet weak var inputViewBottonAnchor: NSLayoutConstraint!
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var sendMessageButton: UIButton!
@@ -26,15 +32,18 @@ class ChatController: UIViewController {
     private func registerNibs() {
         tableView.register(UINib(nibName: viewModel.cellNib, bundle: nil), forCellReuseIdentifier: viewModel.cellNib)
         tableView.register(UINib(nibName: viewModel.cellWithImageNib, bundle: nil), forCellReuseIdentifier: viewModel.cellWithImageNib)
+        
+//        NotificationCenter.default.addObserver(self, selector: #selector(handleImageDownload(_:)), name: .didDownloadChatImage, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(didDownloaded), name: .didDownloadChatImage, object: nil)
     }
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showLoader(true)
-
         viewModel.delegate = self
         viewModel.photoSentDelegate = self
+        CoreDataManager.shared.loadImageDelegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
         setupRefreshControl()
@@ -42,6 +51,7 @@ class ChatController: UIViewController {
         configureSendImageButton()
         photoPicker.delegate = self
         videoCell.isHidden = true
+//        showLoader(true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -95,11 +105,38 @@ class ChatController: UIViewController {
         }
     }
     
+//    @objc private func handleImageDownload(_ notification: Notification) {
+//        guard let userInfo = notification.userInfo,
+//              let imageData = userInfo["imageData"] as? Data,
+//            let payloadDate = userInfo["sendTime"] as? String
+//        else {
+//            return
+//        }
+//
+//        print("sdasdf get payload")
+//
+//        guard let index = viewModel.messages?.firstIndex(where: {$0.sendTime == payloadDate}) else { return }
+//        if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ChatCellWithImage {
+//            guard let image = UIImage(data: imageData) else { return }
+//            print("sdasdf setting image")
+//            DispatchQueue.main.async { [weak self] in
+//                guard let self = self else { return }
+//                cell.updateImage(image)
+//                tableView.reloadData()
+//
+//            }
+//        }
+////        let indexPath =
+////        if let cell = tableView.cellForRow(at: IndexPath(row: rowIndex, section: 0)) as? ChatCellWithImage {
+////            cell.updateImage(image)
+////        }
+//    }
+
+    
     @objc func keyboardWillHide(notification: NSNotification) {
         UIView.animate(withDuration: 0.3) {
             self.inputViewBottonAnchor.constant = 0
             self.view.layoutIfNeeded()
-            
             self.tableView.contentInset = .zero
             self.tableView.scrollIndicatorInsets = .zero
         }
@@ -174,7 +211,6 @@ class ChatController: UIViewController {
         case .group(let group):
             if videoCell.isHidden{
                 performSegue(withIdentifier: viewModel.startSegueId, sender: nil)
-                //handle gere
             }else{
                 SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "66",status: 1)
             }
@@ -265,11 +301,15 @@ class ChatController: UIViewController {
     
 }
 
-extension ChatController : UITableViewDelegate {}
+extension ChatController : UITableViewDelegate {
+}
 
 extension ChatController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.messages?.count ?? 0
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(viewModel.messages![indexPath.row])
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -277,6 +317,7 @@ extension ChatController : UITableViewDataSource {
         if messageItemType == MessageTypes.text.rawValue{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellNib) as? ChatCell2 else { fatalError("Could not load table view cell !!")}
             cell.message = viewModel.messages?[indexPath.row]
+            
             return cell
         }else{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: viewModel.cellWithImageNib) as? ChatCellWithImage else { fatalError("Could not load table view cell !!")}
@@ -285,6 +326,21 @@ extension ChatController : UITableViewDataSource {
 
         }
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellHeights[indexPath] = cell.frame.size.height
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return cellHeights[indexPath] ?? UITableView.automaticDimension
+
+    }
+    
+    func findCellAndUpdate(payloadDate: String) {
+        
+    }
+    
+    
 }
 
 extension ChatController : ChatControllerSentPhotoDelegate {
@@ -297,5 +353,35 @@ extension ChatController : ChatControllerSentPhotoDelegate {
         }
     }
 }
+
+extension ChatController{
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if shouldEndRefreshingAfterDragging {
+            tableView.refreshControl?.endRefreshing()
+            shouldEndRefreshingAfterDragging = false
+        }
+    }
+}
+
+extension ChatController: loadImageDelegate {
+    func didCompleteLoadingImage(payloadDate: String, imageData: Data?) {
+        guard
+            let cellIndex = viewModel.messages?.firstIndex(where: {$0.sendTime == payloadDate}),
+            let tableView = self.tableView
+        else {
+            return
+        }
+        
+        let indexPath = IndexPath(row: cellIndex, section: 0)
+        if let cell = tableView.cellForRow(at: indexPath) as? ChatCellWithImage {
+            // You can now update the cell with the image data
+            cell.sentImageView.image = UIImage(data: imageData!)
+            tableView.reloadData()
+            print("COMPLETED")
+        }
+    }
+}
+
+
 
 

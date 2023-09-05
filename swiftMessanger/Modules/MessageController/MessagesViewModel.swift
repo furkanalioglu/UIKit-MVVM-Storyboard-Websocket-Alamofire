@@ -155,8 +155,7 @@ class MessagesViewModel {
         }
     }
     
-    func saveToLocal(_ message: MessageItem,payloadDate: String) {
-        CoreDataManager.shared.saveMessageEntity(message,payloadDate: payloadDate)
+    func saveToLocal(_ message: MessageItem,payloadDate: String, imageData: Data?) {
+        CoreDataManager.shared.saveMessageEntity(message,payloadDate: payloadDate, imageData: imageData)
     }
-
 }
