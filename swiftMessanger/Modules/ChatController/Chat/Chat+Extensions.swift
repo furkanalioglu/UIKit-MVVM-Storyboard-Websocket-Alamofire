@@ -229,18 +229,19 @@ extension ChatController : SocketIOManagerChatDelegate {
                     scrollToBottom(animated: true)
                 }else{
                     guard let url = URL(string:message.message) else { return }
+                    let index = self.viewModel.messages?.firstIndex(where: {$0.sendTime == message.sendTime})
+
                     ImageLoader.shared.getData(from: url) { data, _, err in
                         if err == nil {
                             CoreDataManager.shared.updateImageDataInCoreData(forMessageWithSendTime: message.sendTime, with: data!)
-                            let index = self.viewModel.messages?.firstIndex(where: {$0.sendTime == message.sendTime})
                             self.viewModel.messages![index!].imageData = data
                         }
+                        
                     }
-   
                 }
 //                viewModel.saveToLocal(message)
-                self.tableView.reloadData()
-                self.scrollToBottom(animated: true)
+                tableView.reloadData()
+                scrollToBottom(animated: true)
             }
             
         default:
