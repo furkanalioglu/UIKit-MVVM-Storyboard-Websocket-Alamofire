@@ -79,7 +79,7 @@ extension ChatController : ChatControllerDelegate {
 
                 }
             }
-        case .user(let user):
+        case .user(_):
             if error == nil {
                 if tableView.refreshControl?.isRefreshing == true {
                     if tableView.isDragging {
@@ -93,6 +93,7 @@ extension ChatController : ChatControllerDelegate {
                 tableView.reloadData()
                 setupNavigationController()
             }else{
+
             }
         default:
             break
@@ -239,7 +240,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                         
                     }
                 }
-//                viewModel.saveToLocal(message)
                 tableView.reloadData()
                 scrollToBottom(animated: true)
             }
@@ -284,8 +284,36 @@ extension ChatController : PhotoPickerDelegate {
     func didCancelPicking() {
         print("IMAGEDEBUG: Picker dismieed")
     }
-    
-    
+}
+
+
+extension ChatController: LoadImageDelegate {
+    func didCompleteLoadingImage(payloadDate: String, imageData: Data?) {
+        guard
+            let cellIndex = viewModel.messages?.firstIndex(where: {$0.sendTime == payloadDate}),
+            let tableView = self.tableView
+        else {
+            return
+        }
+        
+        let indexPath = IndexPath(row: cellIndex, section: 0)
+        if let cell = tableView.cellForRow(at: indexPath) as? ChatCellWithImage {
+            cell.sentImageView.image = UIImage(data: imageData!)
+            tableView.reloadData()
+            print("COMPLETED")
+        }
+    }
+}
+
+
+extension ChatController : ChatControllerSentPhotoDelegate {
+    func userDidSentPhoto(image: UIImage?, error: String?) {
+        if error == nil {
+            self.tableView.reloadData()
+            self.showLoader(false)
+            scrollToBottom(animated: true)
+        }
+    }
 }
 
 

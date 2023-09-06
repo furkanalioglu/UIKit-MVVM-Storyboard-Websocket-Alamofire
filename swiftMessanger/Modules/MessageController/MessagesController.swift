@@ -157,7 +157,6 @@ extension MessagesController {
                 chatVC.viewModel.seenDelegate = self
             }else if let selectedGroup = sender as? GroupCell{
                 chatVC.viewModel.chatType = .group(selectedGroup)
-//                chatVC.videoCell.isHidden = !selectedGroup.isEvent
                 chatVC.viewModel.seenDelegate = self
             }else{
                 print("SEGUEDEBUG: could not send segue")

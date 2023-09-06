@@ -12,7 +12,7 @@ enum CoreDataIds : String {
 }
 
 
-protocol loadImageDelegate : AnyObject {
+protocol LoadImageDelegate : AnyObject {
     func didCompleteLoadingImage(payloadDate:String, imageData: Data?)
 }
 
@@ -32,7 +32,7 @@ final class CoreDataManager {
         }
     }
     
-    weak var loadImageDelegate : loadImageDelegate?
+    weak var loadImageDelegate : LoadImageDelegate?
     
     private func dispose() {
         CoreDataManager.Static.instance = nil
@@ -51,22 +51,22 @@ final class CoreDataManager {
     }()
     
     // MARK: - Core Data Saving support
-    func saveContext () {
+    func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
-            do {
-                context.perform {
-                    // CoreData operations here
-                    try? context.save()
+            context.perform {
+                do {
+                    try context.save()
+                } catch {
+                    // Replace this implementation with code to handle the error appropriately.
+                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                    let nserror = error as NSError
+                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
                 }
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }
+
     func saveMessageEntity(_ message: MessageItem, payloadDate: String, imageData: Data?) {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
         //        guard let sendTime = Int(message.sendTime) else { return }
@@ -103,7 +103,6 @@ final class CoreDataManager {
                 let results = try context.fetch(fetchRequest)
                 if let messageEntityToUpdate = results.first {
                     messageEntityToUpdate.imageData = imageData
-                    print("COREDEBUG",messageEntityToUpdate.sendTime)
                     // Save the changes to persist the updated imageData
                     do {
                         try context.save()
