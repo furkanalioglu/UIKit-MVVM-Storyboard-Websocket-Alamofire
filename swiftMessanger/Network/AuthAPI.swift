@@ -107,9 +107,18 @@ extension AuthAPI: TargetType {
         case .getAllUsers:
             return .requestPlain
         case .getMessagesForId(_, let lastMsgTime, let firstMsgTime):
-            let parameters : [String: Any] = ["lastMsgTime":lastMsgTime,
-                                              "firstMsgTime":firstMsgTime]
+            var parameters: [String: Any] = [:]
+            
+            if let lastTime = lastMsgTime {
+                parameters["lastMsgTime"] = lastTime
+            }
+            
+            if let firstTime = firstMsgTime {
+                parameters["firstMsgTime"] = firstTime
+            }
+
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
+
         case .getAllMessages:
             return .requestPlain
         case .updateCurrentUser(let updateModel):

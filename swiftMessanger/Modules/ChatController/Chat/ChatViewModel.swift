@@ -192,7 +192,8 @@ class ChatViewModel {
     }
         
     func fetchMessagesForSelectedUser(userId: String, lastMsgTime: String?, firstMsgTime: String?, completion: @escaping(Error?, [MessageItem]?) -> Void) {
-
+        let lastMsgTime = lastMsgTime ?? nil
+        let firstMsgTime = firstMsgTime ?? nil
         var output = [MessageItem]()
         print("Fetching messages from time: \(lastMsgTime ?? "nil")")
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, lastMsgTime: lastMsgTime, firstMsgTime: firstMsgTime) { error, messages in
@@ -261,7 +262,8 @@ class ChatViewModel {
                 print("debug6: we fetched new according to \(messages?.last?.sendTime)")
                 print("debug6: we fetched new according to \(messages?.last?.message)")
                 //ahmetdebug
-                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: messages?.last?.sendTime, firstMsgTime: nil) { err, messages in
+                guard let lastMsgTime = messages?.last?.sendTime else { return }
+                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: lastMsgTime, firstMsgTime: nil) { err, messages in
                     if err == nil, let newMessages = messages {
                         self.messages?.append(contentsOf:newMessages)
                         self.delegate?.datasReceived(error: nil)
@@ -338,8 +340,6 @@ class ChatViewModel {
         case .user(_):
             guard let sendTime = messages?.first?.sendTime else { fatalError("no st") }
             guard let message = messages?.first?.message else { fatalError("no st") }
-            print("debug7 Sent message time: \(sendTime)")
-            print("debug7 Sent message: \(message)")
             fetchLocalMessages(beforeTime: sendTime)
         case .group(_ ):
             currentPage += 1
@@ -504,7 +504,7 @@ class ChatViewModel {
                     }
                 }
             }else{
-                print("debug7: since no local messages exist appending")
+                print("debug7: since local messages exist appending")
                 self.messages?.insert(contentsOf: sortedMessages, at: 0)
                 self.delegate?.datasReceived(error: nil)
             }
