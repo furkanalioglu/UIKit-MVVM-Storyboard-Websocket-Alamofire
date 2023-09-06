@@ -260,6 +260,22 @@ class RaceView: UIView {
         lottieAnimationView.stop()
         lottieAnimationView.removeFromSuperview()
     }
+    
+    func raceViewDispose() {
+        removeAllCircles()
+        removeLottieAnimation()
+        removeFromSuperview()
+        userCircles = []
+        handler?.stopTimer()
+        ghostCarView.itemCount = 0
+        ghostCarView.updateItemCountForGhostCar(itemCount: 0)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            lottieAnimationView.isHidden = true
+            lottieAnimationView.stop()
+            flagView.isHidden = true
+        }
+    }
 }
 
 //Timer Delegate

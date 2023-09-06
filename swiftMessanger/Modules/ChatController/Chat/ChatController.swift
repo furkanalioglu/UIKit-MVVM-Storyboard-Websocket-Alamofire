@@ -47,30 +47,7 @@ class ChatController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        switch viewModel.chatType {
-        case .user(let user):
-            AppConfig.instance.currentChat = nil
-            viewModel.handleMessageSeen(forUserId: user.userId)
-        case .group(let group):
-            viewModel.rView?.handler?.stopTimer()
-            viewModel.player?.pause()
-            AppConfig.instance.currentChat = nil
-            viewModel.rView?.removeAllCircles()
-            viewModel.rView?.removeLottieAnimation()
-            viewModel.rView?.removeFromSuperview()
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                viewModel.handleMessageSeen(forUserId: group.id)
-                viewModel.rView?.lottieAnimationView.isHidden = true
-                viewModel.rView?.lottieAnimationView.stop()
-                viewModel.rView?.flagView.isHidden = true
-                viewModel.rView = nil
-                //
-                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
-            }
-        default:
-            print("Error")
-        }
+        viewModel.handleDismissView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -78,6 +55,8 @@ class ChatController: UIViewController {
         switch viewModel.chatType {
         case .user(let user):
             AppConfig.instance.currentChat = user.userId
+            navigationItem.title = user.username
+            navigationItem.largeTitleDisplayMode = .never
         case .group(let group):
             AppConfig.instance.currentChat = group.id
         default:

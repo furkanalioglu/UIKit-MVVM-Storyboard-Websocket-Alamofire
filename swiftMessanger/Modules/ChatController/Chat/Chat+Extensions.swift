@@ -53,18 +53,12 @@ extension ChatController : ChatControllerDelegate {
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         videoCell.isHidden = true
-
                     }
                 }else{
-                    guard let timeLeft = viewModel.timeLeft else { return }
                     guard let raceDetails = viewModel.raceDetails else { return }
-                    guard let userItemCount = viewModel.userItemCount else { return }
-                    viewModel.rView?.handler?.countdownValue = timeLeft
-                    let handler = RaceHandler(userModels: raceDetails, isAnyRaceAvailable: true,countdownValue:timeLeft, raceOwnerId: viewModel.groupOwnerId)
+                    let handler = viewModel.createHandlerForNewEvent(raceDetails: raceDetails, groupId: group.id, countdownValue: timeleft)
                     viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
-                    viewModel.rView?.handler?.startTimer()
-                    viewModel.rView?.ghostCarView.itemCount = userItemCount
-                    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+                    viewModel.updateRaceViewWithHandler(handler: handler)
                     viewModel.rView?.layoutIfNeeded()
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
@@ -72,11 +66,8 @@ extension ChatController : ChatControllerDelegate {
                         viewModel.rView?.fillSuperview()
                         videoCell.isHidden = false
                         viewModel.rView?.layoutIfNeeded()
-                        print("2")
                     }
                     viewModel.rView?.updateUserCircles(newUsers: nil)
-                    print("3")
-
                 }
             }
         case .user(_):
@@ -103,7 +94,6 @@ extension ChatController : ChatControllerDelegate {
 
 extension ChatController : SocketIOManagerChatDelegate {
     func didSentNewChatMessage(payloadDate: String,text: String,type:String) {
-        guard let currentUserId = AppConfig.instance.currentUserId else { return }
         switch viewModel.chatType{
         case .user(_ ):
             if type == MessageTypes.text.rawValue {
@@ -149,18 +139,14 @@ extension ChatController : SocketIOManagerChatDelegate {
                 switch eventType{
                 case .updateUserCircles:
                     self.viewModel.rView?.updateUserCircles(newUsers: userModel)
-
                 case .showVideoCell(let raceDetails, let groupId, let timer):
-                    let handler = RaceHandler(userModels: raceDetails,
-                                              isAnyRaceAvailable: true,
-                                              countdownValue: timer,raceOwnerId: self.viewModel.groupOwnerId)
+                    
+                    let handler = viewModel.createHandlerForNewEvent(raceDetails: raceDetails, groupId: groupId, countdownValue: timer)
                     self.viewModel.rView = RaceView(frame: (self.view.frame),
                                                handler: handler,
                                                groupId: groupId)
-
                     self.viewModel.rView?.handler?.startTimer()
                     self.viewModel.rView?.updateUserCircles(newUsers: nil)
-
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         videoCell.isHidden = false
@@ -170,17 +156,11 @@ extension ChatController : SocketIOManagerChatDelegate {
                     }
                     
                 case .hideVideoCell:
-                    self.viewModel.rView?.userCircles = []
-                    self.viewModel.raceDetails = []
-                    self.viewModel.rView?.handler?.stopTimer()
-                    viewModel.rView?.ghostCarView.itemCount = 0
-                    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: 0)
-
+                    viewModel.handleDismissView()
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         self.videoCell.isHidden = true
                         self.viewModel.rView?.removeFromSuperview()
-                        
                     }
 
                 }
@@ -243,7 +223,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                 tableView.reloadData()
                 scrollToBottom(animated: true)
             }
-            
         default:
             break
         }

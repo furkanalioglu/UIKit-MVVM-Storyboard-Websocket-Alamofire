@@ -155,16 +155,77 @@ class ChatViewModel {
     weak var seenDelegate : ChatMessageSeenDelegate?
     weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
+    
+    func handleDismissView() {
+        switch chatType {
+        case .user(let user):
+            AppConfig.instance.currentChat = nil
+            handleMessageSeen(forUserId: user.userId)
+        case .group(let group):
+            player?.pause()
+            AppConfig.instance.currentChat = nil
+            rView?.handler?.stopTimer()
+            rView?.raceViewDispose()
+            SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
+        default:
+            break
+        }
+    }
+    
+    //    guard let timeLeft = viewModel.timeLeft else { return }
+    //    guard let raceDetails = viewModel.raceDetails else { return }
+    //    guard let userItemCount = viewModel.userItemCount else { return }
+    //    let handler = viewModel.createHandlerForNewEvent(raceDetails: raceDetails, groupId: group.id, countdownValue: timeleft)
+    //
+    //    viewModel.rView?.handler?.countdownValue = timeLeft
+    //    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
+    //    viewModel.rView?.handler?.startTimer()
+    //    viewModel.rView?.ghostCarView.itemCount = userItemCount
+    //    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+    //    viewModel.rView?.layoutIfNeeded()
+    //    DispatchQueue.main.async { [weak self] in
+    //        guard let self = self else { return }
+    //        videoCell.addSubview(self.viewModel.rView!)
+    //        viewModel.rView?.fillSuperview()
+    //        videoCell.isHidden = false
+    //        viewModel.rView?.layoutIfNeeded()
+    //        print("2")
+    //    }
+    //    viewModel.rView?.updateUserCircles(newUsers: nil)
+    //    print("3")
+    
+    func updateRaceViewWithHandler(handler: RaceHandler) {
+        guard let timeLeft = timeLeft else { return }
+        guard let userItemCount = userItemCount else { return }
+        rView?.handler?.countdownValue = timeLeft
+        rView?.handler?.startTimer()
+        rView?.ghostCarView.itemCount = userItemCount
+        rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+    }
+    
+    func createHandlerForNewEvent(raceDetails: [GroupEventModel], groupId: Int, countdownValue : Int) -> RaceHandler{
+        let handler = RaceHandler(userModels: raceDetails,
+                                  isAnyRaceAvailable: true,
+                                  countdownValue: countdownValue,raceOwnerId: groupOwnerId)
+        return handler
+    }
+    
+    func hideVideoCell() {
+        raceDetails = []
+        rView?.raceViewDispose()
+    }
+    
+    
     func fetchMessagesForSelectedUser(userId: String, page: Int) {
         let lastMsgTime = Int(messages?.last?.sendTime ?? "") ?? 0
+        
         print("Fetching messages from time: \(lastMsgTime)")
-
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page, lastMsgTime: lastMsgTime) { error, messages in
             if let error = error {
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
             }
-
+            
             guard let newMessages = messages, !newMessages.isEmpty else {
                 print("FETCHLOG: No new messages fetched. Messages might exist in DB.")
                 self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
@@ -173,10 +234,10 @@ class ChatViewModel {
             
             self.delegate?.newMessageDatasExist(status: ChatStatus.fetch.rawValue)
             self.messages?.append(contentsOf: newMessages)
-
+            
             let downloadGroup = DispatchGroup()
             for newMessage in newMessages {
-
+                
                 guard newMessage.type == MessageTypes.image.rawValue, let imageURL = URL(string: newMessage.message) else {
                     self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
                     continue
@@ -197,12 +258,12 @@ class ChatViewModel {
                         self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
                         return
                     }
-
+                    
                     self.messages?[index].imageData = imageData
                     self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: imageData)
                 }
             }
-
+            
             downloadGroup.notify(queue: .main) {
                 self.fetchMessagesForSelectedUser(userId: userId, page: page + 1)
             }
@@ -210,7 +271,7 @@ class ChatViewModel {
         
         self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
     }
-
+    
     
     
     
@@ -270,41 +331,12 @@ class ChatViewModel {
         }
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        switch viewModel.chatType {
-//        case .user(let user):
-//            AppConfig.instance.currentChat = nil
-//            viewModel.handleMessageSeen(forUserId: user.userId)
-//        case .group(let group):
-//            viewModel.rView?.handler?.stopTimer()
-//            viewModel.player?.pause()
-//            AppConfig.instance.currentChat = nil
-//            viewModel.rView?.removeAllCircles()
-//            viewModel.rView?.removeLottieAnimation()
-//            viewModel.rView?.removeFromSuperview()
-//            DispatchQueue.main.async { [weak self] in
-//                guard let self = self else { return }
-//                viewModel.handleMessageSeen(forUserId: group.id)
-//                viewModel.rView?.lottieAnimationView.isHidden = true
-//                viewModel.rView?.lottieAnimationView.stop()
-//                viewModel.rView?.flagView.isHidden = true
-//                viewModel.rView = nil
-//                //
-//                SocketIOManager.shared().sendRaceEventRequest(groupId: String(group.id), seconds: "100",status: 1)
-//            }
-//        default:
-//            print("Error")
-//        }
-//    }
-//
-//    func handleDismissViewForGroup(_ animated: Bool) {
-//
-//    }
     
     func fetchNewMessages() {
         switch chatType {
         case .user(_):
             currentPage += 1
+            print("page")
         case .group(_ ):
             currentPage += 1
         default:
@@ -408,46 +440,44 @@ class ChatViewModel {
         
     }
     
-    
-    
     func fetchLocalMessages(forPage page: Int) {
         switch chatType {
         case .user(let user):
             guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
             let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, page: page)
             
-            var newLocalMessageItems = [MessageItem]()
-
+            newLocalMessageItems = [MessageItem]()
+            
             for message in localMessages {
                 guard let messages = message.message,
                       let sendTime = message.sendTime,
                       let type = message.type,
                       isRelevantMessage(user: user, senderId: Int(message.senderId), receiverId: Int(message.receiverId))
                 else { continue }
-
-                var messageItem = MessageItem(message: messages,
+                
+                let messageItem = MessageItem(message: messages,
                                               senderId: Int(message.senderId),
                                               receiverId: Int(message.receiverId),
                                               sendTime: sendTime,
                                               type: type,
                                               imageData: message.imageData)
-
+                
                 if shouldDownloadImageForCell(messageItem: messageItem) {
                     downloadImageAndUpdateItem(messageItem) { updatedMessageItem in
                         if let updatedItem = updatedMessageItem {
-                            newLocalMessageItems.append(updatedItem)
+                            self.newLocalMessageItems.append(updatedItem)
+                            print(updatedItem)
                         }
                     }
                 } else {
                     newLocalMessageItems.append(messageItem)
                 }
             }
-
-            // Sorting and appending messages
+            
             let sortedMessages = newLocalMessageItems.sorted {
                 $0.sendTime.timeStampToDate() ?? Date() < $1.sendTime.timeStampToDate() ?? Date()
             }
-
+            
             if messages == nil {
                 self.messages = sortedMessages
                 self.delegate?.datasReceived(error: nil)
@@ -455,7 +485,7 @@ class ChatViewModel {
                 self.messages?.insert(contentsOf: sortedMessages, at: 0)
                 self.delegate?.datasReceived(error: nil)
             }
-
+            
         default:
             break
         }
@@ -466,7 +496,7 @@ class ChatViewModel {
             completion(nil)
             return
         }
-
+        
         ImageLoader.shared.getData(from: imageURL) { data, _, err in
             if err == nil, let imageData = data {
                 var updatedMessageItem = messageItem
@@ -478,7 +508,7 @@ class ChatViewModel {
             }
         }
     }
-
+    
     
     
     func fetchMessagesForPaginiton() {

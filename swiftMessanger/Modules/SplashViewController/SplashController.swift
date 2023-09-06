@@ -39,6 +39,7 @@ extension SplashController : SplashControllerDelegate {
         
         if error == .couldNotReceivedDatas {
             print("COULD NOT FIND USER")
+            RootManager.switchRoot(.auth)
             return
         }
         

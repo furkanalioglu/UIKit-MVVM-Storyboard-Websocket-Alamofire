@@ -60,8 +60,8 @@ final class CoreDataManager {
                 } catch {
                     // Replace this implementation with code to handle the error appropriately.
                     // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    let nserror = error as NSError
-                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+//                    let nserror = error as NSError
+//                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
                 }
             }
         }
@@ -69,7 +69,6 @@ final class CoreDataManager {
 
     func saveMessageEntity(_ message: MessageItem, payloadDate: String, imageData: Data?) {
         let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
-        //        guard let sendTime = Int(message.sendTime) else { return }
         
         if message.type == MessageTypes.image.rawValue {
             newMessageModel.imageData = imageData
