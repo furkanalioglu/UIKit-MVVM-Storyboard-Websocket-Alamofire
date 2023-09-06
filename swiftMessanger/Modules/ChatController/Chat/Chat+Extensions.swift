@@ -22,6 +22,7 @@ protocol ChatMessageSeenDelegate : AnyObject {
 
 protocol ChatControllerSentPhotoDelegate: AnyObject {
     func userDidSentPhoto(image:UIImage?, error: String?)
+    func userDidReceivePhotoMessage(error: String?)
 }
 
 
@@ -29,6 +30,7 @@ extension ChatController : ChatControllerDelegate {
     func newMessageDatasExist(status: String) {
         if status == "fetch" {
             showLoader(true)
+            print("showloader")
         }else{
             tableView.reloadData()
             setupNavigationController()
@@ -37,14 +39,15 @@ extension ChatController : ChatControllerDelegate {
         }
     }
     
-    
     func datasReceived(error: String?) {
         switch viewModel.chatType{
         case .group(let group):
             if error == nil {
+                print("hereee")
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 setupNavigationController()
+                print("asdas",viewModel.groupOwnerId)
                 if let count = viewModel.messages?.count, count > 0 {
                     tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }
@@ -57,8 +60,8 @@ extension ChatController : ChatControllerDelegate {
                 }else{
                     guard let raceDetails = viewModel.raceDetails else { return }
                     let handler = viewModel.createHandlerForNewEvent(raceDetails: raceDetails, groupId: group.id, countdownValue: timeleft)
-                    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     viewModel.updateRaceViewWithHandler(handler: handler)
+                    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
                     viewModel.rView?.layoutIfNeeded()
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
@@ -67,6 +70,7 @@ extension ChatController : ChatControllerDelegate {
                         videoCell.isHidden = false
                         viewModel.rView?.layoutIfNeeded()
                     }
+                    
                     viewModel.rView?.updateUserCircles(newUsers: nil)
                 }
             }
@@ -175,7 +179,6 @@ extension ChatController : SocketIOManagerChatDelegate {
                 if group.id == groupMessage.receiverId {
                     viewModel.messages?.append(groupMessage)
                     viewModel.socketMessages.append(groupMessage)
-                    print("receiveddebugSOCKET arrived appending....")
                     viewModel.socketMessages.removeAll()
                     tableView.reloadData()
                     scrollToBottom(animated: true)
@@ -200,32 +203,7 @@ extension ChatController : SocketIOManagerChatDelegate {
     }
     
     func didReceiveChatMessage(message: MessageItem) {
-        switch viewModel.chatType {
-        case .user(let user):
-            if message.senderId == user.userId || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
-                viewModel.messages?.append(message)
-
-                if message.type == MessageTypes.text.rawValue {
-                    tableView.reloadData()
-                    scrollToBottom(animated: true)
-                }else{
-                    guard let url = URL(string:message.message) else { return }
-                    let index = self.viewModel.messages?.firstIndex(where: {$0.sendTime == message.sendTime})
-
-                    ImageLoader.shared.getData(from: url) { data, _, err in
-                        if err == nil {
-                            CoreDataManager.shared.updateImageDataInCoreData(forMessageWithSendTime: message.sendTime, with: data!)
-                            self.viewModel.messages![index!].imageData = data
-                        }
-                        
-                    }
-                }
-                tableView.reloadData()
-                scrollToBottom(animated: true)
-            }
-        default:
-            break
-        }
+        viewModel.didReceiveChatMessage(message: message)
     }
 }
 
@@ -286,13 +264,34 @@ extension ChatController: LoadImageDelegate {
 
 
 extension ChatController : ChatControllerSentPhotoDelegate {
+    func userDidReceivePhotoMessage(error: String?) {
+        if error == nil {
+            tableView.reloadData()
+            scrollToBottom(animated: false)
+        }
+    }
+    
     func userDidSentPhoto(image: UIImage?, error: String?) {
         if error == nil {
             self.tableView.reloadData()
             self.showLoader(false)
-            scrollToBottom(animated: true)
+            scrollToBottom(animated: false)
         }
     }
 }
+
+extension ChatController{
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if shouldEndRefreshingAfterDragging {
+            tableView.refreshControl?.endRefreshing()
+            shouldEndRefreshingAfterDragging = false
+        }
+    }
+}
+
+
+
+
+
 
 

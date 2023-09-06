@@ -35,7 +35,6 @@ class ChatController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
-        viewModel.photoSentDelegate = self
         CoreDataManager.shared.loadImageDelegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
@@ -59,6 +58,7 @@ class ChatController: UIViewController {
             navigationItem.largeTitleDisplayMode = .never
         case .group(let group):
             AppConfig.instance.currentChat = group.id
+            
         default:
             print("Error")
         }
@@ -215,6 +215,7 @@ class ChatController: UIViewController {
             let infoButton = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(rightBarButtonTapped))
             rightBarButtonItems.append(infoButton)
             
+            print("heree",viewModel.isGroupOwner)
             if viewModel.isGroupOwner {
                 let startEventButtonImage = UIImage(systemName: "flag.checkered")
                 let startEventButton = UIBarButtonItem(image:startEventButtonImage, style: .plain, target: self, action: #selector(startEventTapped))
@@ -267,17 +268,4 @@ extension ChatController : UITableViewDataSource {
         }
     }
 }
-
-extension ChatController{
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if shouldEndRefreshingAfterDragging {
-            tableView.refreshControl?.endRefreshing()
-            shouldEndRefreshingAfterDragging = false
-        }
-    }
-}
-
-
-
-
 

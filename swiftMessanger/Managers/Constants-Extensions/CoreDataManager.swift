@@ -43,11 +43,13 @@ final class CoreDataManager {
         
         let container = NSPersistentCloudKitContainer(name: CoreDataIds.MessageEntity.rawValue)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            print("asadasfdsgdafasfad",storeDescription)
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
         return container
+        
     }()
     
     // MARK: - Core Data Saving support
@@ -93,7 +95,7 @@ final class CoreDataManager {
     }
     
     
-    func updateImageDataInCoreData(forMessageWithSendTime sendTime: String, with imageData: Data) {
+    func updateImageDataInCoreData(forMessageWithSendTime sendTime: String, with imageData: Data?) {
         let context = self.persistentContainer.viewContext
         context.perform {
             let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()

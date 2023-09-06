@@ -58,7 +58,7 @@ class ChatViewModel {
             switch chatType {
             case .user(let user):
                 fetchLocalMessages(forPage: 1)
-                fetchMessagesForSelectedUser(userId: String(user.userId), page: 1)
+//                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: Int(messages?.last?.sendTime ?? ""), firstMsgTime: nil)
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
             default:
@@ -80,7 +80,7 @@ class ChatViewModel {
     }
     
     var isGroupOwner: Bool {
-        if let currentUserInfo = userInformations?.first(where: { $0.id == Int(AppConfig.instance.currentUserId ?? "")}) {
+        if let currentUserInfo = userInformations?.first(where: { $0.userId == Int(AppConfig.instance.currentUserId ?? "")}) {
             return currentUserInfo.groupRole != GroupRoles.User.rawValue
         }
         return false
@@ -88,7 +88,7 @@ class ChatViewModel {
     
     var groupOwnerId: Int? {
         if let ownerIndex = userInformations?.firstIndex(where: {$0.groupRole != GroupRoles.User.rawValue}) {
-            return userInformations?[ownerIndex].id
+            return userInformations?[ownerIndex].userId
         }
         return nil
     }
@@ -172,28 +172,6 @@ class ChatViewModel {
         }
     }
     
-    //    guard let timeLeft = viewModel.timeLeft else { return }
-    //    guard let raceDetails = viewModel.raceDetails else { return }
-    //    guard let userItemCount = viewModel.userItemCount else { return }
-    //    let handler = viewModel.createHandlerForNewEvent(raceDetails: raceDetails, groupId: group.id, countdownValue: timeleft)
-    //
-    //    viewModel.rView?.handler?.countdownValue = timeLeft
-    //    viewModel.rView = RaceView(frame: view.frame, handler: handler,groupId: group.id)
-    //    viewModel.rView?.handler?.startTimer()
-    //    viewModel.rView?.ghostCarView.itemCount = userItemCount
-    //    viewModel.rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
-    //    viewModel.rView?.layoutIfNeeded()
-    //    DispatchQueue.main.async { [weak self] in
-    //        guard let self = self else { return }
-    //        videoCell.addSubview(self.viewModel.rView!)
-    //        viewModel.rView?.fillSuperview()
-    //        videoCell.isHidden = false
-    //        viewModel.rView?.layoutIfNeeded()
-    //        print("2")
-    //    }
-    //    viewModel.rView?.updateUserCircles(newUsers: nil)
-    //    print("3")
-    
     func updateRaceViewWithHandler(handler: RaceHandler) {
         guard let timeLeft = timeLeft else { return }
         guard let userItemCount = userItemCount else { return }
@@ -201,6 +179,7 @@ class ChatViewModel {
         rView?.handler?.startTimer()
         rView?.ghostCarView.itemCount = userItemCount
         rView?.ghostCarView.updateItemCountForGhostCar(itemCount: userItemCount)
+        
     }
     
     func createHandlerForNewEvent(raceDetails: [GroupEventModel], groupId: Int, countdownValue : Int) -> RaceHandler{
@@ -214,13 +193,12 @@ class ChatViewModel {
         raceDetails = []
         rView?.raceViewDispose()
     }
-    
-    
-    func fetchMessagesForSelectedUser(userId: String, page: Int) {
-        let lastMsgTime = Int(messages?.last?.sendTime ?? "") ?? 0
         
-        print("Fetching messages from time: \(lastMsgTime)")
-        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, page: page, lastMsgTime: lastMsgTime) { error, messages in
+    func fetchMessagesForSelectedUser(userId: String, lastMsgTime: String?, firstMsgTime: String?) {
+
+        
+        print("Fetching messages from time: \(lastMsgTime ?? "nil")")
+        MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, lastMsgTime: lastMsgTime, firstMsgTime: firstMsgTime) { error, messages in
             if let error = error {
                 self.delegate?.datasReceived(error: error.localizedDescription)
                 return
@@ -228,52 +206,47 @@ class ChatViewModel {
             
             guard let newMessages = messages, !newMessages.isEmpty else {
                 print("FETCHLOG: No new messages fetched. Messages might exist in DB.")
-                self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
                 return
             }
             
-            self.delegate?.newMessageDatasExist(status: ChatStatus.fetch.rawValue)
-            self.messages?.append(contentsOf: newMessages)
+            self.messages?.append(contentsOf:newMessages)
             
-            let downloadGroup = DispatchGroup()
+            let dispatchGroup = DispatchGroup() // Creating a DispatchGroup
+
             for newMessage in newMessages {
-                
-                guard newMessage.type == MessageTypes.image.rawValue, let imageURL = URL(string: newMessage.message) else {
+                self.delegate?.newMessageDatasExist(status: ChatStatus.fetch.rawValue)
+
+                if newMessage.type == MessageTypes.image.rawValue, let imageURL = URL(string: newMessage.message) {
+                    
+                    dispatchGroup.enter()  // Notify the group that a task has started
+                    
+                    ImageLoader.shared.getData(from: imageURL) { data, _, err in
+                        
+                        if let err = err {
+                            print("LOXS:Error fetching image data for message: \(newMessage.message). Error: \(err.localizedDescription)")
+                            self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
+                        } else if let imageData = data {
+                            let index = self.messages?.firstIndex(where: { $0.sendTime == newMessage.sendTime })
+                            self.messages?[index!].imageData = imageData
+                            self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: imageData)
+                        } else {
+                            print("LOXS:Failed to process image for message: \(newMessage.message)")
+                            self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
+                        }
+                        
+                        dispatchGroup.leave() // Notify the group that the task has finished
+                    }
+                } else {
                     self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
-                    continue
-                }
-                
-                downloadGroup.enter()
-                ImageLoader.shared.getData(from: imageURL) { data, _, err in
-                    defer { downloadGroup.leave() }
-                    
-                    if let err = err {
-                        print("Error fetching image data for message: \(newMessage.message). Error: \(err.localizedDescription)")
-                        self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
-                        return
-                    }
-                    
-                    guard let imageData = data, let index = self.messages?.firstIndex(where: { $0.sendTime == newMessage.sendTime }) else {
-                        print("Failed to process image for message: \(newMessage.message)")
-                        self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
-                        return
-                    }
-                    
-                    self.messages?[index].imageData = imageData
-                    self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: imageData)
                 }
             }
             
-            downloadGroup.notify(queue: .main) {
-                self.fetchMessagesForSelectedUser(userId: userId, page: page + 1)
+            dispatchGroup.notify(queue: .main) {  // This block will be triggered once all the async tasks inside the dispatchGroup have finished
+                self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
             }
         }
-        
-        self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
     }
-    
-    
-    
+
     
     func addNewChatMessage(payloadDate: String, messageText: String, type:String, completion: @escaping(Error?) -> Void) {
         switch chatType {
@@ -445,8 +418,14 @@ class ChatViewModel {
         case .user(let user):
             guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
             let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, page: page)
-            
             newLocalMessageItems = [MessageItem]()
+
+            
+            //setup after root
+            if localMessages.isEmpty {
+                fetchMessagesForSelectedUser(userId: String(user.userId),lastMsgTime: nil, firstMsgTime: nil)
+            }
+            
             
             for message in localMessages {
                 guard let messages = message.message,
@@ -479,6 +458,7 @@ class ChatViewModel {
             }
             
             if messages == nil {
+                //never execute
                 self.messages = sortedMessages
                 self.delegate?.datasReceived(error: nil)
             } else {
@@ -509,10 +489,38 @@ class ChatViewModel {
         }
     }
     
-    
-    
-    func fetchMessagesForPaginiton() {
-        
+    func didReceiveChatMessage(message: MessageItem) {
+        switch chatType {
+        case .user(let user):
+            if message.senderId == user.userId || message.senderId == Int(AppConfig.instance.currentUserId ?? "") {
+                messages?.append(message)
+
+                if message.type == MessageTypes.text.rawValue {
+                    self.photoSentDelegate?.userDidReceivePhotoMessage(error: nil)
+                }else{
+                    guard let url = URL(string:message.message) else { return }
+                    guard let index = self.messages?.firstIndex(where: {$0.sendTime == message.sendTime}) else { return }
+
+                    ImageLoader.shared.getData(from: url) { data, _, err in
+                        if err == nil {
+                            if let data = data{
+                                CoreDataManager.shared.updateImageDataInCoreData(forMessageWithSendTime: message.sendTime, with: data)
+                                self.messages?[index].imageData = data
+                            }else{
+                                CoreDataManager.shared.updateImageDataInCoreData(forMessageWithSendTime: message.sendTime, with: nil)
+                                self.messages?[index].imageData = nil
+                            }
+
+                        }else{
+                            self.photoSentDelegate?.userDidReceivePhotoMessage(error: err?.localizedDescription)
+                        }
+                    }
+                    self.photoSentDelegate?.userDidReceivePhotoMessage(error: nil)
+                }
+            }
+        default:
+            break
+        }
     }
 }
 

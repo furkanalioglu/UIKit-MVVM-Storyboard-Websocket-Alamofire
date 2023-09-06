@@ -34,7 +34,7 @@ class MessagesController: UIViewController{
         viewModel.delegate = self
         SocketIOManager.shared().delegate = self
         tableView.reloadData()
-        
+    
         setupRefreshControl()
         
         NotificationCenter.default.addObserver(self,selector: #selector(handleNotificationArrived),name: .notificationArrived,object: nil)

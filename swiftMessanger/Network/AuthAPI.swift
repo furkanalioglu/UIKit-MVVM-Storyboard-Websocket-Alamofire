@@ -15,7 +15,7 @@ enum AuthAPI {
     case getCurrentUser
     case getAllUsers
     case updateCurrentUser(updateModel : UpdateUserModel)
-    case getMessagesForId(userId: String, page: Int, lastMsgTime: Int)
+    case getMessagesForId(userId: String, lastMsgTime: String?, firstMsgTime: String?)
     case getAllMessages
     case getSpecificUser(userId: Int)
     case requestRefreshToken
@@ -106,9 +106,9 @@ extension AuthAPI: TargetType {
             return .requestPlain
         case .getAllUsers:
             return .requestPlain
-        case .getMessagesForId(let userId, let page, let lastMsgTime):
-            let parameters : [String: Any] = ["page": page,
-                                              "lastMsgTime":lastMsgTime]
+        case .getMessagesForId(_, let lastMsgTime, let firstMsgTime):
+            let parameters : [String: Any] = ["lastMsgTime":lastMsgTime,
+                                              "firstMsgTime":firstMsgTime]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         case .getAllMessages:
             return .requestPlain
