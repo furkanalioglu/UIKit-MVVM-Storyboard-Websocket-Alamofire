@@ -43,11 +43,9 @@ extension ChatController : ChatControllerDelegate {
         switch viewModel.chatType{
         case .group(let group):
             if error == nil {
-                print("hereee")
                 tableView.refreshControl?.endRefreshing()
                 tableView.reloadData()
                 setupNavigationController()
-                print("asdas",viewModel.groupOwnerId)
                 if let count = viewModel.messages?.count, count > 0 {
                     tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
                 }

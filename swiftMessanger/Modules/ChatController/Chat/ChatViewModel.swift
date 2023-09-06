@@ -57,8 +57,7 @@ class ChatViewModel {
         didSet{
             switch chatType {
             case .user(let user):
-                fetchLocalMessages(forPage: 1)
-//                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: Int(messages?.last?.sendTime ?? ""), firstMsgTime: nil)
+                handleInitialLoad()
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
             default:
@@ -126,8 +125,6 @@ class ChatViewModel {
             switch chatType {
             case .group(let group):
                 fetchGroupMessagesForSelectedGroup(gid: group.id, page: currentPage)
-            case .user(_ ):
-                fetchLocalMessages(forPage: currentPage)
             default:
                 break
             }
@@ -194,47 +191,45 @@ class ChatViewModel {
         rView?.raceViewDispose()
     }
         
-    func fetchMessagesForSelectedUser(userId: String, lastMsgTime: String?, firstMsgTime: String?) {
+    func fetchMessagesForSelectedUser(userId: String, lastMsgTime: String?, firstMsgTime: String?, completion: @escaping(Error?, [MessageItem]?) -> Void) {
 
-        
+        var output = [MessageItem]()
         print("Fetching messages from time: \(lastMsgTime ?? "nil")")
         MessagesService.instance.fetchMessagesForSpecificUser(userId: userId, lastMsgTime: lastMsgTime, firstMsgTime: firstMsgTime) { error, messages in
             if let error = error {
-                self.delegate?.datasReceived(error: error.localizedDescription)
+                completion(error,nil)
                 return
             }
             
             guard let newMessages = messages, !newMessages.isEmpty else {
                 print("FETCHLOG: No new messages fetched. Messages might exist in DB.")
+                completion(nil, [MessageItem]())
                 return
             }
-            
-            self.messages?.append(contentsOf:newMessages)
-            
             let dispatchGroup = DispatchGroup() // Creating a DispatchGroup
 
             for newMessage in newMessages {
                 self.delegate?.newMessageDatasExist(status: ChatStatus.fetch.rawValue)
+                output.append(newMessage)
 
                 if newMessage.type == MessageTypes.image.rawValue, let imageURL = URL(string: newMessage.message) {
-                    
                     dispatchGroup.enter()  // Notify the group that a task has started
                     
                     ImageLoader.shared.getData(from: imageURL) { data, _, err in
-                        
                         if let err = err {
                             print("LOXS:Error fetching image data for message: \(newMessage.message). Error: \(err.localizedDescription)")
                             self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
+                            
                         } else if let imageData = data {
-                            let index = self.messages?.firstIndex(where: { $0.sendTime == newMessage.sendTime })
-                            self.messages?[index!].imageData = imageData
+                            let index = output.firstIndex(where: { $0.sendTime == newMessage.sendTime })
+                            output[index!].imageData = imageData
                             self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: imageData)
+                            
                         } else {
                             print("LOXS:Failed to process image for message: \(newMessage.message)")
                             self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
                         }
-                        
-                        dispatchGroup.leave() // Notify the group that the task has finished
+                        dispatchGroup.leave()
                     }
                 } else {
                     self.saveToLocal(newMessage, payloadDate: newMessage.sendTime, imageData: nil)
@@ -243,7 +238,40 @@ class ChatViewModel {
             
             dispatchGroup.notify(queue: .main) {  // This block will be triggered once all the async tasks inside the dispatchGroup have finished
                 self.delegate?.newMessageDatasExist(status: ChatStatus.load.rawValue)
+                completion(nil, output)
             }
+        }
+    }
+    
+    func handleInitialLoad() {
+        switch chatType {
+        case .user(let user):
+            guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
+            let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, before: Date().toTimestampString())
+            if localMessages.first == nil {
+                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: nil, firstMsgTime: nil) { err, messages in
+                    if err == nil, let messages = messages {
+                        self.messages = messages
+                        self.delegate?.datasReceived(error: nil)
+                        print("debug6: we didnt have any new  messahe ")
+                    }
+                }
+            }else{
+                self.messages = convertEntityToItem(messageEntity: localMessages, forUser: user)
+                print("debug6: we fetched new according to \(messages?.last?.sendTime)")
+                print("debug6: we fetched new according to \(messages?.last?.message)")
+                //ahmetdebug
+                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: messages?.last?.sendTime, firstMsgTime: nil) { err, messages in
+                    if err == nil, let newMessages = messages {
+                        self.messages?.append(contentsOf:newMessages)
+                        self.delegate?.datasReceived(error: nil)
+                        print("debug6: we fetched new \(newMessages)")
+                    }
+                }
+            }
+
+        default:
+            break
         }
     }
 
@@ -308,8 +336,11 @@ class ChatViewModel {
     func fetchNewMessages() {
         switch chatType {
         case .user(_):
-            currentPage += 1
-            print("page")
+            guard let sendTime = messages?.first?.sendTime else { fatalError("no st") }
+            guard let message = messages?.first?.message else { fatalError("no st") }
+            print("debug7 Sent message time: \(sendTime)")
+            print("debug7 Sent message: \(message)")
+            fetchLocalMessages(beforeTime: sendTime)
         case .group(_ ):
             currentPage += 1
         default:
@@ -413,55 +444,67 @@ class ChatViewModel {
         
     }
     
-    func fetchLocalMessages(forPage page: Int) {
+    private func convertEntityToItem(messageEntity: [MessageEntity], forUser user: MessagesCellItem) -> [MessageItem] {
+        var convertedMessages = [MessageItem]()
+        for message in messageEntity {
+            guard let messages = message.message,
+                  let sendTime = message.sendTime,
+                  let type = message.type,
+                  isRelevantMessage(user: user, senderId: Int(message.senderId), receiverId: Int(message.receiverId))
+            else { continue }
+            
+            let messageItem = MessageItem(message: messages,
+                                          senderId: Int(message.senderId),
+                                          receiverId: Int(message.receiverId),
+                                          sendTime: sendTime,
+                                          type: type,
+                                          imageData: message.imageData)
+        
+            if shouldDownloadImageForCell(messageItem: messageItem) {
+                downloadImageAndUpdateItem(messageItem) { updatedMessageItem in
+                    if let updatedItem = updatedMessageItem {
+                        convertedMessages.append(updatedItem)
+                        print(updatedItem)
+                    }
+                }
+            } else {
+                convertedMessages.append(messageItem)
+            }
+        }
+        
+        let sortedMessages = convertedMessages.sorted {
+            $0.sendTime.timeStampToDate() ?? Date() < $1.sendTime.timeStampToDate() ?? Date()
+        }
+        return sortedMessages
+    }
+    
+    func fetchLocalMessages(beforeTime payloadDate: String) {
         switch chatType {
         case .user(let user):
             guard let currentUid = Int(AppConfig.instance.currentUserId ?? "") else { return }
-            let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, page: page)
-            newLocalMessageItems = [MessageItem]()
-
+            let localMessages = CoreDataManager.shared.fetchMessages(currentUserId: currentUid, userId: user.userId, before: payloadDate)
+            newLocalMessageItems = convertEntityToItem(messageEntity: localMessages, forUser: user)
             
-            //setup after root
-            if localMessages.isEmpty {
-                fetchMessagesForSelectedUser(userId: String(user.userId),lastMsgTime: nil, firstMsgTime: nil)
-            }
-            
-            
-            for message in localMessages {
-                guard let messages = message.message,
-                      let sendTime = message.sendTime,
-                      let type = message.type,
-                      isRelevantMessage(user: user, senderId: Int(message.senderId), receiverId: Int(message.receiverId))
-                else { continue }
-                
-                let messageItem = MessageItem(message: messages,
-                                              senderId: Int(message.senderId),
-                                              receiverId: Int(message.receiverId),
-                                              sendTime: sendTime,
-                                              type: type,
-                                              imageData: message.imageData)
-                
-                if shouldDownloadImageForCell(messageItem: messageItem) {
-                    downloadImageAndUpdateItem(messageItem) { updatedMessageItem in
-                        if let updatedItem = updatedMessageItem {
-                            self.newLocalMessageItems.append(updatedItem)
-                            print(updatedItem)
-                        }
-                    }
-                } else {
-                    newLocalMessageItems.append(messageItem)
-                }
-            }
-            
+            print("debug7: get local messages \(newLocalMessageItems)")
             let sortedMessages = newLocalMessageItems.sorted {
                 $0.sendTime.timeStampToDate() ?? Date() < $1.sendTime.timeStampToDate() ?? Date()
             }
             
-            if messages == nil {
-                //never execute
-                self.messages = sortedMessages
-                self.delegate?.datasReceived(error: nil)
-            } else {
+            if sortedMessages.isEmpty {
+                print("debug7: since no local messages getting from backend")
+                guard let sendTime = messages?.first?.sendTime else { return }
+                guard let sendTime2 = messages?.first?.message else { return }
+                fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: nil, firstMsgTime: sendTime) { error, messages in
+                    if error == nil, let messages = messages {
+                        self.messages?.insert(contentsOf: messages, at: 0)
+                        self.delegate?.datasReceived(error: nil)
+                        print("debug7: local messages appending \(messages)")
+                        print("debug7: local message send time \(sendTime)")
+                        print("debug7 local message message \(sendTime2)")
+                    }
+                }
+            }else{
+                print("debug7: since no local messages exist appending")
                 self.messages?.insert(contentsOf: sortedMessages, at: 0)
                 self.delegate?.datasReceived(error: nil)
             }

@@ -3,4 +3,70 @@
    uuid = "EBB16DBA-E11B-435D-A17A-1C5A05A38FD4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8BE04057-FE33-4EC5-8719-6B7008FD6466"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "483"
+            endingLineNumber = "483"
+            landmarkName = "fetchLocalMessages(beforeTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3A0B2DE9-674A-44C4-B441-2D6643F46DCD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "handleInitialLoad()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3A0B2DE9-674A-44C4-B441-2D6643F46DCD - adc1742aa594d425"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "swiftMessanger.ChatViewModel.handleInitialLoad() -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Documents/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "263"
+                  endingLineNumber = "263"
+                  offsetFromSymbolStart = "1800">
+               </Location>
+               <Location
+                  uuid = "3A0B2DE9-674A-44C4-B441-2D6643F46DCD - 47d7e5211c5d8e75"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Optional&lt;Swift.Error&gt;, Swift.Optional&lt;Swift.Array&lt;swiftMessanger.MessageItem&gt;&gt;) -&gt; () in swiftMessanger.ChatViewModel.handleInitialLoad() -&gt; ()"
+                  moduleName = "swiftMessanger"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/furkanalioglu/Documents/swiftMessanger2/swiftMessanger/Modules/ChatController/Chat/ChatViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "264"
+                  endingLineNumber = "264"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

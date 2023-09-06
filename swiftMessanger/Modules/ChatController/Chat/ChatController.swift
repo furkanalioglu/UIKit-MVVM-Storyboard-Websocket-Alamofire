@@ -54,10 +54,10 @@ class ChatController: UIViewController {
         switch viewModel.chatType {
         case .user(let user):
             AppConfig.instance.currentChat = user.userId
-            navigationItem.title = user.username
-            navigationItem.largeTitleDisplayMode = .never
+            setupNavigationController()
         case .group(let group):
             AppConfig.instance.currentChat = group.id
+            setupNavigationController()
             
         default:
             print("Error")
@@ -87,14 +87,16 @@ class ChatController: UIViewController {
     }
     
     @objc func handleRefresh() {
-        if viewModel.newLocalMessageItems.count > 0 {
-            viewModel.fetchNewMessages()
-        }else{
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                tableView.refreshControl?.endRefreshing()
-            }
-        }
+        viewModel.fetchNewMessages()
+
+//        if viewModel.newLocalMessageItems.count > 0 {
+//            viewModel.fetchNewMessages()
+//        }else{
+//            DispatchQueue.main.async { [weak self] in
+//                guard let self = self else { return }
+//                tableView.refreshControl?.endRefreshing()
+//            }
+//        }
     }
     
     @objc func handleUserDidEnterForeground() {
@@ -103,7 +105,7 @@ class ChatController: UIViewController {
         case .group(let group):
             viewModel.fetchGroupMessagesForSelectedGroup(gid: group.id, page: 1)
         case .user(_):
-            viewModel.fetchLocalMessages(forPage: 1)
+            viewModel.fetchLocalMessages(beforeTime: Date().toTimestampString())
         default:
             break
         }

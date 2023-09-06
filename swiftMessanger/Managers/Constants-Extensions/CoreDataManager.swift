@@ -49,7 +49,6 @@ final class CoreDataManager {
             }
         })
         return container
-        
     }()
     
     // MARK: - Core Data Saving support
@@ -68,31 +67,52 @@ final class CoreDataManager {
             }
         }
     }
+    
+    
+    func doesMessageExist(with sendTime: String) -> Bool {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "MessageEntity")
+        fetchRequest.predicate = NSPredicate(format: "sendTime == %@", sendTime)
+        
+        do {
+            let count = try self.persistentContainer.viewContext.count(for: fetchRequest)
+            return count > 0
+        } catch {
+            print("Error checking for duplicates: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
 
     func saveMessageEntity(_ message: MessageItem, payloadDate: String, imageData: Data?) {
-        let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
-        
-        if message.type == MessageTypes.image.rawValue {
-            newMessageModel.imageData = imageData
-            newMessageModel.senderId = Int16(message.senderId)
-            newMessageModel.receiverId = Int16(message.receiverId)
-            newMessageModel.sendTime = payloadDate
-            newMessageModel.message = message.message
-            newMessageModel.type = message.type
-            print("messagelog: \(newMessageModel)")
-        }else{
-            newMessageModel.imageData = nil
-            newMessageModel.message = message.message
-            newMessageModel.receiverId = Int16(message.receiverId)
-            newMessageModel.senderId = Int16(message.senderId)
-            newMessageModel.sendTime = message.sendTime
-            newMessageModel.type = message.type
-            print("messagelog2: \(newMessageModel)")
+        // Check if the message with the same sendTime already exists
+        if !doesMessageExist(with: payloadDate) {
+            let newMessageModel = MessageEntity(context: self.persistentContainer.viewContext)
+
+            if message.type == MessageTypes.image.rawValue {
+                newMessageModel.imageData = imageData
+                newMessageModel.senderId = Int16(message.senderId)
+                newMessageModel.receiverId = Int16(message.receiverId)
+                newMessageModel.sendTime = payloadDate
+                newMessageModel.message = message.message
+                newMessageModel.type = message.type
+                print("messagelog: \(newMessageModel)")
+            } else {
+                newMessageModel.imageData = nil
+                newMessageModel.message = message.message
+                newMessageModel.receiverId = Int16(message.receiverId)
+                newMessageModel.senderId = Int16(message.senderId)
+                newMessageModel.sendTime = message.sendTime
+                newMessageModel.type = message.type
+                print("messagelog2: \(newMessageModel)")
+            }
+
+            saveContext()
+            print("COREDEBUG: Saved Message Entity")
+        } else {
+            print("COREDEBUG: Message with the same sendTime already exists. Skipping save.")
         }
-        
-        saveContext()
-        print("COREDEBUG: Saved Message Entity")
     }
+
     
     
     func updateImageDataInCoreData(forMessageWithSendTime sendTime: String, with imageData: Data?) {
@@ -123,16 +143,15 @@ final class CoreDataManager {
         }
     }
     
-    func fetchMessages(currentUserId: Int, userId: Int, page: Int) -> [MessageEntity] {
+    func fetchMessages(currentUserId: Int, userId: Int, before sendTime: String) -> [MessageEntity] {
         let fetchRequest: NSFetchRequest<MessageEntity> = MessageEntity.fetchRequest()
+        let itemsPerPage = 10
         
-        let itemsPerPage = 10 // you can change this to whatever number you like
-        fetchRequest.fetchLimit = 10
-        fetchRequest.fetchOffset = (page - 1) * itemsPerPage // If page = 1, then offset is 0, which means it starts from the first record. If page = 2, it will skip the first 10 records, and so on.
-        
-        let predicate = NSPredicate(format: "(senderId == %d AND receiverId == %d) OR (senderId == %d AND receiverId == %d)", currentUserId, userId, userId, currentUserId)
-        
+        // The predicate now includes a condition for the sendTime
+        let predicate = NSPredicate(format: "((senderId == %d AND receiverId == %d) OR (senderId == %d AND receiverId == %d)) AND sendTime < %@", currentUserId, userId, userId, currentUserId, sendTime)
         fetchRequest.predicate = predicate
+        
+        fetchRequest.fetchLimit = itemsPerPage
         
         let dateSortDescriptor = NSSortDescriptor(key: "sendTime", ascending: false)
         fetchRequest.sortDescriptors = [dateSortDescriptor]
@@ -145,6 +164,7 @@ final class CoreDataManager {
             return []
         }
     }
+
 }
 
 

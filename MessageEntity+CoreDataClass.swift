@@ -2,7 +2,7 @@
 //  MessageEntity+CoreDataClass.swift
 //  swiftMessanger
 //
-//  Created by Furkan Alioglu on 1.09.2023.
+//  Created by Furkan Alioglu on 6.09.2023.
 //
 //
 
