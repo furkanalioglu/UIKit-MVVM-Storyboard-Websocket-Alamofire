@@ -272,6 +272,16 @@ extension ChatController : UITableViewDataSource {
 
         }
     }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let indexPaths = tableView.indexPathsForVisibleRows ?? []
+        let lastRow = tableView.numberOfRows(inSection: 0) - 1
+        if viewModel.areLastMessagesVisible(numberOfMessages: 10, indexPaths: indexPaths, lastRow: lastRow) {
+            scrollToBottomButtonLabel.isHidden = true
+        } else {
+            scrollToBottomButtonLabel.isHidden = false
+        }
+    }
+    
 
 }
 
