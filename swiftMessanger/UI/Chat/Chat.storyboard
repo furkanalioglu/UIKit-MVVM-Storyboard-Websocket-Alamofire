@@ -83,11 +83,27 @@
                                     <constraint firstAttribute="height" constant="50" id="zpN-Id-RU8"/>
                                 </constraints>
                             </view>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FNx-md-xZk">
+                                <rect key="frame" x="341" y="716" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="7hy-2P-1R8"/>
+                                    <constraint firstAttribute="width" constant="40" id="q0A-Uy-t4g"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="chevron.down.circle.fill" catalog="system">
+                                    <color key="baseForegroundColor" red="0.4756349325" green="0.47564673419999998" blue="0.47564041610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="handleScrollToBottom:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Xn0-oR-OEj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="a1h-GK-geR" firstAttribute="top" secondItem="FNx-md-xZk" secondAttribute="bottom" constant="12" id="8XZ-Hw-jV1"/>
                             <constraint firstItem="a1h-GK-geR" firstAttribute="top" secondItem="vKo-lO-k7p" secondAttribute="bottom" constant="10" id="9Eg-YW-Pca"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="FNx-md-xZk" secondAttribute="trailing" constant="12" id="HHc-Na-Y17"/>
                             <constraint firstItem="vKo-lO-k7p" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="ak9-f7-O3Z"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="vKo-lO-k7p" secondAttribute="trailing" id="bOX-Bk-Gr8"/>
                             <constraint firstItem="a1h-GK-geR" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="jlO-Y6-iY0"/>
@@ -100,6 +116,7 @@
                     <connections>
                         <outlet property="inputViewBottonAnchor" destination="yPi-nr-59M" id="QVo-eS-AoX"/>
                         <outlet property="messageTextField" destination="XFE-yd-LRk" id="72h-z9-8YJ"/>
+                        <outlet property="scrollToBottomButtonLabel" destination="FNx-md-xZk" id="eVu-Qq-GZ3"/>
                         <outlet property="sendMessageButton" destination="BAk-Ef-dsW" id="VV9-JY-DdJ"/>
                         <outlet property="tableView" destination="gQF-xJ-CwD" id="aCc-C3-NYy"/>
                         <outlet property="takePhotoButton" destination="sAi-JU-qTs" id="g73-Py-v5b"/>
@@ -139,6 +156,7 @@
     </scenes>
     <resources>
         <image name="camera.circle.fill" catalog="system" width="128" height="123"/>
+        <image name="chevron.down.circle.fill" catalog="system" width="128" height="123"/>
         <image name="paperplane.fill" catalog="system" width="128" height="119"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

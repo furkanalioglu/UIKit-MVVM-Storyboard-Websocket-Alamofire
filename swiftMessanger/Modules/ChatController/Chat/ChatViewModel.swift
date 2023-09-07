@@ -21,7 +21,7 @@ enum GroupRoles: String {
 }
 
 enum ChatStatus : String{
-    case load, fetch
+    case load, fetch, disableRefresh
 }
 
 enum MessageTypes : String{
@@ -338,8 +338,7 @@ class ChatViewModel {
     func fetchNewMessages() {
         switch chatType {
         case .user(_):
-            guard let sendTime = messages?.first?.sendTime else { fatalError("no st") }
-            guard let message = messages?.first?.message else { fatalError("no st") }
+            guard let sendTime = messages?.first?.sendTime else { return }
             fetchLocalMessages(beforeTime: sendTime)
         case .group(_ ):
             currentPage += 1
@@ -478,6 +477,20 @@ class ChatViewModel {
         return sortedMessages
     }
     
+    func areLastMessagesVisible(numberOfMessages: Int, indexPaths: [IndexPath], lastRow: Int) -> Bool {
+        guard numberOfMessages > 0 else { return false }
+        
+        let thresholdRow = max(0, lastRow - numberOfMessages)
+        
+        for indexPath in indexPaths {
+            if indexPath.row > thresholdRow {
+                return true
+            }
+        }
+        return false
+    }
+
+    
     func fetchLocalMessages(beforeTime payloadDate: String) {
         switch chatType {
         case .user(let user):
@@ -496,12 +509,17 @@ class ChatViewModel {
                 guard let sendTime2 = messages?.first?.message else { return }
                 fetchMessagesForSelectedUser(userId: String(user.userId), lastMsgTime: nil, firstMsgTime: sendTime) { error, messages in
                     if error == nil, let messages = messages {
+                        if messages.isEmpty{
+                            self.delegate?.datasReceived(error: ChatStatus.disableRefresh.rawValue)
+                            print("debug7: No messages exist disable scroll")
+                        }
                         self.messages?.insert(contentsOf: messages, at: 0)
                         self.delegate?.datasReceived(error: nil)
                         print("debug7: local messages appending \(messages)")
                         print("debug7: local message send time \(sendTime)")
                         print("debug7 local message message \(sendTime2)")
                     }
+                    
                 }
             }else{
                 print("debug7: since local messages exist appending")

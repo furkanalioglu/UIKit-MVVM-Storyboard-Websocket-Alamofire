@@ -18,6 +18,8 @@ class ChatController: UIViewController {
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var videoCell: UIView!
     @IBOutlet weak var takePhotoButton: UIButton!
+    @IBOutlet weak var scrollToBottomButtonLabel: UIButton!
+    
     
     @IBOutlet weak var tableView: UITableView! {
         didSet{
@@ -88,16 +90,16 @@ class ChatController: UIViewController {
     
     @objc func handleRefresh() {
         viewModel.fetchNewMessages()
-
-//        if viewModel.newLocalMessageItems.count > 0 {
-//            viewModel.fetchNewMessages()
-//        }else{
-//            DispatchQueue.main.async { [weak self] in
-//                guard let self = self else { return }
-//                tableView.refreshControl?.endRefreshing()
-//            }
-//        }
     }
+    
+    @IBAction func handleScrollToBottom(_ sender: Any) {
+        let lastRow = tableView.numberOfRows(inSection: 0) - 1
+        if lastRow > 0 {
+            let indexPath = IndexPath(row: lastRow, section: 0)
+            tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
     
     @objc func handleUserDidEnterForeground() {
         viewModel.messages?.removeAll()
@@ -267,6 +269,16 @@ extension ChatController : UITableViewDataSource {
             cell.message = viewModel.messages?[indexPath.row]
             return cell
 
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let indexPaths = tableView.indexPathsForVisibleRows ?? []
+        let lastRow = tableView.numberOfRows(inSection: 0) - 1
+        if viewModel.areLastMessagesVisible(numberOfMessages: 10, indexPaths: indexPaths, lastRow: lastRow) {
+            scrollToBottomButtonLabel.isHidden = true
+        } else {
+            scrollToBottomButtonLabel.isHidden = false
         }
     }
 }

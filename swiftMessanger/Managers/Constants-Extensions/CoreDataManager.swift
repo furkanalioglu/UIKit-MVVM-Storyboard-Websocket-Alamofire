@@ -55,7 +55,7 @@ final class CoreDataManager {
     func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
-            context.perform {
+//            context.perform {
                 do {
                     try context.save()
                 } catch {
@@ -66,7 +66,7 @@ final class CoreDataManager {
                 }
             }
         }
-    }
+//    }
     
     
     func doesMessageExist(with sendTime: String) -> Bool {

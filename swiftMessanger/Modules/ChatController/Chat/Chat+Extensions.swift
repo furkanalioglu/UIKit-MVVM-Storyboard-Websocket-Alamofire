@@ -25,16 +25,14 @@ protocol ChatControllerSentPhotoDelegate: AnyObject {
     func userDidReceivePhotoMessage(error: String?)
 }
 
-
 extension ChatController : ChatControllerDelegate {
     func newMessageDatasExist(status: String) {
-        if status == "fetch" {
+        if status == ChatStatus.fetch.rawValue {
             showLoader(true)
             print("showloader")
         }else{
             tableView.reloadData()
             setupNavigationController()
-            scrollToBottom()
             showLoader(false)
         }
     }
@@ -85,8 +83,8 @@ extension ChatController : ChatControllerDelegate {
                 }
                 tableView.reloadData()
                 setupNavigationController()
-            }else{
-
+            }else if error == ChatStatus.disableRefresh.rawValue{
+                tableView.refreshControl = nil
             }
         default:
             break
