@@ -37,6 +37,7 @@ class ChatController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        viewModel.photoSentDelegate = self
         CoreDataManager.shared.loadImageDelegate = self
         SocketIOManager.shared().chatDelegate = self
         setupTapGesture()
@@ -271,15 +272,6 @@ extension ChatController : UITableViewDataSource {
 
         }
     }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let indexPaths = tableView.indexPathsForVisibleRows ?? []
-        let lastRow = tableView.numberOfRows(inSection: 0) - 1
-        if viewModel.areLastMessagesVisible(numberOfMessages: 10, indexPaths: indexPaths, lastRow: lastRow) {
-            scrollToBottomButtonLabel.isHidden = true
-        } else {
-            scrollToBottomButtonLabel.isHidden = false
-        }
-    }
+
 }
 

@@ -84,7 +84,8 @@ extension ChatController : ChatControllerDelegate {
                 tableView.reloadData()
                 setupNavigationController()
             }else if error == ChatStatus.disableRefresh.rawValue{
-                tableView.refreshControl = nil
+//                tableView.refreshControl = nil
+                viewModel.fetchNewDatas = false
             }
         default:
             break
@@ -264,6 +265,7 @@ extension ChatController : ChatControllerSentPhotoDelegate {
         if error == nil {
             tableView.reloadData()
             scrollToBottom(animated: false)
+            print("received message ")
         }
     }
     

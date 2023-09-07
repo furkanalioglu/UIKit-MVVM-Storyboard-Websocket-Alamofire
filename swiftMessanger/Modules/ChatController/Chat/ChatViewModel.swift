@@ -42,6 +42,7 @@ enum ActionType {
 class ChatViewModel {
     
     var rView:RaceView? = nil
+    var fetchNewDatas : Bool = true
     
     let cellNib = "ChatCell2"
     let cellWithImageNib = "ChatCellWithImage"
@@ -149,7 +150,7 @@ class ChatViewModel {
     var userInformations: [UserModel]?
     
     weak var delegate : ChatControllerDelegate?
-    weak var seenDelegate : ChatMessageSeenDelegate?
+    weak var seenDelegate :ChatMessageSeenDelegate?
     weak var photoSentDelegate : ChatControllerSentPhotoDelegate?
     
     
@@ -503,7 +504,7 @@ class ChatViewModel {
                 $0.sendTime.timeStampToDate() ?? Date() < $1.sendTime.timeStampToDate() ?? Date()
             }
             
-            if sortedMessages.isEmpty {
+            if sortedMessages.isEmpty && fetchNewDatas{
                 print("debug7: since no local messages getting from backend")
                 guard let sendTime = messages?.first?.sendTime else { return }
                 guard let sendTime2 = messages?.first?.message else { return }
