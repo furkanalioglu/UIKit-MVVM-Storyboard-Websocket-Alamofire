@@ -46,6 +46,12 @@ class ChatController: UIViewController {
         configureSendImageButton()
         photoPicker.delegate = self
         videoCell.isHidden = true
+        switch viewModel.chatType{
+        case .user(let user):
+            print("USERUSERUSER",user)
+        default:break
+        }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
